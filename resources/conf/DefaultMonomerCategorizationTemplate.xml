@@ -1,0 +1,363 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<Template xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+    <Polymer name="RNA" title="Nucleic Acid" fontColor="black" shape="Rectangle">
+
+        <FragmentGroup name="Standard Nucleotide" shape="No">
+            <Fragment name="A" backgroundColor="White" fontColor="Green" notation="R(A)P"/>
+            <Fragment name="C" backgroundColor="White" fontColor="Red" notation="R(C)P"/>
+            <Fragment name="G" backgroundColor="White" fontColor="Orange" notation="R(G)P"/>
+            <Fragment name="T" backgroundColor="White" fontColor="Cyan" notation="R(T)P"/>
+            <Fragment name="U" backgroundColor="White" fontColor="Cyan" notation="R(U)P"/>
+        </FragmentGroup>
+
+        <FragmentGroup name="Modified Nucleotide" shape="No">
+            <FragmentGroup name="dR" shape="No">
+                <Fragment name="dA" backgroundColor="White" fontColor="Green" notation="[dR](A)P"/>
+                <Fragment name="dsA" backgroundColor="White" fontColor="Green" notation="[dR](A)[sP]"/>
+                <Fragment name="dC" backgroundColor="White" fontColor="Red" notation="[dR](C)P"/>
+                <Fragment name="dsC" backgroundColor="White" fontColor="Red" notation="[dR](C)[sP]"/>
+                <Fragment name="dG" backgroundColor="White" fontColor="Orange" notation="[dR](G)P"/>
+                <Fragment name="dsG" backgroundColor="White" fontColor="Orange" notation="[dR](G)[sP]"/>
+                <Fragment name="dT" backgroundColor="White" fontColor="Cyan" notation="[dR](T)P"/>
+                <Fragment name="dsT" backgroundColor="White" fontColor="Cyan" notation="[dR](T)[sP]"/>
+                <Fragment name="dU" backgroundColor="White" fontColor="Cyan" notation="[dR](U)P"/>
+                <Fragment name="dsU" backgroundColor="White" fontColor="Cyan" notation="[dR](U)[sP]"/>
+            </FragmentGroup>
+
+            <FragmentGroup name="mR" shape="No">
+                <Fragment name="mA" backgroundColor="White" fontColor="Green" notation="[mR](A)P"/>
+                <Fragment name="msA" backgroundColor="White" fontColor="Green" notation="[mR](A)[sP]"/>
+                <Fragment name="mC" backgroundColor="White" fontColor="Red" notation="[mR](C)P"/>
+                <Fragment name="msC" backgroundColor="White" fontColor="Red" notation="[mR](C)[sP]"/>
+                <Fragment name="mG" backgroundColor="White" fontColor="Orange" notation="[mR](G)P"/>
+                <Fragment name="msG" backgroundColor="White" fontColor="Orange" notation="[mR](G)[sP]"/>
+                <Fragment name="mT" backgroundColor="White" fontColor="Cyan" notation="[mR](T)P"/>
+                <Fragment name="msT" backgroundColor="White" fontColor="Cyan" notation="[mR](T)[sP]"/>
+                <Fragment name="mU" backgroundColor="White" fontColor="Cyan" notation="[mR](U)P"/>
+                <Fragment name="msU" backgroundColor="White" fontColor="Cyan" notation="[mR](U)[sP]"/>
+            </FragmentGroup>
+
+            <FragmentGroup name="fR" shape="No">
+                <Fragment name="fA" backgroundColor="White" fontColor="Green" notation="[fR](A)P"/>
+                <Fragment name="fsA" backgroundColor="White" fontColor="Green" notation="[fR](A)[sP]"/>
+                <Fragment name="fC" backgroundColor="White" fontColor="Red" notation="[fR](C)P"/>
+                <Fragment name="fsC" backgroundColor="White" fontColor="Red" notation="[fR](C)[sP]"/>
+                <Fragment name="fG" backgroundColor="White" fontColor="Orange" notation="[fR](G)P"/>
+                <Fragment name="fsG" backgroundColor="White" fontColor="Orange" notation="[fR](G)[sP]"/>
+                <Fragment name="fT" backgroundColor="White" fontColor="Cyan" notation="[fR](T)P"/>
+                <Fragment name="fU" backgroundColor="White" fontColor="Cyan" notation="[fR](U)P"/>
+                <Fragment name="fsU" backgroundColor="White" fontColor="Cyan" notation="[fR](U)[sP]"/>
+            </FragmentGroup>
+
+            <FragmentGroup name="LR + sP" shape="No">
+                <Fragment name="lsA" backgroundColor="White" fontColor="Green" notation="[LR](A)[sP]"/>
+                <Fragment name="lsC" backgroundColor="White" fontColor="Green" notation="[LR](C)[sP]"/>
+                <Fragment name="ls5C" backgroundColor="White" fontColor="Green" notation="[LR]([5meC])[sP]"/>
+                <Fragment name="lsG" backgroundColor="White" fontColor="Green" notation="[LR](G)[sP]"/>
+                <Fragment name="lsT" backgroundColor="White" fontColor="Green" notation="[LR](T)[sP]"/>
+            </FragmentGroup>
+
+            <FragmentGroup name="R + sP" shape="No">
+                <Fragment name="sA" backgroundColor="White" fontColor="Green" notation="R(A)[sP]"/>
+                <Fragment name="sC" backgroundColor="White" fontColor="Green" notation="R(C)[sP]"/>
+                <Fragment name="sG" backgroundColor="White" fontColor="Green" notation="R(G)[sP]"/>
+                <Fragment name="sU" backgroundColor="White" fontColor="Green" notation="R(U)[sP]"/>
+            </FragmentGroup>
+
+        </FragmentGroup>
+
+
+        <MonomerGroup name="Sugar" shape="Rectangle">
+            <MonomerGroup name="Standard" shape="Rectangle">
+                <Monomer name="dR" backgroundColor="Light_Violet" fontColor="Black"/>
+                <Monomer name="fR" backgroundColor="Light_Violet" fontColor="Black"/>
+                <Monomer name="LR" backgroundColor="Light_Violet" fontColor="Black"/>
+                <Monomer name="MOE" backgroundColor="Light_Violet" fontColor="Black"/>
+                <Monomer name="mR" backgroundColor="Light_Violet" fontColor="Black"/>
+                <Monomer name="R" backgroundColor="Light_Violet" fontColor="Black"/>
+            </MonomerGroup>
+            <MonomerGroup name="Special" shape="Rectangle">
+                <Monomer name="12ddR" backgroundColor="Light_Violet" fontColor="Black"/>
+                <Monomer name="25R" backgroundColor="Light_Violet" fontColor="Black"/>
+                <Monomer name="4sR" backgroundColor="Light_Violet" fontColor="Black"/>
+                <Monomer name="aFR" backgroundColor="Light_Violet" fontColor="Black"/>
+                <Monomer name="aR" backgroundColor="Light_Violet" fontColor="Black"/>
+                <Monomer name="ce" backgroundColor="Light_Violet" fontColor="Black"/>
+                <Monomer name="eR" backgroundColor="Light_Violet" fontColor="Black"/>
+                <Monomer name="FR" backgroundColor="Light_Violet" fontColor="Black"/>
+                <Monomer name="hx" backgroundColor="Light_Violet" fontColor="Black"/>
+                <Monomer name="lLR" backgroundColor="Light_Violet" fontColor="Black"/>
+                <Monomer name="tR" backgroundColor="Light_Violet" fontColor="Black"/>
+                <Monomer name="UNA" backgroundColor="Light_Violet" fontColor="Black"/>
+            </MonomerGroup>
+            <MonomerGroup name="Custom" shape="Rectangle">
+                <Monomer name="3tnR" backgroundColor="Light_Violet" fontColor="Black"/>
+                <Monomer name="azR" backgroundColor="Light_Violet" fontColor="Black"/>
+                <Monomer name="cR" backgroundColor="Light_Violet" fontColor="Black"/>
+                <Monomer name="cyR" backgroundColor="Light_Violet" fontColor="Black"/>
+                <Monomer name="dmednR" backgroundColor="Light_Violet" fontColor="Black"/>
+                <Monomer name="FMOE" backgroundColor="Light_Violet" fontColor="Black"/>
+                <Monomer name="maLR" backgroundColor="Light_Violet" fontColor="Black"/>
+                <Monomer name="mbLR" backgroundColor="Light_Violet" fontColor="Black"/>
+                <Monomer name="mdmb" backgroundColor="Light_Violet" fontColor="Black"/>
+                <Monomer name="miLR" backgroundColor="Light_Violet" fontColor="Black"/>
+                <Monomer name="mmR" backgroundColor="Light_Violet" fontColor="Black"/>
+                <Monomer name="mnR" backgroundColor="Light_Violet" fontColor="Black"/>
+                <Monomer name="mph" backgroundColor="Light_Violet" fontColor="Black"/>
+                <Monomer name="msnR" backgroundColor="Light_Violet" fontColor="Black"/>
+                <Monomer name="npR" backgroundColor="Light_Violet" fontColor="Black"/>
+                <Monomer name="nR" backgroundColor="Light_Violet" fontColor="Black"/>
+                <Monomer name="peR" backgroundColor="Light_Violet" fontColor="Black"/>
+                <Monomer name="PONA" backgroundColor="Light_Violet" fontColor="Black"/>
+                <Monomer name="prR" backgroundColor="Light_Violet" fontColor="Black"/>
+                <Monomer name="qR" backgroundColor="Light_Violet" fontColor="Black"/>
+                <Monomer name="RGNA" backgroundColor="Light_Violet" fontColor="Black"/>
+                <Monomer name="SGNA" backgroundColor="Light_Violet" fontColor="Black"/>
+                <Monomer name="t1R" backgroundColor="Light_Violet" fontColor="Black"/>
+                <Monomer name="t2R" backgroundColor="Light_Violet" fontColor="Black"/>
+                <Monomer name="t3R" backgroundColor="Light_Violet" fontColor="Black"/>
+                <Monomer name="tnR" backgroundColor="Light_Violet" fontColor="Black"/>
+            </MonomerGroup>
+            <MonomerGroup name="Commericial" shape="Rectangle">
+                <Monomer name="3pd" backgroundColor="Light_Violet" fontColor="Black"/>
+                <Monomer name="am12" backgroundColor="Light_Violet" fontColor="Black"/>
+                <Monomer name="am6" backgroundColor="Light_Violet" fontColor="Black"/>
+                <Monomer name="heg" backgroundColor="Light_Violet" fontColor="Black"/>
+                <Monomer name="SS6" backgroundColor="Light_Violet" fontColor="Black"/>
+                <Monomer name="teg" backgroundColor="Light_Violet" fontColor="Black"/>
+            </MonomerGroup>
+            <MonomerGroup name="5'-Modifier" shape="Rectangle">
+                <Monomer name="5A6" backgroundColor="Light_Violet" fontColor="Black"/>
+                <Monomer name="5chg" backgroundColor="Light_Violet" fontColor="Black"/>
+                <Monomer name="5chL" backgroundColor="Light_Violet" fontColor="Black"/>
+                <Monomer name="5chm" backgroundColor="Light_Violet" fontColor="Black"/>
+                <Monomer name="5chs" backgroundColor="Light_Violet" fontColor="Black"/>
+                <Monomer name="5css" backgroundColor="Light_Violet" fontColor="Black"/>
+                <Monomer name="5FAM" backgroundColor="Light_Violet" fontColor="Black"/>
+                <Monomer name="5FBC6" backgroundColor="Light_Violet" fontColor="Black"/>
+                <Monomer name="5hyn" backgroundColor="Light_Violet" fontColor="Black"/>
+                <Monomer name="5N36" backgroundColor="Light_Violet" fontColor="Black"/>
+                <Monomer name="5nag" backgroundColor="Light_Violet" fontColor="Black"/>
+                <Monomer name="Cy55" backgroundColor="Light_Violet" fontColor="Black"/>
+                <Monomer name="5cGT" backgroundColor="Light_Violet" fontColor="Black"/>
+            </MonomerGroup>
+            <MonomerGroup name="3'-Modifier" shape="Rectangle">
+                <Monomer name="3A6" backgroundColor="Light_Violet" fontColor="Black"/>
+                <Monomer name="3Ab" backgroundColor="Light_Violet" fontColor="Black"/>
+                <Monomer name="3chg" backgroundColor="Light_Violet" fontColor="Black"/>
+                <Monomer name="3chl" backgroundColor="Light_Violet" fontColor="Black"/>
+                <Monomer name="3FAM" backgroundColor="Light_Violet" fontColor="Black"/>
+                <Monomer name="3hyn" backgroundColor="Light_Violet" fontColor="Black"/>
+                <Monomer name="3NdR" backgroundColor="Light_Violet" fontColor="Black"/>
+                <Monomer name="3SS6" backgroundColor="Light_Violet" fontColor="Black"/>
+                <Monomer name="3yn8" backgroundColor="Light_Violet" fontColor="Black"/>
+                <Monomer name="3yng" backgroundColor="Light_Violet" fontColor="Black"/>
+                <Monomer name="bat" backgroundColor="Light_Violet" fontColor="Black"/>
+                <Monomer name="bioteg" backgroundColor="Light_Violet" fontColor="Black"/>
+                <Monomer name="biotin" backgroundColor="Light_Violet" fontColor="Black"/>
+                <Monomer name="FITC" backgroundColor="Light_Violet" fontColor="Black"/>
+                <Monomer name="hex" backgroundColor="Light_Violet" fontColor="Black"/>
+                <Monomer name="pal" backgroundColor="Light_Violet" fontColor="Black"/>
+            </MonomerGroup>
+        </MonomerGroup>
+
+        <MonomerGroup name="Base" shape="Rhomb">
+            <MonomerGroup name="Standard" shape="Rhomb">
+                <Monomer name="A" backgroundColor="Green" fontColor="Red"/>
+                <Monomer name="C" backgroundColor="Red" fontColor="Black"/>
+                <Monomer name="G" backgroundColor="Orange" fontColor="Black"/>
+                <Monomer name="T" backgroundColor="Cyan" fontColor="White"/>
+                <Monomer name="U" backgroundColor="Cyan" fontColor="White"/>
+            </MonomerGroup>
+
+            <MonomerGroup name="Modified A" shape="Rhomb">
+                <Monomer name="cpmA" backgroundColor="Green" fontColor="Red"/>
+                <Monomer name="eaA" backgroundColor="Green" fontColor="Red"/>
+                <Monomer name="daA" backgroundColor="Green" fontColor="Red"/>
+                <Monomer name="dabA" backgroundColor="Green" fontColor="Red"/>
+                <Monomer name="meA" backgroundColor="Green" fontColor="Red"/>
+                <Monomer name="baA" backgroundColor="Green" fontColor="Red"/>
+                <Monomer name="clA" backgroundColor="Green" fontColor="Red"/>
+            </MonomerGroup>
+
+            <MonomerGroup name="Modified C" shape="Rhomb">
+                <Monomer name="5fC" backgroundColor="Red" fontColor="Black"/>
+                <Monomer name="prpC" backgroundColor="Red" fontColor="Black"/>
+                <Monomer name="5meC" backgroundColor="Red" fontColor="Black"/>
+                <Monomer name="cpC" backgroundColor="Red" fontColor="Black"/>
+                <Monomer name="cdaC" backgroundColor="Red" fontColor="Black"/>
+                <Monomer name="oclC" backgroundColor="Red" fontColor="Black"/>
+                <Monomer name="clC" backgroundColor="Red" fontColor="Black"/>
+                <Monomer name="c1C" backgroundColor="Red" fontColor="Black"/>
+                <Monomer name="c2C" backgroundColor="Red" fontColor="Black"/>
+                <Monomer name="c3C" backgroundColor="Red" fontColor="Black"/>
+            </MonomerGroup>
+
+            <MonomerGroup name="Modified G" shape="Rhomb">
+                <Monomer name="oxG" backgroundColor="Orange" fontColor="Black"/>
+                <Monomer name="imG" backgroundColor="Orange" fontColor="Black"/>
+            </MonomerGroup>
+
+            <MonomerGroup name="Modified T" shape="Rhomb">
+                <Monomer name="bioT" backgroundColor="Cyan" fontColor="White"/>
+            </MonomerGroup>
+
+            <MonomerGroup name="Modified U" shape="Rhomb">
+                <Monomer name="5eU" backgroundColor="Cyan" fontColor="White"/>
+                <Monomer name="5fU" backgroundColor="Cyan" fontColor="White"/>
+                <Monomer name="prpU" backgroundColor="Cyan" fontColor="White"/>
+                <Monomer name="cpU" backgroundColor="Cyan" fontColor="White"/>
+                <Monomer name="5tpU" backgroundColor="Cyan" fontColor="White"/>
+                <Monomer name="tfU" backgroundColor="Cyan" fontColor="White"/>
+                <Monomer name="5iU" backgroundColor="Cyan" fontColor="White"/>
+            </MonomerGroup>
+
+            <MonomerGroup name="Synthetic" shape="Rhomb">
+                <Monomer name="AP" backgroundColor="Pink" fontColor="Black"/>
+                <Monomer name="Bea" backgroundColor="Pink" fontColor="Black"/>
+                <Monomer name="Bya" backgroundColor="Pink" fontColor="Black"/>
+                <Monomer name="dfB" backgroundColor="Pink" fontColor="Black"/>
+                <Monomer name="In" backgroundColor="Pink" fontColor="Black"/>
+                <Monomer name="Pea" backgroundColor="Pink" fontColor="Black"/>
+                <Monomer name="Pya" backgroundColor="Pink" fontColor="Black"/>
+            </MonomerGroup>
+        </MonomerGroup>
+
+        <MonomerGroup name="Linker" shape="Circle">
+            <MonomerGroup name="Common" shape="Circle">
+                <Monomer name="P" backgroundColor="Light_Violet" fontColor="Black"/>
+                <Monomer name="sP" backgroundColor="Light_Violet" fontColor="Black"/>
+            </MonomerGroup>
+
+            <MonomerGroup name="Special" shape="Circle">
+                <Monomer name="bP" backgroundColor="Light_Violet" fontColor="Black"/>
+                <Monomer name="CH2" backgroundColor="Light_Violet" fontColor="Black"/>
+                <Monomer name="nP" backgroundColor="Light_Violet" fontColor="Black"/>
+                <Monomer name="Sft" backgroundColor="Light_Violet" fontColor="Black"/>
+                <Monomer name="ynPn" backgroundColor="Light_Violet" fontColor="Black"/>
+                <Monomer name="ynP" backgroundColor="Light_Violet" fontColor="Black"/>
+                <Monomer name="phPn" backgroundColor="Light_Violet" fontColor="Black"/>
+            </MonomerGroup>
+
+            <MonomerGroup name="Salt" shape="Circle">
+                <Monomer name="naP" backgroundColor="Light_Violet" fontColor="Black"/>
+                <Monomer name="nasP" backgroundColor="Light_Violet" fontColor="Black"/>
+            </MonomerGroup>
+        </MonomerGroup>
+    </Polymer>
+
+    <Polymer name="PEPTIDE" title="Peptide" fontColor="black" shape="Rhomb">
+        <MonomerGroup name="L Amino Acid" shape="Rhomb">
+            <MonomerGroup name="Natural" shape="Rhomb">
+                <Monomer name="A" backgroundColor="Light_Cyan" fontColor="Black"/>
+                <Monomer name="C" backgroundColor="Light_Cyan" fontColor="Black"/>
+                <Monomer name="D" backgroundColor="Light_Cyan" fontColor="Black"/>
+                <Monomer name="E" backgroundColor="Light_Cyan" fontColor="Black"/>
+                <Monomer name="F" backgroundColor="Light_Cyan" fontColor="Black"/>
+                <Monomer name="G" backgroundColor="Light_Cyan" fontColor="Black"/>
+                <Monomer name="H" backgroundColor="Light_Cyan" fontColor="Black"/>
+                <Monomer name="I" backgroundColor="Light_Cyan" fontColor="Black"/>
+                <Monomer name="K" backgroundColor="Light_Cyan" fontColor="Black"/>
+                <Monomer name="L" backgroundColor="Light_Cyan" fontColor="Black"/>
+                <Monomer name="M" backgroundColor="Light_Cyan" fontColor="Black"/>
+                <Monomer name="N" backgroundColor="Light_Cyan" fontColor="Black"/>
+                <Monomer name="P" backgroundColor="Light_Cyan" fontColor="Black"/>
+                <Monomer name="Q" backgroundColor="Light_Cyan" fontColor="Black"/>
+                <Monomer name="R" backgroundColor="Light_Cyan" fontColor="Black"/>
+                <Monomer name="S" backgroundColor="Light_Cyan" fontColor="Black"/>
+                <Monomer name="T" backgroundColor="Light_Cyan" fontColor="Black"/>
+                <Monomer name="V" backgroundColor="Light_Cyan" fontColor="Black"/>
+                <Monomer name="W" backgroundColor="Light_Cyan" fontColor="Black"/>
+                <Monomer name="Y" backgroundColor="Light_Cyan" fontColor="Black"/>
+            </MonomerGroup>
+
+            <MonomerGroup name="Modified" shape="Rhomb">
+                <Monomer name="seC" backgroundColor="Light_Cyan" fontColor="Black"/>
+                <Monomer name="nL" backgroundColor="Light_Cyan" fontColor="Black"/>
+                <Monomer name="mA" backgroundColor="Light_Cyan" fontColor="Black"/>
+            </MonomerGroup>
+        </MonomerGroup>
+
+        <MonomerGroup name="D Amino Acid" shape="Rhomb">
+                <Monomer name="dA" backgroundColor="Light_Cyan" fontColor="Black"/>
+                <Monomer name="dC" backgroundColor="Light_Cyan" fontColor="Black"/>
+                <Monomer name="dD" backgroundColor="Light_Cyan" fontColor="Black"/>
+                <Monomer name="dE" backgroundColor="Light_Cyan" fontColor="Black"/>
+                <Monomer name="dF" backgroundColor="Light_Cyan" fontColor="Black"/>
+                <Monomer name="dH" backgroundColor="Light_Cyan" fontColor="Black"/>
+                <Monomer name="dI" backgroundColor="Light_Cyan" fontColor="Black"/>
+                <Monomer name="dK" backgroundColor="Light_Cyan" fontColor="Black"/>
+                <Monomer name="dL" backgroundColor="Light_Cyan" fontColor="Black"/>
+                <Monomer name="dM" backgroundColor="Light_Cyan" fontColor="Black"/>
+                <Monomer name="dN" backgroundColor="Light_Cyan" fontColor="Black"/>
+                <Monomer name="dP" backgroundColor="Light_Cyan" fontColor="Black"/>
+                <Monomer name="dQ" backgroundColor="Light_Cyan" fontColor="Black"/>
+                <Monomer name="dR" backgroundColor="Light_Cyan" fontColor="Black"/>
+                <Monomer name="dS" backgroundColor="Light_Cyan" fontColor="Black"/>
+                <Monomer name="dT" backgroundColor="Light_Cyan" fontColor="Black"/>
+                <Monomer name="dV" backgroundColor="Light_Cyan" fontColor="Black"/>
+                <Monomer name="dW" backgroundColor="Light_Cyan" fontColor="Black"/>
+                <Monomer name="dY" backgroundColor="Light_Cyan" fontColor="Black"/>
+        </MonomerGroup>
+
+        <MonomerGroup name="Synthetic Amino Acid" shape="Rhomb">
+            <Monomer name="ahA" backgroundColor="Light_Cyan" fontColor="Black"/>
+            <Monomer name="ssX" backgroundColor="Light_Cyan" fontColor="Black"/>
+        </MonomerGroup>
+
+        <MonomerGroup name="Peptide Nucleic Acid (PNA)" shape="Rhomb">
+            <MonomerGroup name="Standard" shape="Rhomb">
+                <Monomer name="pnA" backgroundColor="Light_Cyan" fontColor="Black"/>
+                <Monomer name="pnG" backgroundColor="Light_Cyan" fontColor="Black"/>
+                <Monomer name="pnC" backgroundColor="Light_Cyan" fontColor="Black"/>
+                <Monomer name="pnT" backgroundColor="Light_Cyan" fontColor="Black"/>
+            </MonomerGroup>
+            <MonomerGroup name="Modified" shape="Rhomb">
+                <Monomer name="1lK_pnT" backgroundColor="Light_Cyan" fontColor="Black"/>
+                <Monomer name="1lK_pnC" backgroundColor="Light_Cyan" fontColor="Black"/>
+            </MonomerGroup>
+        </MonomerGroup>
+
+        <MonomerGroup name="N-Terminal" shape="Rhomb">
+            <Monomer name="ac" backgroundColor="Light_Cyan" fontColor="Black"/>
+            <Monomer name="fmoc" backgroundColor="Light_Cyan" fontColor="Black"/>
+        </MonomerGroup>
+
+        <MonomerGroup name="C-Terminal" shape="Rhomb">
+            <Monomer name="am" backgroundColor="Light_Cyan" fontColor="Black"/>
+        </MonomerGroup>
+
+    </Polymer>
+
+    <Polymer name="CHEM" title="Chemical Modifier" fontColor="black" shape="Hexagon">
+
+        <MonomerGroup name="Reactive" shape="Hexagon">
+            <Monomer name="Az" backgroundColor="Purple" fontColor="Black"/>
+            <Monomer name="hxy" backgroundColor="Purple" fontColor="Black"/>
+            <Monomer name="MCC" backgroundColor="Purple" fontColor="Black"/>
+        </MonomerGroup>
+
+        <MonomerGroup name="Mono-Functional" shape="Hexagon">
+            <Monomer name="Me" backgroundColor="Purple" fontColor="Black"/>
+            <Monomer name="MeOH" backgroundColor="Purple" fontColor="Black"/>
+            <Monomer name="Ac" backgroundColor="Purple" fontColor="Black"/>
+        </MonomerGroup>
+
+        <MonomerGroup name="Bi-Functional" shape="Hexagon">
+            <Monomer name="EG" backgroundColor="Purple" fontColor="Black"/>
+            <Monomer name="A6OH" backgroundColor="Purple" fontColor="Black"/>
+            <Monomer name="PEG2" backgroundColor="Purple" fontColor="Black"/>
+            <Monomer name="SS3" backgroundColor="Purple" fontColor="Black"/>
+        </MonomerGroup>
+
+        <MonomerGroup name="Multi-Functional" shape="Hexagon">
+            <Monomer name="5chol" backgroundColor="Purple" fontColor="Black"/>
+        </MonomerGroup>
+
+        <MonomerGroup name="No-Structure" shape="Hexagon">
+            <Monomer name="Alexa" backgroundColor="Purple" fontColor="Black"/>
+        </MonomerGroup>
+    </Polymer>
+</Template>

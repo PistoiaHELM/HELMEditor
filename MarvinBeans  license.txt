@@ -1,0 +1,6 @@
+/*******************************************************************************************
+ * HELM Editor requires MarvinBeans version 5.0 or higher from ChemAxon. 
+ * A copy of the required library (MarvinBeans-5.0.jar) is included for your convenience. 
+ * Please note, however, that if you intend to use the software beyond a trial basis then 
+ * you are responsible for procuring a MarvinBeans license from ChemAxon (www.chemaxon.com)
+ *******************************************************************************************/

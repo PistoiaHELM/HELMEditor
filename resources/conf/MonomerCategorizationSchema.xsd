@@ -1,0 +1,109 @@
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified" >
+
+    <xsd:annotation>
+        <xsd:documentation xml:lang="en">
+            PME Monomer Categorization XML Schema
+        </xsd:documentation>
+    </xsd:annotation>
+
+    <!-- Root element of xml document-->
+    <xsd:element name="Template" type="PolymerList"/>
+
+    <xsd:complexType name="PolymerList">
+        <xsd:sequence>
+            <xsd:element name="Polymer" type="Polymer" maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <!-- Main subgroup -->
+    <xsd:complexType name="Polymer">
+        <xsd:sequence>
+            <xsd:element name="FragmentGroup" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="MonomerGroup" minOccurs="1" maxOccurs="unbounded"/>
+        </xsd:sequence>
+
+        <!-- Polymer type. Can be either peptide, RNA, and Chem Modifier -->
+        <xsd:attribute name="name" type="PolymerType"/>
+
+        <!-- panel title  -->
+        <xsd:attribute name="title" type="xsd:string"/>
+
+        <!-- title color -->
+        <xsd:attribute name="fontColor" type="xsd:string"/>
+        <xsd:attribute name="shape" type="Shape"/>
+    </xsd:complexType>
+
+    <!-- restriction for Polymer types -->
+    <xsd:simpleType name="PolymerType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="RNA"/>
+            <xsd:enumeration value="PEPTIDE"/>
+            <xsd:enumeration value="CHEM"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <!-- FragmentGroup is recursive-->
+    <xsd:element name="FragmentGroup" >
+        <xsd:complexType >
+            <xsd:sequence  >
+                <xsd:element name="Fragment" type="Fragment" minOccurs="0" maxOccurs="unbounded"/>
+                <xsd:element ref="FragmentGroup"  minOccurs="0" maxOccurs="unbounded"/>
+            </xsd:sequence>
+
+            <!-- Fragment group name -->
+            <xsd:attribute name="name" type="xsd:string"/>
+            <!-- Parent group -->
+            <xsd:attribute name="parent" type="xsd:string"/>
+
+            <!-- shape of group nodes -->
+            <xsd:attribute name="shape" type="Shape"/>
+        </xsd:complexType>
+    </xsd:element>
+
+    <!-- A fragement is an aggregate of multiple monomers -->
+    <xsd:complexType name="Fragment">
+        <!-- Fragment name -->
+        <xsd:attribute name="name" type="xsd:string"/>
+        <!-- Fragment notation -->
+        <xsd:attribute name="notation" type="xsd:string"/>
+
+        <!-- UI specification -->
+        <xsd:attribute name="fontColor" type="xsd:string"/>
+        <xsd:attribute name="backgroundColor" type="xsd:string"/>
+    </xsd:complexType>
+
+    <!-- MonomerGroup is recursive, use ref attribute of element -->
+    <xsd:element name="MonomerGroup" >
+        <xsd:complexType >
+            <xsd:sequence >
+                <xsd:element name="Monomer" type="Monomer" minOccurs="0" maxOccurs="unbounded"/>
+                <xsd:element  ref="MonomerGroup" minOccurs="0" maxOccurs="unbounded"/>
+            </xsd:sequence>
+
+            <!-- Monomer group name -->
+            <xsd:attribute name="name" type="xsd:string"/>
+
+            <!-- shape of group nodes -->
+            <xsd:attribute name="shape" type="Shape"/>
+        </xsd:complexType>
+    </xsd:element>
+
+    <!-- UI specification -->
+    <xsd:complexType name="Monomer">
+        <xsd:attribute name="name" type="xsd:string"/>
+        <xsd:attribute name="fontColor" type="xsd:string"/>
+        <xsd:attribute name="backgroundColor" type="xsd:string"/>
+    </xsd:complexType>
+
+    <!-- Possible node shapes -->
+    <xsd:simpleType name="Shape">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="No"/>
+            <xsd:enumeration value="Circle"/>
+            <xsd:enumeration value="Rectangle"/>
+            <xsd:enumeration value="Rhomb"/>
+            <xsd:enumeration value="Hexagon"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+</xsd:schema>

@@ -1,0 +1,6 @@
+/***********************************************************************************************
+ * HELM Editor requires yFiles for Java version 2.6 or higher and GraphML extension from yWorks. 
+ * Trial versions of such libraries can be downloaded from yWorks at www.yworks.com. You need to 
+ * update the ant build file with regard to yfiles.dir and jar file names before compiling
+ * and running the project.
+ ***********************************************************************************************/
