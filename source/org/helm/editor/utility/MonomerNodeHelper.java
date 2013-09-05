@@ -54,7 +54,8 @@ public class MonomerNodeHelper {
         generateImageFile(monomer, false);
         
         if (imageFile.exists()) {
-            tooltip = "<html><body>Monomer Id: " + monomer.getAlternateId() + "<br><img src = \"file:" + imageFilePath+ "\"></body></html>";
+            String title = monomer.getAlternateId()+":"+monomer.getNaturalAnalog()+ ":"+monomer.getName();
+            tooltip = "<html><body>" + title + "<br><img src = \"file:" + imageFilePath+ "\"></body></html>";
         }
         return tooltip;
     }
