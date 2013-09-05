@@ -21,16 +21,13 @@
  ******************************************************************************/
 package org.helm.editor.utility;
 
-import org.helm.notation.MonomerFactory;
-import org.helm.editor.data.MonomerInfo;
-import org.helm.editor.data.NodeMapKeys;
-import org.helm.notation.model.Monomer;
-import org.helm.notation.model.Nucleotide;
 import java.util.Comparator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.AbstractListModel;
-
+import org.helm.editor.data.MonomerInfo;
+import org.helm.editor.data.NodeMapKeys;
+import org.helm.notation.model.Nucleotide;
 import y.base.Node;
 import y.base.NodeMap;
 import y.view.Graph2D;
@@ -82,11 +79,12 @@ public class TemplatesModel extends AbstractListModel {
                     try {
                         MonomerInfo mi1 = (MonomerInfo) nodeMap.get((Node) o1);
                         MonomerInfo mi2 = (MonomerInfo) nodeMap.get((Node) o2);
-                        Monomer monomer1 = MonomerFactory.getInstance().getMonomerDB().get(mi1.getPolymerType()).get(mi1.getMonomerID());
-                        Monomer monomer2 = MonomerFactory.getInstance().getMonomerDB().get(mi2.getPolymerType()).get(mi2.getMonomerID());
-                        String st1 = monomer1.getNaturalAnalog() + "-" + monomer1.getAlternateId();
-                        String st2 = monomer2.getNaturalAnalog() + "-" + monomer2.getAlternateId();
-                        return st1.compareToIgnoreCase(st2);
+                        return mi1.getMonomerID().compareToIgnoreCase(mi2.getMonomerID());
+//                        Monomer monomer1 = MonomerFactory.getInstance().getMonomerDB().get(mi1.getPolymerType()).get(mi1.getMonomerID());
+//                        Monomer monomer2 = MonomerFactory.getInstance().getMonomerDB().get(mi2.getPolymerType()).get(mi2.getMonomerID());
+//                        String st1 = monomer1.getNaturalAnalog() + "-" + monomer1.getAlternateId();
+//                        String st2 = monomer2.getNaturalAnalog() + "-" + monomer2.getAlternateId();
+//                        return st1.compareToIgnoreCase(st2);
                     } catch (Exception ex) {
                         Logger.getLogger(TemplatesModel.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -99,8 +97,6 @@ public class TemplatesModel extends AbstractListModel {
         data = this.graph.getNodeArray();
     }
 
-    private void sort(Node[] nodes) {
-    }
 
     public int getSize() {
         return data.length;
