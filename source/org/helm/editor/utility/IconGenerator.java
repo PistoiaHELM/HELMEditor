@@ -34,7 +34,7 @@ import javax.swing.ImageIcon;
  * @author ZHANGTIANHONG
  */
 public class IconGenerator {
-    public static final String HELM_APP_ICON_RESOURCE_URL = "/org/helm/editor/editor/resource/Icon-HELM.png";
+    public static final String HELM_APP_ICON_RESOURCE_URL = "/org/helm/editor/editor/resource/HELM_Editor_Icon_24.png";
     public static final String FORWARD_ARROW_ICON_RESOURCE_URL = "/org/helm/editor/editor/resource/Forward16.gif";
 
     public static Image getImage(String resouceURL) {
