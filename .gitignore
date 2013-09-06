@@ -94,7 +94,7 @@ DocProject/Help/Html2
 DocProject/Help/html
 
 # Click-Once directory
-publish
+#publish
 
 # Others
 [Bb]in
@@ -169,4 +169,7 @@ local
 applet
 
 # obfuscated artifacts
-obf
+obf/*.*
+
+# publish jar artifacts
+publish/jar

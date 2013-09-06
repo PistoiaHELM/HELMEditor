@@ -204,9 +204,44 @@
             </MonomerGroup>
 
             <MonomerGroup name="Modified" shape="Rhomb">
+                <Monomer name="Aad" backgroundColor="Light_Cyan" fontColor="Black"/>
+                <Monomer name="Abu" backgroundColor="Light_Cyan" fontColor="Black"/>
+                <Monomer name="Aca" backgroundColor="Light_Cyan" fontColor="Black"/>
+                <Monomer name="Apm" backgroundColor="Light_Cyan" fontColor="Black"/>
+                <Monomer name="Asu" backgroundColor="Light_Cyan" fontColor="Black"/>
+                <Monomer name="Aze" backgroundColor="Light_Cyan" fontColor="Black"/>
+                <Monomer name="Bal" backgroundColor="Light_Cyan" fontColor="Black"/>
+                <Monomer name="Cha" backgroundColor="Light_Cyan" fontColor="Black"/>
+                <Monomer name="Cit" backgroundColor="Light_Cyan" fontColor="Black"/>
+                <Monomer name="Cya" backgroundColor="Light_Cyan" fontColor="Black"/>
+                <Monomer name="Dab" backgroundColor="Light_Cyan" fontColor="Black"/>
+                <Monomer name="Dpr" backgroundColor="Light_Cyan" fontColor="Black"/>
+                <Monomer name="Dsu" backgroundColor="Light_Cyan" fontColor="Black"/>
+                <Monomer name="Edc" backgroundColor="Light_Cyan" fontColor="Black"/>
+                <Monomer name="Glc" backgroundColor="Light_Cyan" fontColor="Black"/>
+                <Monomer name="Har" backgroundColor="Light_Cyan" fontColor="Black"/>
+                <Monomer name="Hcy" backgroundColor="Light_Cyan" fontColor="Black"/>
+                <Monomer name="Hhs" backgroundColor="Light_Cyan" fontColor="Black"/>
+                <Monomer name="Hiv" backgroundColor="Light_Cyan" fontColor="Black"/>
+                <Monomer name="Hse" backgroundColor="Light_Cyan" fontColor="Black"/>
+                <Monomer name="Hyl" backgroundColor="Light_Cyan" fontColor="Black"/>
+                <Monomer name="Hyp" backgroundColor="Light_Cyan" fontColor="Black"/>
+                <Monomer name="Iva" backgroundColor="Light_Cyan" fontColor="Black"/>
+                <Monomer name="Mhp" backgroundColor="Light_Cyan" fontColor="Black"/>
+                <Monomer name="Nal" backgroundColor="Light_Cyan" fontColor="Black"/>
+                <Monomer name="Nle" backgroundColor="Light_Cyan" fontColor="Black"/>
+                <Monomer name="Nty" backgroundColor="Light_Cyan" fontColor="Black"/>
+                <Monomer name="Nva" backgroundColor="Light_Cyan" fontColor="Black"/>
+                <Monomer name="Oic" backgroundColor="Light_Cyan" fontColor="Black"/>
+                <Monomer name="Orn" backgroundColor="Light_Cyan" fontColor="Black"/>
+                <Monomer name="Pen" backgroundColor="Light_Cyan" fontColor="Black"/>
+                <Monomer name="Phg" backgroundColor="Light_Cyan" fontColor="Black"/>
                 <Monomer name="seC" backgroundColor="Light_Cyan" fontColor="Black"/>
-                <Monomer name="nL" backgroundColor="Light_Cyan" fontColor="Black"/>
-                <Monomer name="mA" backgroundColor="Light_Cyan" fontColor="Black"/>
+                <Monomer name="Thi" backgroundColor="Light_Cyan" fontColor="Black"/>
+                <Monomer name="Tle" backgroundColor="Light_Cyan" fontColor="Black"/>
+                <Monomer name="Tml" backgroundColor="Light_Cyan" fontColor="Black"/>
+                <Monomer name="Tza" backgroundColor="Light_Cyan" fontColor="Black"/>
+                <Monomer name="Wil" backgroundColor="Light_Cyan" fontColor="Black"/>
             </MonomerGroup>
         </MonomerGroup>
 
@@ -236,7 +271,6 @@
             <Monomer name="meD" backgroundColor="Light_Cyan" fontColor="Black"/>
             <Monomer name="meE" backgroundColor="Light_Cyan" fontColor="Black"/>
             <Monomer name="meF" backgroundColor="Light_Cyan" fontColor="Black"/>
-            <Monomer name="meG" backgroundColor="Light_Cyan" fontColor="Black"/>
             <Monomer name="meH" backgroundColor="Light_Cyan" fontColor="Black"/>
             <Monomer name="meI" backgroundColor="Light_Cyan" fontColor="Black"/>
             <Monomer name="meK" backgroundColor="Light_Cyan" fontColor="Black"/>
@@ -250,6 +284,21 @@
             <Monomer name="meV" backgroundColor="Light_Cyan" fontColor="Black"/>
             <Monomer name="meW" backgroundColor="Light_Cyan" fontColor="Black"/>
             <Monomer name="meY" backgroundColor="Light_Cyan" fontColor="Black"/>
+            <Monomer name="Sar" backgroundColor="Light_Cyan" fontColor="Black"/>
+        </MonomerGroup>
+        
+        <MonomerGroup name="Synthetic Amino Acid" shape="Rhomb">
+            <Monomer name="Aib" backgroundColor="Light_Cyan" fontColor="Black"/>
+            <Monomer name="App" backgroundColor="Light_Cyan" fontColor="Black"/>          
+            <Monomer name="Bux" backgroundColor="Light_Cyan" fontColor="Black"/>
+            <Monomer name="Cap" backgroundColor="Light_Cyan" fontColor="Black"/>
+            <Monomer name="Dpm" backgroundColor="Light_Cyan" fontColor="Black"/>
+            <Monomer name="Ggu" backgroundColor="Light_Cyan" fontColor="Black"/>
+            <Monomer name="Gla" backgroundColor="Light_Cyan" fontColor="Black"/>
+            <Monomer name="Pqa" backgroundColor="Light_Cyan" fontColor="Black"/>
+            <Monomer name="Spg" backgroundColor="Light_Cyan" fontColor="Black"/>
+            <Monomer name="Sta" backgroundColor="Light_Cyan" fontColor="Black"/>
+            <Monomer name="Tic" backgroundColor="Light_Cyan" fontColor="Black"/>
         </MonomerGroup>
 
         <MonomerGroup name="Peptide Nucleic Acid (PNA)" shape="Rhomb">
@@ -263,7 +312,15 @@
 
         <MonomerGroup name="N-Terminal" shape="Rhomb">
             <Monomer name="ac" backgroundColor="Light_Cyan" fontColor="Black"/>
+            <Monomer name="Bua" backgroundColor="Light_Cyan" fontColor="Black"/>
             <Monomer name="fmoc" backgroundColor="Light_Cyan" fontColor="Black"/>
+            <Monomer name="Glc" backgroundColor="Light_Cyan" fontColor="Black"/>
+            <Monomer name="Glp" backgroundColor="Light_Cyan" fontColor="Black"/>
+            <Monomer name="Hva" backgroundColor="Light_Cyan" fontColor="Black"/>
+            <Monomer name="Lac" backgroundColor="Light_Cyan" fontColor="Black"/>
+            <Monomer name="Maa" backgroundColor="Light_Cyan" fontColor="Black"/>
+            <Monomer name="Mba" backgroundColor="Light_Cyan" fontColor="Black"/>
+            <Monomer name="Mpa" backgroundColor="Light_Cyan" fontColor="Black"/>
         </MonomerGroup>
 
         <MonomerGroup name="C-Terminal" shape="Rhomb">
