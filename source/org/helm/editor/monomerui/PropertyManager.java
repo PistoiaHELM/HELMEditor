@@ -25,6 +25,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.JarURLConnection;
@@ -32,12 +33,10 @@ import java.net.URLConnection;
 import java.util.Enumeration;
 import java.util.Properties;
 import java.util.jar.JarEntry;
-
-import org.helm.editor.services.PreferensesService;
-import org.helm.editor.utility.xmlparser.data.Template.UIType;
-import java.io.FileWriter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.helm.editor.services.PreferensesService;
+import org.helm.editor.utility.xmlparser.data.Template.UIType;
 
 /**
  * @author Alexander Makarov
@@ -51,7 +50,7 @@ public class PropertyManager implements PreferensesService {
     private Properties properties;
     private String propertyFilePath = "";
     public static final String USER_PROPERTY = "user.home";
-    public static final String PROPERTY_FOLDER = System.getProperty(USER_PROPERTY) + "/.helm/";
+    public static final String PROPERTY_FOLDER = System.getProperty(USER_PROPERTY) + "/.helm/editor/";
     public static final String PROPERTY_FILE = PROPERTY_FOLDER + "user.property";
     public static final String SCHEMA_FILE = PROPERTY_FOLDER + "MonomerCategorizationSchema.xsd";
     public static final String DEFAULT_MONOMER_CATEGORIZATION_TEMPLATE = "DefaultMonomerCategorizationTemplate.xml";
@@ -153,8 +152,8 @@ public class PropertyManager implements PreferensesService {
         }
 
         File configFile = new File(propertyFolder, fileName);
-        if (configFile.exists()) {
-            // if file already exists, skip it
+        if (configFile.exists() && PROPERTY_FILE.endsWith(fileName)) {
+            // if user.property file already exists, skip it
             return;
         }
 
