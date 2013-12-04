@@ -22,6 +22,14 @@
 package org.helm.editor.action;
 
 import chemaxon.struc.Molecule;
+import java.awt.Cursor;
+import java.awt.event.ActionEvent;
+import java.io.File;
+import java.io.FileOutputStream;
+import javax.swing.AbstractAction;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import javax.swing.filechooser.FileFilter;
 import org.helm.editor.editor.MacromoleculeEditor;
 import org.helm.editor.editor.TextViewer;
 import org.helm.editor.utility.ClipBoardProcessor;
@@ -29,16 +37,6 @@ import org.helm.editor.utility.ExceptionHandler;
 import org.helm.editor.worker.PDBFileGenerator;
 import org.helm.notation.tools.ComplexNotationParser;
 import org.helm.notation.tools.StructureParser;
-import java.awt.Cursor;
-import java.awt.event.ActionEvent;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.AbstractAction;
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
-import javax.swing.filechooser.FileFilter;
 
 /**
  * treat everything in the drawing pane as one structure
@@ -52,6 +50,7 @@ public class TextMenuAction extends AbstractAction {
     public static final int SAVE_ACTION_TYPE = 3;
     protected int actionType;
     public static final String NOTATION_TEXT_TYPE = "HELM Notation";
+    public static final String CANONICAL_HELM_TEXT_TYPE = "Canonical HELM Notation";
     public static final String MOLFILE_TEXT_TYPE = "MDL Molfile";
     public static final String SMILES_TEXT_TYPE = "SMILES";
     public static final String PDB_TEXT_TYPE = "PDB Format";
@@ -88,6 +87,8 @@ public class TextMenuAction extends AbstractAction {
             String text = "";
             if (textType.equals(NOTATION_TEXT_TYPE)) {
                 text = notation;
+            } else if (textType.equals(CANONICAL_HELM_TEXT_TYPE)) {
+                text = ComplexNotationParser.getCanonicalNotation(notation);
             } else if (textType.equals(SMILES_TEXT_TYPE)) {
                 String smiles = ComplexNotationParser.getComplexPolymerSMILES(notation);
                 Molecule mol = StructureParser.getMolecule(smiles);
@@ -111,7 +112,6 @@ public class TextMenuAction extends AbstractAction {
             }
 
         } catch (Exception ex) {
-            Logger.getLogger(ShowMolecularStructureAction.class.getName()).log(Level.WARNING, ShowMolecularStructureAction.class.getName(), ex);
             ExceptionHandler.handleException(ex);
         } finally {
             if (!textType.equals(PDB_TEXT_TYPE)) {
@@ -141,6 +141,8 @@ public class TextMenuAction extends AbstractAction {
         TextFileFilter fileFilter = null;
         if (textType.equals(NOTATION_TEXT_TYPE)) {
             fileFilter = new TextFileFilter("helm", "HELM Notation File (*.helm)");
+        } else if (textType.equals(CANONICAL_HELM_TEXT_TYPE)) {
+            fileFilter = new TextFileFilter("chelm", "Canonical HELM Notation File (*.chelm)");
         } else if (textType.equals(SMILES_TEXT_TYPE)) {
             fileFilter = new TextFileFilter("smi", "SMILES File (*.smi)");
         } else if (textType.equals(PDB_TEXT_TYPE)) {
@@ -170,9 +172,7 @@ public class TextMenuAction extends AbstractAction {
                 fos.close();
                 JOptionPane.showMessageDialog(editor.getFrame(), textType + " saved successfully to " + name, title, JOptionPane.INFORMATION_MESSAGE);
             } catch (Exception ex) {
-                Logger.getLogger(FileMenuAction.class.getName()).log(Level.SEVERE, null, ex);
                 ExceptionHandler.handleException(ex);
-                return;
             } finally {
                 editor.getFrame().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
             }

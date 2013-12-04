@@ -35,7 +35,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import javax.swing.AbstractAction;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
@@ -56,10 +55,59 @@ import javax.swing.JToolBar;
 import javax.swing.JTree;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-
+import org.helm.editor.action.ConvertNotationAction;
+import org.helm.editor.action.FileMenuAction;
+import org.helm.editor.action.MoleculePropertyAction;
+import org.helm.editor.action.MonomerManagerAction;
+import org.helm.editor.action.NucleotideManagerAction;
+import org.helm.editor.action.OligonucleotideFragmentAction;
+import org.helm.editor.action.ProteinEditorAction;
+import org.helm.editor.action.ReplaceMonomerAction;
+import org.helm.editor.action.ShowChooseUIDialog;
+import org.helm.editor.action.ShowMolecularStructureAction;
+import org.helm.editor.action.TextMenuAction;
+import org.helm.editor.componentPanel.LoadPanel;
+import org.helm.editor.controller.ModelController;
+import org.helm.editor.data.Annotator;
+import org.helm.editor.data.DataListener;
+import org.helm.editor.data.EdgeMapKeys;
+import org.helm.editor.data.EditorEdgeInfoData;
+import org.helm.editor.data.GraphData;
+import org.helm.editor.data.GraphManager;
+import org.helm.editor.data.GraphManagerInfo;
+import org.helm.editor.data.GraphPair;
+import org.helm.editor.data.MonomerInfo;
+import org.helm.editor.data.NodeMapKeys;
+import org.helm.editor.data.NotationUpdateEvent;
+import org.helm.editor.monomerui.PropertyManager;
+import org.helm.editor.monomerui.UIConstructor;
+import org.helm.editor.monomerui.tabui.PolymerUI;
+import org.helm.editor.realizer.MonomerNodeRealizer;
+import org.helm.editor.utility.ClipBoardProcessor;
+import org.helm.editor.utility.ExceptionHandler;
+import org.helm.editor.utility.Graph2NotationTranslator;
+import org.helm.editor.utility.GraphUtils;
+import org.helm.editor.utility.ListNotComparableException;
+import org.helm.editor.utility.MonomerInfoUtils;
+import org.helm.editor.utility.NotationParser;
+import org.helm.editor.utility.SaveAsPNG;
+import org.helm.editor.utility.SequenceGraphTools;
+import org.helm.editor.utility.SequenceLayout;
+import org.helm.editor.utility.xmlparser.data.Template.UIType;
+import org.helm.editor.utility.xmlparser.parser.TemplateParsingException;
+import org.helm.editor.utility.xmlparser.validator.ValidationTemplateExcaption;
+import org.helm.notation.MonomerException;
+import org.helm.notation.MonomerFactory;
+import org.helm.notation.NotationException;
+import org.helm.notation.NucleotideFactory;
+import org.helm.notation.StructureException;
+import org.helm.notation.model.Attachment;
+import org.helm.notation.model.Monomer;
+import org.helm.notation.model.Nucleotide;
+import org.helm.notation.tools.ComplexNotationParser;
+import org.helm.notation.tools.NucleotideSequenceParser;
 import org.jdom.Element;
 import org.jdom.JDOMException;
-
 import y.anim.AnimationFactory;
 import y.anim.AnimationObject;
 import y.anim.AnimationPlayer;
@@ -86,58 +134,6 @@ import y.view.NodeLabel;
 import y.view.NodeRealizer;
 import y.view.ViewMode;
 import y.view.hierarchy.HierarchyManager;
-
-import org.helm.notation.MonomerException;
-import org.helm.notation.MonomerFactory;
-import org.helm.notation.NotationException;
-import org.helm.notation.NucleotideFactory;
-import org.helm.notation.StructureException;
-import org.helm.editor.action.ShowMolecularStructureAction;
-import org.helm.editor.action.ConvertNotationAction;
-import org.helm.editor.action.FileMenuAction;
-import org.helm.editor.action.TextMenuAction;
-import org.helm.editor.action.MoleculePropertyAction;
-import org.helm.editor.action.MonomerManagerAction;
-import org.helm.editor.action.NucleotideManagerAction;
-import org.helm.editor.action.OligonucleotideFragmentAction;
-import org.helm.editor.action.ProteinEditorAction;
-import org.helm.editor.action.ReplaceMonomerAction;
-import org.helm.editor.action.ShowChooseUIDialog;
-import org.helm.editor.componentPanel.LoadPanel;
-import org.helm.editor.controller.ModelController;
-import org.helm.editor.data.Annotator;
-import org.helm.editor.data.DataListener;
-import org.helm.editor.data.EditorEdgeInfoData;
-import org.helm.editor.data.EdgeMapKeys;
-import org.helm.editor.data.GraphData;
-import org.helm.editor.data.GraphManager;
-import org.helm.editor.data.GraphManagerInfo;
-import org.helm.editor.data.GraphPair;
-import org.helm.editor.data.MonomerInfo;
-import org.helm.editor.data.NodeMapKeys;
-import org.helm.editor.data.NotationUpdateEvent;
-import org.helm.editor.monomerui.PropertyManager;
-import org.helm.editor.monomerui.UIConstructor;
-import org.helm.editor.monomerui.tabui.PolymerUI;
-import org.helm.editor.realizer.MonomerNodeRealizer;
-import org.helm.editor.utility.ClipBoardProcessor;
-import org.helm.editor.utility.ExceptionHandler;
-import org.helm.editor.utility.Graph2NotationTranslator;
-import org.helm.editor.utility.GraphUtils;
-import org.helm.editor.utility.ListNotComparableException;
-import org.helm.editor.utility.MonomerInfoUtils;
-import org.helm.editor.utility.NotationParser;
-import org.helm.editor.utility.SaveAsPNG;
-import org.helm.editor.utility.SequenceGraphTools;
-import org.helm.editor.utility.SequenceLayout;
-import org.helm.editor.utility.xmlparser.data.Template.UIType;
-import org.helm.editor.utility.xmlparser.parser.TemplateParsingException;
-import org.helm.editor.utility.xmlparser.validator.ValidationTemplateExcaption;
-import org.helm.notation.model.Attachment;
-import org.helm.notation.model.Monomer;
-import org.helm.notation.model.Nucleotide;
-import org.helm.notation.tools.ComplexNotationParser;
-import org.helm.notation.tools.NucleotideSequenceParser;
 
 public class MacromoleculeEditor extends GUIBase implements DataListener, NotationProducer, IMacromoleculeEditor {
 
@@ -354,9 +350,6 @@ public class MacromoleculeEditor extends GUIBase implements DataListener, Notati
 
 
         initFirstNodePopup();
-
-
-        //////////////////////////////////////////////////////////////////////
 
         //add the node property editor
         view.addViewMode(new ViewMode() {
@@ -761,12 +754,6 @@ public class MacromoleculeEditor extends GUIBase implements DataListener, Notati
         peptideAnnotationNodePopup.add(clearItem);
     }
 
-    //
-//	Set As Heavy Chain, will add 'hc' to notation as PEPTIDE#{hc}
-//
-//	b. Set As Light Chain, will add 'lc' to notation as PEPTIDE#{lc}
-//
-//	c. Clear Annotation, will remove it from notation
     private JTree constructTreePane() throws MonomerException, IOException, JDOMException {
         JTree xmlTree = uiConstructor.getTree();
         JScrollPane verticalTreeScrollPane = new JScrollPane(xmlTree);
@@ -822,6 +809,9 @@ public class MacromoleculeEditor extends GUIBase implements DataListener, Notati
 
         TextMenuAction notationAtction = new TextMenuAction(this, TextMenuAction.NOTATION_TEXT_TYPE, TextMenuAction.COPY_ACTION_TYPE);
         menu.add(notationAtction);
+        
+        TextMenuAction canHelmAtction = new TextMenuAction(this, TextMenuAction.CANONICAL_HELM_TEXT_TYPE, TextMenuAction.COPY_ACTION_TYPE);
+        menu.add(canHelmAtction);
 
         TextMenuAction smiAtction = new TextMenuAction(this, TextMenuAction.SMILES_TEXT_TYPE, TextMenuAction.COPY_ACTION_TYPE);
         menu.add(smiAtction);
@@ -847,6 +837,9 @@ public class MacromoleculeEditor extends GUIBase implements DataListener, Notati
 
         TextMenuAction notationAtction = new TextMenuAction(this, TextMenuAction.NOTATION_TEXT_TYPE, TextMenuAction.SHOW_ACTION_TYPE);
         menu.add(notationAtction);
+        
+        TextMenuAction canHelmAtction = new TextMenuAction(this, TextMenuAction.CANONICAL_HELM_TEXT_TYPE, TextMenuAction.SHOW_ACTION_TYPE);
+        menu.add(canHelmAtction);
 
         TextMenuAction smiAtction = new TextMenuAction(this, TextMenuAction.SMILES_TEXT_TYPE, TextMenuAction.SHOW_ACTION_TYPE);
         menu.add(smiAtction);
@@ -868,6 +861,9 @@ public class MacromoleculeEditor extends GUIBase implements DataListener, Notati
 
         TextMenuAction notationAtction = new TextMenuAction(this, TextMenuAction.NOTATION_TEXT_TYPE, TextMenuAction.SAVE_ACTION_TYPE);
         menu.add(notationAtction);
+        
+        TextMenuAction canHelmAtction = new TextMenuAction(this, TextMenuAction.CANONICAL_HELM_TEXT_TYPE, TextMenuAction.SAVE_ACTION_TYPE);
+        menu.add(canHelmAtction);
 
         TextMenuAction smiAtction = new TextMenuAction(this, TextMenuAction.SMILES_TEXT_TYPE, TextMenuAction.SAVE_ACTION_TYPE);
         menu.add(smiAtction);
@@ -886,6 +882,9 @@ public class MacromoleculeEditor extends GUIBase implements DataListener, Notati
 
         FileMenuAction notationAtction = new FileMenuAction(this, TextMenuAction.NOTATION_TEXT_TYPE, TextMenuAction.SAVE_ACTION_TYPE);
         menu.add(notationAtction);
+        
+        TextMenuAction canHelmAtction = new FileMenuAction(this, TextMenuAction.CANONICAL_HELM_TEXT_TYPE, TextMenuAction.SAVE_ACTION_TYPE);
+        menu.add(canHelmAtction);
 
         FileMenuAction smiAtction = new FileMenuAction(this, TextMenuAction.SMILES_TEXT_TYPE, TextMenuAction.SAVE_ACTION_TYPE);
         menu.add(smiAtction);

@@ -1,43 +1,43 @@
-/*******************************************************************************
+/**
+ * *****************************************************************************
  * Copyright C 2012, The Pistoia Alliance
- * 
- * Permission is hereby granted, free of charge, to any person obtaining
- * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including
- * without limitation the rights to use, copy, modify, merge, publish,
- * distribute, sublicense, and/or sell copies of the Software, and to
- * permit persons to whom the Software is furnished to do so, subject to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be
- * included in all copies or substantial portions of the Software.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
- * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
- * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
- * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
- * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- ******************************************************************************/
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ * ****************************************************************************
+ */
 package org.helm.editor.action;
 
 import chemaxon.struc.Molecule;
-import org.helm.editor.controller.ModelController;
-import org.helm.editor.editor.MacromoleculeEditor;
-import org.helm.editor.utility.ExceptionHandler;
-import org.helm.editor.worker.PDBFileGenerator;
-import org.helm.notation.tools.ComplexNotationParser;
-import org.helm.notation.tools.StructureParser;
 import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import org.helm.editor.controller.ModelController;
+import org.helm.editor.editor.MacromoleculeEditor;
+import org.helm.editor.utility.ExceptionHandler;
+import org.helm.editor.worker.PDBFileGenerator;
+import org.helm.notation.tools.ComplexNotationParser;
+import org.helm.notation.tools.StructureParser;
 
 /**
  * try to decompose structures in drawing pane into multiple structures
@@ -79,7 +79,6 @@ public class FileMenuAction extends TextMenuAction {
                         fr.close();
                         br.close();
                     } catch (Exception ex) {
-                        Logger.getLogger(FileMenuAction.class.getName()).log(Level.SEVERE, null, ex);
                         ExceptionHandler.handleException(ex);
                         return;
                     } finally {
@@ -135,7 +134,6 @@ public class FileMenuAction extends TextMenuAction {
                             notation = ComplexNotationParser.getCombinedComlexNotation(notation, standardNote);
                         }
                     } catch (Exception ex) {
-                        Logger.getLogger(FileMenuAction.class.getName()).log(Level.SEVERE, null, ex);
                         ExceptionHandler.handleException(ex);
                         return;
                     } finally {
@@ -159,7 +157,6 @@ public class FileMenuAction extends TextMenuAction {
                 editor.getFrame().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
                 notations = ComplexNotationParser.decompose(notation);
             } catch (Exception ex) {
-                Logger.getLogger(FileMenuAction.class.getName()).log(Level.SEVERE, null, ex);
                 ExceptionHandler.handleException(ex);
                 return;
             } finally {
@@ -173,6 +170,21 @@ public class FileMenuAction extends TextMenuAction {
                 for (String note : notations) {
                     sb.append(note);
                     sb.append("\n");
+                }
+                textToSave = sb.toString();
+            } else if (textType.equals(CANONICAL_HELM_TEXT_TYPE)) {
+                StringBuilder sb = new StringBuilder();
+                try {
+                    for (String helm : notations) {
+                        String canHelm = ComplexNotationParser.getCanonicalNotation(helm);
+                        sb.append(canHelm);
+                        sb.append("\n");
+                    }
+                } catch (Exception ex) {
+                    ExceptionHandler.handleException(ex);
+                    return;
+                } finally {
+                    editor.getFrame().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
                 }
                 textToSave = sb.toString();
             } else if (textType.equals(SMILES_TEXT_TYPE)) {
@@ -189,7 +201,6 @@ public class FileMenuAction extends TextMenuAction {
                         sb.append("\n");
                     }
                 } catch (Exception ex) {
-                    Logger.getLogger(FileMenuAction.class.getName()).log(Level.SEVERE, null, ex);
                     ExceptionHandler.handleException(ex);
                     return;
                 } finally {
@@ -205,12 +216,11 @@ public class FileMenuAction extends TextMenuAction {
                         String note = notations[i];
                         String smiles = ComplexNotationParser.getComplexPolymerSMILES(note);
                         String pdb = PDBFileGenerator.SMILES2OpenBabelPDB(smiles);
-                        pdb.replace("UNNAMED", ""+(i+1));
+                        pdb.replace("UNNAMED", "" + (i + 1));
                         sb.append(pdb);
                         sb.append("$$$$\n");
                     }
                 } catch (Exception ex) {
-                    Logger.getLogger(FileMenuAction.class.getName()).log(Level.SEVERE, null, ex);
                     ExceptionHandler.handleException(ex);
                     return;
                 } finally {
@@ -233,7 +243,6 @@ public class FileMenuAction extends TextMenuAction {
                         sb.append("$$$$\n");
                     }
                 } catch (Exception ex) {
-                    Logger.getLogger(FileMenuAction.class.getName()).log(Level.SEVERE, null, ex);
                     ExceptionHandler.handleException(ex);
                     return;
                 } finally {
@@ -244,9 +253,9 @@ public class FileMenuAction extends TextMenuAction {
             } else {
                 throw new UnsupportedOperationException("Unsupported structure format type :" + textType);
             }
-            
+
             save(textToSave);
-          
+
         }
     }
 }
