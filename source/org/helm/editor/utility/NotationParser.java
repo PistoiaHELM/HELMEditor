@@ -1,24 +1,26 @@
-/*******************************************************************************
+/**
+ * *****************************************************************************
  * Copyright C 2012, The Pistoia Alliance
- * 
- * Permission is hereby granted, free of charge, to any person obtaining
- * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including
- * without limitation the rights to use, copy, modify, merge, publish,
- * distribute, sublicense, and/or sell copies of the Software, and to
- * permit persons to whom the Software is furnished to do so, subject to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be
- * included in all copies or substantial portions of the Software.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
- * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
- * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
- * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
- * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- ******************************************************************************/
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ * ****************************************************************************
+ */
 package org.helm.editor.utility;
 
 import java.awt.Color;
@@ -27,10 +29,30 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+import org.helm.editor.data.EdgeMapKeys;
+import org.helm.editor.data.EditorEdgeInfoData;
+import org.helm.editor.data.GraphManager;
+import org.helm.editor.data.GraphPair;
+import org.helm.editor.data.MonomerInfo;
+import org.helm.editor.data.NodeMapKeys;
+import org.helm.editor.monomerui.SimpleElemetFactory;
+import org.helm.notation.MonomerException;
+import org.helm.notation.MonomerFactory;
+import org.helm.notation.NotationException;
+import org.helm.notation.StructureException;
+import org.helm.notation.model.Attachment;
+import org.helm.notation.model.ComplexPolymer;
+import org.helm.notation.model.Monomer;
+import org.helm.notation.model.Nucleotide;
+import org.helm.notation.model.PolymerNode;
+import org.helm.notation.tools.ComplexNotationParser;
+import org.helm.notation.tools.NucleotideSequenceParser;
+import org.helm.notation.tools.SimpleNotationParser;
 import org.jdom.JDOMException;
-
+import y.algo.Cycles;
+import y.algo.GraphChecker;
 import y.base.Edge;
+import y.base.EdgeList;
 import y.base.EdgeMap;
 import y.base.Node;
 import y.base.NodeCursor;
@@ -40,28 +62,9 @@ import y.view.Graph2D;
 import y.view.NodeLabel;
 import y.view.NodeRealizer;
 
-import org.helm.notation.MonomerException;
-import org.helm.notation.MonomerFactory;
-import org.helm.notation.NotationException;
-import org.helm.notation.StructureException;
-import org.helm.editor.data.EdgeMapKeys;
-import org.helm.editor.data.EditorEdgeInfoData;
-import org.helm.editor.data.GraphManager;
-import org.helm.editor.data.GraphPair;
-import org.helm.editor.data.MonomerInfo;
-import org.helm.editor.data.NodeMapKeys;
-import org.helm.editor.monomerui.SimpleElemetFactory;
-import org.helm.notation.model.Attachment;
-import org.helm.notation.model.ComplexPolymer;
-import org.helm.notation.model.Monomer;
-import org.helm.notation.model.Nucleotide;
-import org.helm.notation.model.PolymerNode;
-import org.helm.notation.tools.ComplexNotationParser;
-import org.helm.notation.tools.NucleotideSequenceParser;
-import org.helm.notation.tools.SimpleNotationParser;
-
 /**
  * For translate a string notation to a graph
+ *
  * @author lih25
  */
 public class NotationParser {
@@ -81,61 +84,45 @@ public class NotationParser {
 
     /**
      * setup the hyper edges and connections between different sequences
+     *
      * @param connectionNotation string notation
      * @param isPair if this describes the pairing edges
      * @param graph the original graph, this is also the graph we render
-     * @param hyperGraph a hyper graph 
+     * @param hyperGraph a hyper graph
      * @param hyperNodeNameMap Map <name, hyperNode>
      * @param nodeCursorMap Map <sequence name, sequence graph>
      * @throws org.helm.notation.NotationException
      */
-    private static void getConnection(String connectionNotation, boolean isPair,
-            Graph2D graph,
-            Map<String, NodeCursor> nodeCursorMap)
-            throws NotationException {
+    private static void getConnection(String connectionNotation, boolean isPair, Graph2D graph, Map<String, NodeCursor> nodeCursorMap) throws NotationException {
         if (connectionNotation == null || connectionNotation.equalsIgnoreCase("")) {
             return;
         }
-//        String connections = null;
+
         Node sourceNode = null;
         Node targetNode = null;
-//        Node hyperSourceNode = null;
-//        Node hyperTargetNode = null;
-        Edge edge = null;
-
-        NodeCursor nodeCursor = null;
 
         MonomerInfo sourceMonomerInfo = null;
         MonomerInfo targetMonomerInfo = null;
         Attachment sourceAttachment = null;
         Attachment targetAttachment = null;
-        int position = -1;
-
 
         String[] edgeString = connectionNotation.split(LIST_LEVEL_DELIMITER_REGEX);
-        String[] edgeDesc = null;
-        String[] connectionDesc = null;
-
 
         NodeMap monomerPositionNodeMap = (NodeMap) graph.getDataProvider(NodeMapKeys.MONOMER_POSITION);
         NodeMap monomerInfoNodeMap = (NodeMap) graph.getDataProvider(NodeMapKeys.MONOMER_REF);
         EdgeMap connectionEdgeMap = (EdgeMap) graph.getDataProvider(EdgeMapKeys.EDGE_INFO);
-        NodeMap startingNodeMap = (NodeMap) graph.getDataProvider(NodeMapKeys.NODE2STARTING_NODE);
-        NodeMap pairMap = (NodeMap) graph.getDataProvider(NodeMapKeys.NODE2PAIR_NODE);
-
-        EditorEdgeInfoData edgeInfo = null;
 
         for (int i = 0; i < edgeString.length; i++) {
             //there are only three element in the edgeDesc, the source node, target node and the connection distribtion
-            edgeDesc = edgeString[i].split(EDGE_COMPONENT_DELIMITER_REGEX);
+            String[] edgeDesc = edgeString[i].split(EDGE_COMPONENT_DELIMITER_REGEX);
 
             //connectionDesc normally has two elements, the source attachment description and the target attachment description
             // for some special cases (chemical monomer without struccture) it contains only one element
-            connectionDesc = edgeDesc[2].split(EDGE_PROPERTY_SEPARATOR_SYMBOL);//"-"
+            String[] connectionDesc = edgeDesc[2].split(EDGE_PROPERTY_SEPARATOR_SYMBOL);//"-"
 
-            position = Integer.valueOf(connectionDesc[0].substring(0, connectionDesc[0].indexOf(MONOMER_ATTACHEMENT_SEPARATOR_SYMBOL)));
+            int position = Integer.valueOf(connectionDesc[0].substring(0, connectionDesc[0].indexOf(MONOMER_ATTACHEMENT_SEPARATOR_SYMBOL)));
 
-            nodeCursor = nodeCursorMap.get(edgeDesc[0]);
+            NodeCursor nodeCursor = nodeCursorMap.get(edgeDesc[0]);
             nodeCursor.toFirst();
             for (; nodeCursor.ok(); nodeCursor.next()) {
                 if (monomerPositionNodeMap.getInt(nodeCursor.node()) == position) {
@@ -172,8 +159,8 @@ public class NotationParser {
                             sourceMonomerInfo.setConnection(sourceAttachment, true);
                             targetMonomerInfo.setConnection(targetAttachment, true);
 
-                            edge = graph.createEdge(sourceNode, targetNode);
-                            edgeInfo = new EditorEdgeInfoData(sourceAttachment, targetAttachment);
+                            Edge edge = graph.createEdge(sourceNode, targetNode);
+                            EditorEdgeInfoData edgeInfo = new EditorEdgeInfoData(sourceAttachment, targetAttachment);
                             connectionEdgeMap.set(edge, edgeInfo);
                         } else {
                             throw new NotationException("two nodes of the same type cannot be connected");
@@ -181,23 +168,33 @@ public class NotationParser {
 
                     }
                 } else {
-                    /*if (!sourceMonomerInfo.getPolymerType().equalsIgnoreCase(Monomer.CHEMICAL_POLYMER_TYPE)
-                    && !targetMonomerInfo.getPolymerType().equalsIgnoreCase(Monomer.CHEMICAL_POLYMER_TYPE)) {
-                    //throw new NotationException("Two sequences cannot be directly connected");
-                    } else */ if (sourceMonomerInfo.getPolymerType().equalsIgnoreCase(Monomer.CHEMICAL_POLYMER_TYPE)) {
+                    if (sourceMonomerInfo.getPolymerType().equalsIgnoreCase(Monomer.CHEMICAL_POLYMER_TYPE)) {
                         //chemical structure nodes are always target nodes
                         sourceMonomerInfo.setConnection(sourceAttachment, true);
                         targetMonomerInfo.setConnection(targetAttachment, true);
 
-                        edge = graph.createEdge(targetNode, sourceNode);
-                        edgeInfo = new EditorEdgeInfoData(targetAttachment, sourceAttachment);
+                        Edge edge = graph.createEdge(targetNode, sourceNode);
+                        EditorEdgeInfoData edgeInfo = new EditorEdgeInfoData(targetAttachment, sourceAttachment);
                         connectionEdgeMap.set(edge, edgeInfo);
                     } else {
                         sourceMonomerInfo.setConnection(sourceAttachment, true);
                         targetMonomerInfo.setConnection(targetAttachment, true);
 
-                        edge = graph.createEdge(sourceNode, targetNode);
+                        Edge edge = graph.createEdge(sourceNode, targetNode);
                         connectionEdgeMap.set(edge, new EditorEdgeInfoData(sourceAttachment, targetAttachment));
+
+                        //Check to see if this connection is "backwards" meaning that it created an undirected cycle
+                        //     The edge needs to be in the right direction so downstream functionality will work
+                        boolean isCyclic = GraphChecker.isCyclic(graph);
+                        EdgeList edgeList = Cycles.findAllCycleEdges(graph, false);
+
+                        if (edgeList.isEmpty() == false && isCyclic == false) {
+                            //reverse the direction of the edge
+                            graph.removeEdge(edge);
+
+                            edge = graph.createEdge(targetNode, sourceNode);
+                            connectionEdgeMap.set(edge, new EditorEdgeInfoData(targetAttachment, sourceAttachment));
+                        }
                     }
                 }
             }
@@ -233,6 +230,7 @@ public class NotationParser {
 
     /**
      * translate string notation to an (Graph2D, GraphManager) pair
+     *
      * @param notation
      * @return a (graph, graphmanager) pair
      * @throws org.helm.notation.NotationException
@@ -352,8 +350,9 @@ public class NotationParser {
     }
 
     /**
-     * 
-     * @param monomer the name of the monomer, for modified monomer it will be in the format [name]
+     *
+     * @param monomer the name of the monomer, for modified monomer it will be
+     * in the format [name]
      * @return the name with [] stripped
      */
     private static String getMonomerName(String monomerName) {
@@ -370,7 +369,9 @@ public class NotationParser {
 
     /**
      * Transfer a polymer notation nucleic acid sequence into a graph
-     * @param  polymerNotation - simplePolymerNotation of format R(A)P.R(G)P.[mR](A)P.R([mA]).P
+     *
+     * @param polymerNotation - simplePolymerNotation of format
+     * R(A)P.R(G)P.[mR](A)P.R([mA]).P
      * @param withStarting - if we should have a 5' node
      * @return rna graph
      */
@@ -574,6 +575,7 @@ public class NotationParser {
 
     /**
      * get the sequence graph from notation like "ACCGU"
+     *
      * @param sequenceNotation
      * @return a graph that represent this notation
      * @throws org.helm.notation.MonomerException
@@ -666,7 +668,9 @@ public class NotationParser {
     }
 
     /**
-     * parse an extended polymner notation to a list of simple sequence notations
+     * parse an extended polymner notation to a list of simple sequence
+     * notations
+     *
      * @param complexNotation
      * @return a list of simple notations that contains every polymer
      */
@@ -695,7 +699,9 @@ public class NotationParser {
     }
 
     /**
-     * translate a nucleotide sequence's polymer notation like "R(A)P.R(C)P" to a simple sequence notation as "AC"
+     * translate a nucleotide sequence's polymer notation like "R(A)P.R(C)P" to
+     * a simple sequence notation as "AC"
+     *
      * @param simplePolymerNotation
      * @return simple sequence notation
      */
@@ -733,7 +739,9 @@ public class NotationParser {
     }
 
     /**
-     * translate a peptide sequence's polymer notation like "A.A.A.A" to a simple sequence notation as "AAAA"
+     * translate a peptide sequence's polymer notation like "A.A.A.A" to a
+     * simple sequence notation as "AAAA"
+     *
      * @param simplePolymerNotation
      * @return simple sequence notation
      */
@@ -746,7 +754,9 @@ public class NotationParser {
     }
 
     /**
-     * breaks a complex notation string into polymer list, the polymer could be a nucleotide sequence, a peptide sequence or a chemical linker
+     * breaks a complex notation string into polymer list, the polymer could be
+     * a nucleotide sequence, a peptide sequence or a chemical linker
+     *
      * @param complexNotation : the string notation for the whole structure
      * @return a list of polymers that is in this structure
      * @throws org.helm.notation.NotationException
@@ -776,7 +786,9 @@ public class NotationParser {
     }
 
     /**
-     * generate a standard notation for a given nucleotide sequence such as "AAAA"
+     * generate a standard notation for a given nucleotide sequence such as
+     * "AAAA"
+     *
      * @param sequence
      * @return standard complicate notation
      * @throws org.helm.notation.NotationException
@@ -858,7 +870,7 @@ public class NotationParser {
             pMonomerInfo.setConnection(targetAttachment, true);
             edgeMap.set(edge, new EditorEdgeInfoData(sourceAttachment, targetAttachment));
         }
-        
+
         //s-b edge
         if (null != sNode && null != bNode) {
             Edge edge = graph.createEdge(sNode, bNode);
