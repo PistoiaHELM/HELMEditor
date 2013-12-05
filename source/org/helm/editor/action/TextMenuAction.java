@@ -34,6 +34,7 @@ import org.helm.editor.editor.MacromoleculeEditor;
 import org.helm.editor.editor.TextViewer;
 import org.helm.editor.utility.ClipBoardProcessor;
 import org.helm.editor.utility.ExceptionHandler;
+import org.helm.editor.utility.NotationParser;
 import org.helm.editor.worker.PDBFileGenerator;
 import org.helm.notation.tools.ComplexNotationParser;
 import org.helm.notation.tools.StructureParser;
@@ -85,8 +86,8 @@ public class TextMenuAction extends AbstractAction {
         try {
             editor.getFrame().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             String text = "";
-            if (textType.equals(NOTATION_TEXT_TYPE)) {
-                text = notation;
+            if (textType.equals(NOTATION_TEXT_TYPE)) {              
+                text = NotationParser.addChemMonomerBracket(notation);;
             } else if (textType.equals(CANONICAL_HELM_TEXT_TYPE)) {
                 text = ComplexNotationParser.getCanonicalNotation(notation);
             } else if (textType.equals(SMILES_TEXT_TYPE)) {

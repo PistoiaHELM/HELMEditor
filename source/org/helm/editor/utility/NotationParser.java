@@ -883,4 +883,130 @@ public class NotationParser {
 
         return graph;
     }
+
+    public static String removeChemMonomerBracket(String complexNotation) {
+        if (null == complexNotation || complexNotation.isEmpty()) {
+            return complexNotation;
+        }
+
+        try {
+            if (ComplexNotationParser.validateNotationFormat(complexNotation)) {
+                String allNodeString = ComplexNotationParser.getAllNodeString(complexNotation);
+                String[] tokens = allNodeString.split("}\\|");
+                StringBuilder sb = new StringBuilder();
+
+                if (tokens.length > 1) {
+                    for (int i = 0; i < tokens.length; i++) {
+                        String token = tokens[i];
+                        if (token.startsWith(Monomer.CHEMICAL_POLYMER_TYPE)) {
+                            token = removeBracketFromLabel(token);
+                        }
+
+                        if (sb.length() > 0) {
+                            sb.append("}|");
+                        }
+                        sb.append(token);
+                    }
+
+                } else {
+                    String token = tokens[0];
+                    if (token.startsWith(Monomer.CHEMICAL_POLYMER_TYPE)) {
+                        token = removeBracketFromLabel(token);
+                    }
+                    sb.append(token);
+                }
+
+                return complexNotation.replace(allNodeString, sb.toString());
+            }
+        } catch (NotationException ignore) {
+        }
+        return complexNotation;
+    }
+
+    private static String removeBracketFromLabel(String chemPolymerNodeString) {
+        int start = chemPolymerNodeString.indexOf("{");
+        int end = chemPolymerNodeString.indexOf("}");
+        String label;
+        if (end <= 1) {
+            label = chemPolymerNodeString.substring(start + 1);
+        } else {
+            label = chemPolymerNodeString.substring(start + 1, end);
+        }
+
+        String newLabel = label;
+        if (newLabel.startsWith("[") && !newLabel.startsWith("[*]")) {
+            newLabel = newLabel.substring(1);
+        }
+
+        if (newLabel.endsWith("]")) {
+            newLabel = newLabel.substring(0, newLabel.length() - 1);
+        }
+
+        return chemPolymerNodeString.replace(label, newLabel);
+    }
+
+    public static String addChemMonomerBracket(String complexNotation) {
+        if (null == complexNotation || complexNotation.isEmpty()) {
+            return complexNotation;
+        }
+
+        try {
+            if (ComplexNotationParser.validateNotationFormat(complexNotation)) {
+                String allNodeString = ComplexNotationParser.getAllNodeString(complexNotation);
+                String[] tokens = allNodeString.split("}\\|");
+                StringBuilder sb = new StringBuilder();
+
+                if (tokens.length > 1) {
+                    for (int i = 0; i < tokens.length; i++) {
+                        String token = tokens[i];
+                        if (token.startsWith(Monomer.CHEMICAL_POLYMER_TYPE)) {
+                            token = addBracketToLabel(token);
+                        }
+
+                        if (sb.length() > 0) {
+                            sb.append("}|");
+                        }
+                        sb.append(token);
+                    }
+
+                } else {
+                    String token = tokens[0];
+                    if (token.startsWith(Monomer.CHEMICAL_POLYMER_TYPE)) {
+                        token = addBracketToLabel(token);
+                    }
+                    sb.append(token);
+                }
+
+                return complexNotation.replace(allNodeString, sb.toString());
+            }
+        } catch (NotationException ignore) {
+        }
+        return complexNotation;
+    }
+
+    private static String addBracketToLabel(String chemPolymerNodeString) {
+        int start = chemPolymerNodeString.indexOf("{");
+        int end = chemPolymerNodeString.indexOf("}");
+        String label;
+        if (end <= 1) {
+            label = chemPolymerNodeString.substring(start + 1);
+        } else {
+            label = chemPolymerNodeString.substring(start + 1, end);
+        }
+
+        String newLabel = label;
+        if (label.startsWith("[")) {
+            if (label.startsWith("[*]")) {
+                newLabel = "[" + newLabel;
+            }
+        } else {
+            newLabel = "[" + newLabel;
+        }
+
+        if (!newLabel.endsWith("]")) {
+            newLabel = newLabel + "]";
+        }
+
+        return chemPolymerNodeString.replace(label, newLabel);
+    }
 }

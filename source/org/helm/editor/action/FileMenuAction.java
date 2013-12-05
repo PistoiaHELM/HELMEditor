@@ -35,6 +35,7 @@ import javax.swing.JOptionPane;
 import org.helm.editor.controller.ModelController;
 import org.helm.editor.editor.MacromoleculeEditor;
 import org.helm.editor.utility.ExceptionHandler;
+import org.helm.editor.utility.NotationParser;
 import org.helm.editor.worker.PDBFileGenerator;
 import org.helm.notation.tools.ComplexNotationParser;
 import org.helm.notation.tools.StructureParser;
@@ -93,6 +94,8 @@ public class FileMenuAction extends TextMenuAction {
                     List<String> invalidNotations = new ArrayList<String>();
                     for (int i = 0; i < notations.size(); i++) {
                         String note = notations.get(i);
+                        note = NotationParser.removeChemMonomerBracket(note);
+                        notations.set(i, note);
                         try {
                             ComplexNotationParser.validateComplexNotation(note);
                         } catch (Exception ex) {
@@ -167,9 +170,18 @@ public class FileMenuAction extends TextMenuAction {
             String textToSave = null;
             if (textType.equals(NOTATION_TEXT_TYPE)) {
                 StringBuilder sb = new StringBuilder();
-                for (String note : notations) {
-                    sb.append(note);
-                    sb.append("\n");
+                try {
+                    for (String helm : notations) {
+                        String canHelm = ComplexNotationParser.getCanonicalNotation(helm);
+                        String processedNote = NotationParser.addChemMonomerBracket(canHelm);;
+                        sb.append(processedNote);
+                        sb.append("\n");
+                    }
+                } catch (Exception ex) {
+                    ExceptionHandler.handleException(ex);
+                    return;
+                } finally {
+                    editor.getFrame().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
                 }
                 textToSave = sb.toString();
             } else if (textType.equals(CANONICAL_HELM_TEXT_TYPE)) {

@@ -1,32 +1,27 @@
-/*******************************************************************************
+/**
+ * *****************************************************************************
  * Copyright C 2012, The Pistoia Alliance
- * 
- * Permission is hereby granted, free of charge, to any person obtaining
- * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including
- * without limitation the rights to use, copy, modify, merge, publish,
- * distribute, sublicense, and/or sell copies of the Software, and to
- * permit persons to whom the Software is furnished to do so, subject to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be
- * included in all copies or substantial portions of the Software.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
- * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
- * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
- * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
- * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- ******************************************************************************/
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ * ****************************************************************************
+ */
 package org.helm.editor.componentPanel;
-
-import org.helm.editor.controller.ModelController;
-import org.helm.editor.editor.MacromoleculeEditor;
-import org.helm.notation.tools.ComplexNotationParser;
-import org.helm.notation.tools.NucleotideConverter;
-import org.helm.notation.tools.PeptideSequenceParser;
-import org.helm.notation.tools.SimpleNotationParser;
 
 import java.awt.BorderLayout;
 import java.awt.Cursor;
@@ -39,7 +34,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -47,12 +41,19 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import org.helm.editor.controller.ModelController;
+import org.helm.editor.editor.MacromoleculeEditor;
+import org.helm.editor.utility.NotationParser;
+import org.helm.notation.tools.ComplexNotationParser;
+import org.helm.notation.tools.NucleotideConverter;
+import org.helm.notation.tools.PeptideSequenceParser;
+import org.helm.notation.tools.SimpleNotationParser;
 
 /**
  * Extract LoadPanel from MacromoleculeEditor, and generalize the call by using
- * getNotation() and setNotation() routines Implement two more load methods
- * and Compound Number
- * 
+ * getNotation() and setNotation() routines Implement two more load methods and
+ * Compound Number
+ *
  * @author zhangtianhong
  */
 public class LoadPanel extends JPanel {
@@ -92,14 +93,13 @@ public class LoadPanel extends JPanel {
                 }
             }
         });
-        
+
         final JCheckBox clearCheckBox = new JCheckBox("Reset", false);
         clearCheckBox.setToolTipText("Check this box to clear all structures before loading");
 
         JButton loadButton = new JButton("Load");
         loadButton.setToolTipText("Click to load structure");
         loadButton.addActionListener(new ActionListener() {
-
             public void actionPerformed(ActionEvent e) {
                 if (clearCheckBox.isSelected()) {
                     editor.reset();
@@ -142,7 +142,11 @@ public class LoadPanel extends JPanel {
     private void loadHELMNotation(String inputText) {
         try {
             String existingNotation = editor.getNotation();
-            String complexNotation = ComplexNotationParser.standardize(inputText);
+            
+            //remove square bracket around CHEM monomers if exist, toolkit function assumes no square bracket
+            String processedInput = NotationParser.removeChemMonomerBracket(inputText);
+
+            String complexNotation = ComplexNotationParser.standardize(processedInput);
 
             String newNotation = null;
             if (null != existingNotation
@@ -225,7 +229,7 @@ public class LoadPanel extends JPanel {
                     break;
                 case 1:
                     loadHELMNotation(inputText);
-                    break;             
+                    break;
                 case 2:
                     loadPeptideSequence(inputText);
                     break;
