@@ -50,7 +50,8 @@ public class PropertyManager implements PreferensesService {
     private Properties properties;
     private String propertyFilePath = "";
     public static final String USER_PROPERTY = "user.home";
-    public static final String PROPERTY_FOLDER = System.getProperty(USER_PROPERTY) + "/.helm/editor/";
+    public static final String HELM_FOLDER = System.getProperty(USER_PROPERTY) + "/.helm";
+    public static final String PROPERTY_FOLDER = HELM_FOLDER + "/editor/";
     public static final String PROPERTY_FILE = PROPERTY_FOLDER + "user.property";
     public static final String SCHEMA_FILE = PROPERTY_FOLDER + "MonomerCategorizationSchema.xsd";
     public static final String DEFAULT_MONOMER_CATEGORIZATION_TEMPLATE = "DefaultMonomerCategorizationTemplate.xml";
@@ -108,9 +109,12 @@ public class PropertyManager implements PreferensesService {
     }
 
     private static void configFolderProcessing() throws IOException {
+        File helmFolder = new File(HELM_FOLDER);
+        if (!helmFolder.exists()) {
+            helmFolder.mkdir();
+        }
+        
         propertyFolder = new File(PROPERTY_FOLDER);
-
-        // check folder
         if (!propertyFolder.exists()) {
             propertyFolder.mkdir();
         }
