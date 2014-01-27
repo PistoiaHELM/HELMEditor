@@ -355,7 +355,7 @@ public class MacromoleculeEditor extends GUIBase implements DataListener, Notati
         view.addViewMode(new ViewMode() {
             @Override
             public void mousePressed(MouseEvent ev) {
-                if (ev.getButton() == MouseEvent.BUTTON3) {
+                if (ev.isPopupTrigger() || ev.getButton() == MouseEvent.BUTTON3) {
                     try {
                         currentAnotateStartingNode = null;
                         Node v = getHitInfo(ev).getHitNode();
