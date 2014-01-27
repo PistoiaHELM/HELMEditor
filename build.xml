@@ -164,7 +164,7 @@
             <fileset dir="${build.dest}"/>
             <manifest> 
                 <attribute name="Permissions" value="all-permissions"/>
-                <attribute name="Codebase" value="*.pfizer.com pistoiahelm.github.com"/>
+                <attribute name="Codebase" value="*.pfizer.com pistoiahelm.github.io"/>
                 <attribute name="Application-Name" value="HELM Editor"/>
                 <attribute name="Trusted-Library" value="true"/> 
             </manifest> 
@@ -291,7 +291,7 @@
         <jar jarfile="${applet.dist.dir}/${applet.lib.jar.name}.jar" basedir="${applet.lib.dir}" update="true">
             <manifest> 
                 <attribute name="Permissions" value="all-permissions"/>
-                <attribute name="Codebase" value="*.pfizer.com pistoiahelm.github.com"/>
+                <attribute name="Codebase" value="*.pfizer.com pistoiahelm.github.io"/>
                 <attribute name="Application-Name" value="HELM Editor"/>
                 <attribute name="Trusted-Library" value="true"/> 
             </manifest> 
