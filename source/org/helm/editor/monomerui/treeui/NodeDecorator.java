@@ -29,6 +29,7 @@ import javax.swing.JTree;
 import javax.swing.tree.DefaultTreeCellRenderer;
 
 import org.helm.notation.MonomerFactory;
+import org.helm.editor.data.MonomerStoreCache;
 import org.helm.editor.utility.MonomerNodeHelper;
 import org.helm.editor.utility.NucleotideNodeHelper;
 import org.helm.editor.utility.xmlparser.data.XmlElement;
@@ -36,67 +37,78 @@ import org.helm.editor.utility.xmlparser.data.XmlFragment;
 import org.helm.editor.utility.xmlparser.data.XmlMonomer;
 import org.helm.notation.model.Monomer;
 
-
 /**
  * @author Alexander Makarov
- *
+ * 
  */
-public class NodeDecorator extends DefaultTreeCellRenderer{
-	
-	private static ImageIcon closeIcon = new ImageIcon(NodeDecorator.class.getResource("/org/helm/editor/monomerui/treeui/resource/helm_arrow_right.png"));
-	private static ImageIcon openIcon = new ImageIcon(NodeDecorator.class.getResource("/org/helm/editor/monomerui/treeui/resource/helm_arrow_expanded.png"));
-	private static ImageIcon leafIcon = new ImageIcon(NodeDecorator.class.getResource("/org/helm/editor/monomerui/treeui/resource/helm_leaf.png"));
-		
+public class NodeDecorator extends DefaultTreeCellRenderer {
+
+	private static ImageIcon closeIcon = new ImageIcon(
+			NodeDecorator.class
+					.getResource("/org/helm/editor/monomerui/treeui/resource/helm_arrow_right.png"));
+	private static ImageIcon openIcon = new ImageIcon(
+			NodeDecorator.class
+					.getResource("/org/helm/editor/monomerui/treeui/resource/helm_arrow_expanded.png"));
+	private static ImageIcon leafIcon = new ImageIcon(
+			NodeDecorator.class
+					.getResource("/org/helm/editor/monomerui/treeui/resource/helm_leaf.png"));
+
 	public NodeDecorator() {
 		setClosedIcon(closeIcon);
 		setOpenIcon(openIcon);
 		setLeafIcon(leafIcon);
 	}
-		
+
 	@Override
 	public Component getTreeCellRendererComponent(JTree tree, Object value,
 			boolean sel, boolean expanded, boolean leaf, int row,
 			boolean hasFocus) {
 		super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf,
 				row, hasFocus);
-		
-		if (value instanceof XmlParentNode){
+
+		if (value instanceof XmlParentNode) {
 			XmlParentNode parentNode = (XmlParentNode) value;
 			Color color = parentNode.getNodeColor();
-			if ((color != null) && (! color.equals(Color.BLACK))) {
+			if ((color != null) && (!color.equals(Color.BLACK))) {
 				setForeground(color);
 			}
 		}
-		
-		if (value instanceof XmlLeafNode){					
+
+		if (value instanceof XmlLeafNode) {
 			XmlElement dataElement = ((XmlLeafNode) value).getDataElement();
-			
+
 			String nodeTooltip = "";
 			if (dataElement instanceof XmlFragment) {
 				nodeTooltip = NucleotideNodeHelper.getTooltip(dataElement);
 			}
 			if (dataElement instanceof XmlMonomer) {
 				try {
-					XmlMonomer xmlMonomer = (XmlMonomer)dataElement;
-					Monomer monomer = MonomerFactory.getInstance().getMonomerDB().
-	            		get(xmlMonomer.getPolymerName()).get(xmlMonomer.getName());
+					XmlMonomer xmlMonomer = (XmlMonomer) dataElement;
+					Monomer monomer = MonomerStoreCache.getInstance()
+							.getCombinedMonomerStore()
+							.getMonomerDB()
+							.
+							// Monomer monomer =
+							// MonomerFactory.getInstance().getMonomerDB().
+							get(xmlMonomer.getPolymerName())
+							.get(xmlMonomer.getName());
 					nodeTooltip = MonomerNodeHelper.getTooltip(monomer);
 				} catch (Exception e) {
 					nodeTooltip = "";
 				}
-			}			
+			}
 			setToolTipText(nodeTooltip);
-				
+
 			Color backgroundColor = dataElement.getBackgroundColor();
-			
+
 			if (backgroundColor == null || backgroundColor.equals(Color.WHITE)) {
 				setForeground(dataElement.getFontColor());
 			} else {
 				setForeground(backgroundColor);
 			}
 		}
-		
+
 		return this;
 	}
-	
+
 }

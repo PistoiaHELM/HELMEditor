@@ -22,11 +22,15 @@
 package org.helm.editor.worker;
 
 import org.helm.notation.MonomerFactory;
+import org.helm.editor.data.MonomerStoreCache;
 import org.helm.editor.manager.MonomerManager;
+
 import java.awt.Cursor;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.swing.JOptionPane;
+
 import org.jdesktop.swingworker.SwingWorker;
 
 /**

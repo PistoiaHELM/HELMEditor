@@ -22,14 +22,18 @@
 package org.helm.editor.action;
 
 import chemaxon.struc.Molecule;
+
 import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.FileOutputStream;
+
 import javax.swing.AbstractAction;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
+
+import org.helm.editor.data.MonomerStoreCache;
 import org.helm.editor.editor.MacromoleculeEditor;
 import org.helm.editor.editor.TextViewer;
 import org.helm.editor.utility.ClipBoardProcessor;
@@ -41,171 +45,194 @@ import org.helm.notation.tools.StructureParser;
 
 /**
  * treat everything in the drawing pane as one structure
- *
+ * 
  * @author zhangtianhong
  */
 public class TextMenuAction extends AbstractAction {
 
-    public static final int COPY_ACTION_TYPE = 1;
-    public static final int SHOW_ACTION_TYPE = 2;
-    public static final int SAVE_ACTION_TYPE = 3;
-    protected int actionType;
-    public static final String NOTATION_TEXT_TYPE = "HELM Notation";
-    public static final String CANONICAL_HELM_TEXT_TYPE = "Canonical HELM Notation";
-    public static final String MOLFILE_TEXT_TYPE = "MDL Molfile";
-    public static final String SMILES_TEXT_TYPE = "SMILES";
-    public static final String PDB_TEXT_TYPE = "PDB Format";
-    protected String textType;
-    private TextViewer viewer;
-    protected MacromoleculeEditor editor;
-    protected JFileChooser chooser = new JFileChooser();
+	public static final int COPY_ACTION_TYPE = 1;
+	public static final int SHOW_ACTION_TYPE = 2;
+	public static final int SAVE_ACTION_TYPE = 3;
+	protected int actionType;
+	public static final String NOTATION_TEXT_TYPE = "HELM Notation";
+	public static final String CANONICAL_HELM_TEXT_TYPE = "Canonical HELM Notation";
+	public static final String XHELM_TEXT_TYPE = "xHELM Notation";
+	public static final String MOLFILE_TEXT_TYPE = "MDL Molfile";
+	public static final String SMILES_TEXT_TYPE = "SMILES";
+	public static final String PDB_TEXT_TYPE = "PDB Format";
+	protected String textType;
+	private TextViewer viewer;
+	protected MacromoleculeEditor editor;
+	protected JFileChooser chooser = new JFileChooser();
 
-    public TextMenuAction(MacromoleculeEditor editor, String textType, int actionType) {
-        super(textType);
-        this.editor = editor;
-        this.textType = textType;
-        this.actionType = actionType;
-        viewer = TextViewer.getInstance(editor.getFrame());
-    }
+	public TextMenuAction(MacromoleculeEditor editor, String textType,
+			int actionType) {
+		super(textType);
+		this.editor = editor;
+		this.textType = textType;
+		this.actionType = actionType;
+		viewer = TextViewer.getInstance(editor.getFrame());
+	}
 
-    public void actionPerformed(ActionEvent e) {
-        String title = textType;
-        if (actionType == COPY_ACTION_TYPE) {
-            title = "Copy " + textType;
-        } else if (actionType == SHOW_ACTION_TYPE) {
-            title = "Show " + textType;
-        } else if (actionType == SAVE_ACTION_TYPE) {
-            title = "Save " + textType;
-        }
-        String notation = editor.getNotation();
-        if (null == notation || notation.trim().length() == 0) {
-            JOptionPane.showMessageDialog(editor.getFrame(), "Structure is empty!", title, JOptionPane.WARNING_MESSAGE);
-            return;
-        }
+	public void actionPerformed(ActionEvent e) {
+		String title = textType;
+		if (actionType == COPY_ACTION_TYPE) {
+			title = "Copy " + textType;
+		} else if (actionType == SHOW_ACTION_TYPE) {
+			title = "Show " + textType;
+		} else if (actionType == SAVE_ACTION_TYPE) {
+			title = "Save " + textType;
+		}
+		String notation = editor.getNotation();
+		if (null == notation || notation.trim().length() == 0) {
+			JOptionPane.showMessageDialog(editor.getFrame(),
+					"Structure is empty!", title, JOptionPane.WARNING_MESSAGE);
+			return;
+		}
 
-        try {
-            editor.getFrame().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-            String text = "";
-            if (textType.equals(NOTATION_TEXT_TYPE)) {              
-                text = NotationParser.addChemMonomerBracket(notation);;
-            } else if (textType.equals(CANONICAL_HELM_TEXT_TYPE)) {
-                text = ComplexNotationParser.getCanonicalNotation(notation);
-            } else if (textType.equals(SMILES_TEXT_TYPE)) {
-                String smiles = ComplexNotationParser.getComplexPolymerSMILES(notation);
-                Molecule mol = StructureParser.getMolecule(smiles);
-                mol.dearomatize();
-                mol.clean(2, null);
-                text = mol.exportToFormat("smiles");
-            } else if (textType.equals(PDB_TEXT_TYPE)) {
-                new PDBFileGenerator(editor, notation, this).execute();
-            } else if (textType.equals(MOLFILE_TEXT_TYPE)) {
-                String smiles = ComplexNotationParser.getComplexPolymerSMILES(notation);
-                Molecule mol = StructureParser.getMolecule(smiles);
-                mol.dearomatize();
-                mol.clean(2, null);
-                text = mol.exportToFormat("mol");
-            } else {
-                throw new UnsupportedOperationException("Unsupported operation type :" + textType);
-            }
+		try {
+			editor.getFrame().setCursor(
+					Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+			String text = "";
+			if (textType.equals(NOTATION_TEXT_TYPE)) {
+				text = NotationParser.addChemMonomerBracket(notation);
+				;
+			} else if (textType.equals(CANONICAL_HELM_TEXT_TYPE)) {
+				text = ComplexNotationParser.getCanonicalNotation(notation);
+			} else if (textType.equals(XHELM_TEXT_TYPE)) {
+				text = ComplexNotationParser.getCanonicalNotation(notation,
+						MonomerStoreCache.getInstance()
+								.getCombinedMonomerStore()); //TODO XHELM XML
+			} else if (textType.equals(SMILES_TEXT_TYPE)) {
+				String smiles = ComplexNotationParser
+						.getComplexPolymerSMILES(notation);
+				Molecule mol = StructureParser.getMolecule(smiles);
+				mol.dearomatize();
+				mol.clean(2, null);
+				text = mol.exportToFormat("smiles");
+			} else if (textType.equals(PDB_TEXT_TYPE)) {
+				new PDBFileGenerator(editor, notation, this).execute();
+			} else if (textType.equals(MOLFILE_TEXT_TYPE)) {
+				String smiles = ComplexNotationParser
+						.getComplexPolymerSMILES(notation);
+				Molecule mol = StructureParser.getMolecule(smiles);
+				mol.dearomatize();
+				mol.clean(2, null);
+				text = mol.exportToFormat("mol");
+			} else {
+				throw new UnsupportedOperationException(
+						"Unsupported operation type :" + textType);
+			}
 
-            if (!textType.equals(PDB_TEXT_TYPE)) {
-                processResult(text);
-            }
+			if (!textType.equals(PDB_TEXT_TYPE)) {
+				processResult(text);
+			}
 
-        } catch (Exception ex) {
-            ExceptionHandler.handleException(ex);
-        } finally {
-            if (!textType.equals(PDB_TEXT_TYPE)) {
-                editor.getFrame().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-            }
-        }
-    }
+		} catch (Exception ex) {
+			ExceptionHandler.handleException(ex);
+		} finally {
+			if (!textType.equals(PDB_TEXT_TYPE)) {
+				editor.getFrame().setCursor(
+						Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+			}
+		}
+	}
 
-    public void processResult(String text) {
-        switch (actionType) {
-            case SHOW_ACTION_TYPE:
-                viewer.setTitle(textType);
-                viewer.setText(text);
-                break;
-            case COPY_ACTION_TYPE:
-                ClipBoardProcessor.copy(text);
-                break;
-            case SAVE_ACTION_TYPE:
-                save(text);
-                break;
-            default:
-                break;
-        }
-    }
-    
-    protected TextFileFilter getTextFileFilter(String textType) {
-        TextFileFilter fileFilter = null;
-        if (textType.equals(NOTATION_TEXT_TYPE)) {
-            fileFilter = new TextFileFilter("helm", "HELM Notation File (*.helm)");
-        } else if (textType.equals(CANONICAL_HELM_TEXT_TYPE)) {
-            fileFilter = new TextFileFilter("chelm", "Canonical HELM Notation File (*.chelm)");
-        } else if (textType.equals(SMILES_TEXT_TYPE)) {
-            fileFilter = new TextFileFilter("smi", "SMILES File (*.smi)");
-        } else if (textType.equals(PDB_TEXT_TYPE)) {
-            fileFilter = new TextFileFilter("pdb", "PDB Format (*.pdb)");
-        } else if (textType.equals(MOLFILE_TEXT_TYPE)) {
-            fileFilter = new TextFileFilter("mol", "MDL Molfile (*.mol)");
-        } else {
-            throw new UnsupportedOperationException("Unsupported structure format type :" + textType);
-        }
-        return fileFilter;       
-    }
+	public void processResult(String text) {
+		switch (actionType) {
+		case SHOW_ACTION_TYPE:
+			viewer.setTitle(textType);
+			viewer.setText(text);
+			break;
+		case COPY_ACTION_TYPE:
+			ClipBoardProcessor.copy(text);
+			break;
+		case SAVE_ACTION_TYPE:
+			save(text);
+			break;
+		default:
+			break;
+		}
+	}
 
-    protected void save(String text) {
-        String title = "Save " + textType + " File";
-        TextFileFilter fileFilter = getTextFileFilter(textType);
-        chooser.setFileFilter(fileFilter);
-        
-        if (chooser.showSaveDialog(editor.getFrame()) == JFileChooser.APPROVE_OPTION) {
-            String name = chooser.getSelectedFile().toString();
-            if (!name.endsWith(fileFilter.getExtension())) {
-                name = name + "." + fileFilter.getExtension();
-            }
-            try {
-                editor.getFrame().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-                FileOutputStream fos = new FileOutputStream(new File(name));
-                fos.write(text.getBytes());
-                fos.close();
-                JOptionPane.showMessageDialog(editor.getFrame(), textType + " saved successfully to " + name, title, JOptionPane.INFORMATION_MESSAGE);
-            } catch (Exception ex) {
-                ExceptionHandler.handleException(ex);
-            } finally {
-                editor.getFrame().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-            }
-        }
-    }
+	protected TextFileFilter getTextFileFilter(String textType) {
+		TextFileFilter fileFilter = null;
+		if (textType.equals(NOTATION_TEXT_TYPE)) {
+			fileFilter = new TextFileFilter("helm",
+					"HELM Notation File (*.helm)");
+		} else if (textType.equals(CANONICAL_HELM_TEXT_TYPE)) {
+			fileFilter = new TextFileFilter("chelm",
+					"Canonical HELM Notation File (*.chelm)");
+		} else if (textType.equals(XHELM_TEXT_TYPE)) {
+			fileFilter = new TextFileFilter("xhelm",
+					"Exchangeable HELM Notation File (*.xhelm)");
+		} else if (textType.equals(SMILES_TEXT_TYPE)) {
+			fileFilter = new TextFileFilter("smi", "SMILES File (*.smi)");
+		} else if (textType.equals(PDB_TEXT_TYPE)) {
+			fileFilter = new TextFileFilter("pdb", "PDB Format (*.pdb)");
+		} else if (textType.equals(MOLFILE_TEXT_TYPE)) {
+			fileFilter = new TextFileFilter("mol", "MDL Molfile (*.mol)");
+		} else {
+			throw new UnsupportedOperationException(
+					"Unsupported structure format type :" + textType);
+		}
+		return fileFilter;
+	}
 
-    class TextFileFilter extends FileFilter {
+	protected void save(String text) {
+		String title = "Save " + textType + " File";
+		TextFileFilter fileFilter = getTextFileFilter(textType);
+		chooser.setFileFilter(fileFilter);
 
-        String endsWith = null;
-        String description = null;
+		if (chooser.showSaveDialog(editor.getFrame()) == JFileChooser.APPROVE_OPTION) {
+			String name = chooser.getSelectedFile().toString();
+			if (!name.endsWith(fileFilter.getExtension())) {
+				name = name + "." + fileFilter.getExtension();
+			}
+			try {
+				editor.getFrame().setCursor(
+						Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+				FileOutputStream fos = new FileOutputStream(new File(name));
+				fos.write(text.getBytes());
+				fos.close();
+				JOptionPane.showMessageDialog(editor.getFrame(), textType
+						+ " saved successfully to " + name, title,
+						JOptionPane.INFORMATION_MESSAGE);
+			} catch (Exception ex) {
+				ExceptionHandler.handleException(ex);
+			} finally {
+				editor.getFrame().setCursor(
+						Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+			}
+		}
+	}
 
-        public TextFileFilter(String endsWith, String description) {
-            this.endsWith = endsWith;
-            this.description = description;
-        }
+	class TextFileFilter extends FileFilter {
 
-        @Override
-        public boolean accept(File f) {
-            if (f.isDirectory()) {
-                return true;
-            } else {
-                return f.getName().endsWith(endsWith);
-            }
-        }
+		String endsWith = null;
+		String description = null;
 
-        @Override
-        public String getDescription() {
-            return description;
-        }
+		public TextFileFilter(String endsWith, String description) {
+			this.endsWith = endsWith;
+			this.description = description;
+		}
 
-        public String getExtension() {
-            return endsWith;
-        }
-    }
+		@Override
+		public boolean accept(File f) {
+			if (f.isDirectory()) {
+				return true;
+			} else {
+				return f.getName().endsWith(endsWith);
+			}
+		}
+
+		@Override
+		public String getDescription() {
+			return description;
+		}
+
+		public String getExtension() {
+			return endsWith;
+		}
+	}
 }

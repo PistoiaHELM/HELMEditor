@@ -584,8 +584,8 @@ public class NotationParser {
      */
     private static Graph2D loadAminoAcidGraph(String sequenceNotation) throws MonomerException, IOException, JDOMException {
 
-        MonomerFactory monomerFactory = MonomerFactory.getInstance();
-        Map<String, Map<String, Monomer>> monomerDB = monomerFactory.getMonomerDB();
+        /*MonomerFactory monomerFactory = MonomerFactory.getInstance();
+        Map<String, Map<String, Monomer>> monomerDB = monomerFactory.getMonomerDB();*/
 
         //setting up the sequence graph
         Graph2D sequenceGraph = new Graph2D();

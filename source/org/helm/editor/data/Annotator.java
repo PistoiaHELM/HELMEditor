@@ -48,30 +48,32 @@ import org.helm.editor.utility.SequenceGraphTools;
 import org.helm.notation.model.Monomer;
 
 public class Annotator {
-	
-    private static final Color ANOTATION_COLOR = Color.DARK_GRAY;
-    private Map<Node, List<String>> annotationMap = new HashMap<Node, List<String>>();	
-    private Map<Node, NodeLabel> annotationLabelMap  = new HashMap<Node,NodeLabel>(); 
-    private Graph2D graph;
-    private GraphManager manager;
-    private boolean numberNodes = false;
-    
-    private NodeMap labelInfoMap;
-        
-    public Annotator(GraphManager manager) {
-    	this.manager = manager;
-    }
-    
-    public Annotator(Graph2D graph2D, GraphManager manager) {
-    	setGraph2D(graph2D);
-    	this.manager = manager;
-    }
-    
-    public void annotateBasePosition(final Node startingNode) throws Exception {
+
+	private static final Color ANOTATION_COLOR = Color.DARK_GRAY;
+	private Map<Node, List<String>> annotationMap = new HashMap<Node, List<String>>();
+	private Map<Node, NodeLabel> annotationLabelMap = new HashMap<Node, NodeLabel>();
+	private Graph2D graph;
+	private GraphManager manager;
+	private boolean numberNodes = false;
+
+	private NodeMap labelInfoMap;
+
+	public Annotator(GraphManager manager) {
+		this.manager = manager;
+	}
+
+	public Annotator(Graph2D graph2D, GraphManager manager) {
+		setGraph2D(graph2D);
+		this.manager = manager;
+	}
+
+	public void annotateBasePosition(final Node startingNode) throws Exception {
 		Map<Node, String> annotationMap = manager.getAnnotationMap();
-		String annotation = annotationMap.get(startingNode) == null ? "" : annotationMap.get(startingNode);
+		String annotation = annotationMap.get(startingNode) == null ? ""
+				: annotationMap.get(startingNode);
 		annotate(startingNode, annotation);
-		NodeList nl = SequenceGraphTools.getBaseList(startingNode, graph, false);
+		NodeList nl = SequenceGraphTools
+				.getBaseList(startingNode, graph, false);
 		boolean peptides = false;
 		if (nl == null) {
 			nl = SequenceGraphTools.getPeptideSequence(startingNode, graph);
@@ -97,10 +99,10 @@ public class Annotator {
 
 	private void clearLabels(Node startingNode, Graph2D graph) {
 		AbstractBfsIterator iter = new SenseIterator(graph, startingNode);
-		while (iter.hasNext())  {
+		while (iter.hasNext()) {
 			Node currNode = iter.next();
 			NodeRealizer nr = graph.getRealizer(currNode);
-						
+
 			while (nr.labelCount() > 1) {
 				NodeLabel l = nr.getLabel(1);
 				if (l != null) {
@@ -108,23 +110,24 @@ public class Annotator {
 				}
 			}
 			get(currNode).clear();
-			//annotationLabelMap.remove(startingNode);
-		} 
+			// annotationLabelMap.remove(startingNode);
+		}
 	}
-	
+
 	public void annotateAllBasePosition() throws Exception {
-	    annotationLabelMap.clear();
-	    GraphHider gh = new GraphHider(graph);
-    	for (Edge e : graph.getEdgeArray()) {
-        	if (MonomerInfoUtils.isPBranchEdge(e)) {
-        		gh.hide(e);
-        	}
-        }
-    	
+		annotationLabelMap.clear();
+		GraphHider gh = new GraphHider(graph);
+		for (Edge e : graph.getEdgeArray()) {
+			if (MonomerInfoUtils.isPBranchEdge(e)) {
+				gh.hide(e);
+			}
+		}
+
 		labelInfoMap = clearDataProvider(NodeMapKeys.LABEL_INFO_MAP);
-	    
-		for (Node node : manager.getStartingNodeList()) { 
-			if (MonomerInfoUtils.isNucleicAcidPolymer(node) || MonomerInfoUtils.isPeptidePolymer(node)) {
+
+		for (Node node : manager.getStartingNodeList()) {
+			if (MonomerInfoUtils.isNucleicAcidPolymer(node)
+					|| MonomerInfoUtils.isPeptidePolymer(node)) {
 				clearLabels(node, graph);
 				annotateBasePosition(node);
 			}
@@ -137,7 +140,7 @@ public class Annotator {
 				i++;
 			}
 		}
-	
+
 		gh.unhideAll();
 	}
 
@@ -145,132 +148,154 @@ public class Annotator {
 			MonomerException, JDOMException {
 		List<Node> startingNodeList = manager.getStartingNodeList();
 		Map<Node, String> annotationMap = manager.getAnnotationMap();
-		//Map<Node, NodeLabel> startingNodeLabelMap = manager.getNodeLabelMap();
+		// Map<Node, NodeLabel> startingNodeLabelMap =
+		// manager.getNodeLabelMap();
 
 		if (annotation == null) {
-            return;
-        }
-        if (startingNodeList.contains(node)) {
-            MonomerFactory monomerFactory = MonomerFactory.getInstance();
-            Map<String, Map<String, Monomer>> monomerDB = monomerFactory.getMonomerDB();
+			return;
+		}
+		if (startingNodeList.contains(node)) {
+			// MonomerFactory monomerFactory = MonomerFactory.getInstance();
+			// Map<String, Map<String, Monomer>> monomerDB =
+			// monomerFactory.getMonomerDB();
+			Map<String, Map<String, Monomer>> monomerDB = MonomerStoreCache
+					.getInstance().getCombinedMonomerStore().getMonomerDB();
 
-            NodeMap nodeMap = (NodeMap) node.getGraph().getDataProvider(NodeMapKeys.MONOMER_REF);
-            MonomerInfo monomerInfo = (MonomerInfo) nodeMap.get(node);
+			NodeMap nodeMap = (NodeMap) node.getGraph().getDataProvider(
+					NodeMapKeys.MONOMER_REF);
+			MonomerInfo monomerInfo = (MonomerInfo) nodeMap.get(node);
 
-            boolean isFliped = false;
-            Monomer monomer = monomerDB.get(monomerInfo.getPolymerType()).get(monomerInfo.getMonomerID());
-            if (!monomer.getMonomerType().equalsIgnoreCase(Monomer.BACKBONE_MOMONER_TYPE)) {
-                return;
-            }
+			boolean isFliped = false;
+			Monomer monomer = monomerDB.get(monomerInfo.getPolymerType()).get(
+					monomerInfo.getMonomerID());
+			if (!monomer.getMonomerType().equalsIgnoreCase(
+					Monomer.BACKBONE_MOMONER_TYPE)) {
+				return;
+			}
 
-            annotationMap.put(node, annotation);
+			annotationMap.put(node, annotation);
 
-            //find the first R node in this sequence.
-            Node nodeToAnnotate = null;
-            NodeCursor successors = null;
-            Node nextNode = null;
-            NodeRealizer currentRealizer = null;
+			// find the first R node in this sequence.
+			Node nodeToAnnotate = null;
+			NodeCursor successors = null;
+			Node nextNode = null;
+			NodeRealizer currentRealizer = null;
 
+			if (!monomer.getNaturalAnalog().equalsIgnoreCase(Monomer.ID_R)
+					&& !monomerInfo.getPolymerType().equalsIgnoreCase(
+							Monomer.PEPTIDE_POLYMER_TYPE)) {
+				NodeRealizer nrPreNode = ((Graph2D) node.getGraph())
+						.getRealizer(node);
 
-            if (!monomer.getNaturalAnalog().equalsIgnoreCase(Monomer.ID_R) && !monomerInfo.getPolymerType().equalsIgnoreCase(Monomer.PEPTIDE_POLYMER_TYPE)) {
-                NodeRealizer nrPreNode = ((Graph2D) node.getGraph()).getRealizer(node);
+				successors = node.successors();
+				nextNode = null;
+				for (; successors.ok(); successors.next()) {
+					nextNode = successors.node();
+					monomerInfo = (MonomerInfo) nodeMap.get(nextNode);
+					if (monomerInfo.getPolymerType().equalsIgnoreCase(
+							Monomer.NUCLIEC_ACID_POLYMER_TYPE)) {
+						monomer = monomerDB.get(monomerInfo.getPolymerType())
+								.get(monomerInfo.getMonomerID());
+						if (monomer.getNaturalAnalog().equalsIgnoreCase(
+								Monomer.ID_R)) {
+							nodeToAnnotate = nextNode;
+							currentRealizer = ((Graph2D) nodeToAnnotate
+									.getGraph()).getRealizer(nodeToAnnotate);
+							if (Double.compare(currentRealizer.getCenterX(),
+									nrPreNode.getCenterX()) < 0) {
+								isFliped = true;
+							}
+							break;
+						}
+					}
+				}
+			} else {
+				nodeToAnnotate = node;
+			}
 
-                successors = node.successors();
-                nextNode = null;
-                for (; successors.ok(); successors.next()) {
-                    nextNode = successors.node();
-                    monomerInfo = (MonomerInfo) nodeMap.get(nextNode);
-                    if (monomerInfo.getPolymerType().equalsIgnoreCase(Monomer.NUCLIEC_ACID_POLYMER_TYPE)) {
-                        monomer = monomerDB.get(monomerInfo.getPolymerType()).get(monomerInfo.getMonomerID());
-                        if (monomer.getNaturalAnalog().equalsIgnoreCase(Monomer.ID_R)) {
-                            nodeToAnnotate = nextNode;
-                            currentRealizer = ((Graph2D) nodeToAnnotate.getGraph()).getRealizer(nodeToAnnotate);
-                            if(Double.compare(currentRealizer.getCenterX(), nrPreNode.getCenterX())<0){
-                                isFliped = true;
-                            }
-                            break;
-                        }
-                    }
-                }
-            } else {
-                nodeToAnnotate = node;
-            }
+			if (nodeToAnnotate != null) {
+				currentRealizer = ((Graph2D) nodeToAnnotate.getGraph())
+						.getRealizer(nodeToAnnotate);
+				NodeLabel label;
 
-            if (nodeToAnnotate != null) {
-                currentRealizer = ((Graph2D) nodeToAnnotate.getGraph()).getRealizer(nodeToAnnotate);
-                NodeLabel label;
-                
-                //test if this sequence has been fliped
-                
-                if(monomerInfo.getPolymerType().equalsIgnoreCase(Monomer.PEPTIDE_POLYMER_TYPE)) {
-                	label = createLabelNode(annotation, currentRealizer, "n");
-                	isFliped = manager.isFlipped(nodeToAnnotate);
-                } else {
-                	label = createLabelNode(annotation, currentRealizer, "5'");
-                }
-                
-                if (graph != null) {
-                	getLabelInfo(nodeToAnnotate).setTerminalLabel(label.getText());	
-                }
-                                
-                successors = nodeToAnnotate.successors();
-                for (; successors.ok(); successors.next()) {
-                    nextNode = successors.node();
-                    monomerInfo = (MonomerInfo) nodeMap.get(nextNode);
-                    if (monomerInfo.getPolymerType().equalsIgnoreCase(Monomer.NUCLIEC_ACID_POLYMER_TYPE)) {
-                        monomer = monomerDB.get(monomerInfo.getPolymerType()).get(monomerInfo.getMonomerID());
-                        if (monomer.getMonomerType().equalsIgnoreCase(Monomer.BACKBONE_MOMONER_TYPE)) {
-                            NodeRealizer nrNext =((Graph2D) nodeToAnnotate.getGraph()).getRealizer(successors.node());
-                            if(Double.compare(nrNext.getCenterX(), currentRealizer.getCenterX()) < 0){
-                                isFliped = true;
+				// test if this sequence has been fliped
 
-                            }
-                            break;
-                        }
-                    }
-                }
-                
-                if (isFliped) {
-                    label.setPosition(NodeLabel.SE);
-                } else {
-                    label.setPosition(NodeLabel.NW);
-                }
+				if (monomerInfo.getPolymerType().equalsIgnoreCase(
+						Monomer.PEPTIDE_POLYMER_TYPE)) {
+					label = createLabelNode(annotation, currentRealizer, "n");
+					isFliped = manager.isFlipped(nodeToAnnotate);
+				} else {
+					label = createLabelNode(annotation, currentRealizer, "5'");
+				}
 
-                currentRealizer.addLabel(label);
-                annotationLabelMap.put(nodeToAnnotate, label);
-            }
-        }
+				if (graph != null) {
+					getLabelInfo(nodeToAnnotate).setTerminalLabel(
+							label.getText());
+				}
 
-        
+				successors = nodeToAnnotate.successors();
+				for (; successors.ok(); successors.next()) {
+					nextNode = successors.node();
+					monomerInfo = (MonomerInfo) nodeMap.get(nextNode);
+					if (monomerInfo.getPolymerType().equalsIgnoreCase(
+							Monomer.NUCLIEC_ACID_POLYMER_TYPE)) {
+						monomer = monomerDB.get(monomerInfo.getPolymerType())
+								.get(monomerInfo.getMonomerID());
+						if (monomer.getMonomerType().equalsIgnoreCase(
+								Monomer.BACKBONE_MOMONER_TYPE)) {
+							NodeRealizer nrNext = ((Graph2D) nodeToAnnotate
+									.getGraph()).getRealizer(successors.node());
+							if (Double.compare(nrNext.getCenterX(),
+									currentRealizer.getCenterX()) < 0) {
+								isFliped = true;
+
+							}
+							break;
+						}
+					}
+				}
+
+				if (isFliped) {
+					label.setPosition(NodeLabel.SE);
+				} else {
+					label.setPosition(NodeLabel.NW);
+				}
+
+				currentRealizer.addLabel(label);
+				annotationLabelMap.put(nodeToAnnotate, label);
+			}
+		}
+
 	}
-	
+
 	public void setGraph2D(Graph2D graph2D) {
 		this.graph = graph2D;
-    	labelInfoMap = clearDataProvider(NodeMapKeys.LABEL_INFO_MAP);
+		labelInfoMap = clearDataProvider(NodeMapKeys.LABEL_INFO_MAP);
 	}
-	
+
 	public void setManager(GraphManager manager) {
 		this.manager = manager;
 	}
-	
+
 	public NodeLabel getLabel(Node node) {
-    	return annotationLabelMap.get(node);
-    }
+		return annotationLabelMap.get(node);
+	}
 
-    public void reset() {
-    	annotationLabelMap.clear();
-    	annotationMap.clear();
-    }
+	public void reset() {
+		annotationLabelMap.clear();
+		annotationMap.clear();
+	}
 
-    public void removeLabel(Node node) {
-    	annotationLabelMap.remove(node);
-    }
-    
-    public void numberNodes(boolean numberNodes) {
-    	this.numberNodes = numberNodes;
-    }
-	
-	private NodeLabel createLabelNode(String annotation, NodeRealizer nrRNode, String type) {
+	public void removeLabel(Node node) {
+		annotationLabelMap.remove(node);
+	}
+
+	public void numberNodes(boolean numberNodes) {
+		this.numberNodes = numberNodes;
+	}
+
+	private NodeLabel createLabelNode(String annotation, NodeRealizer nrRNode,
+			String type) {
 		NodeLabel label = null;
 		label = nrRNode.createNodeLabel();
 		label.setModel(NodeLabel.EIGHT_POS);
@@ -288,38 +313,39 @@ public class Annotator {
 		}
 		return result;
 	}
-	
+
 	private NodeMap clearDataProvider(Object key) {
-		NodeMap map = (NodeMap)graph.getDataProvider(key);
-		
+		NodeMap map = (NodeMap) graph.getDataProvider(key);
+
 		if (map != null) {
 			graph.removeDataProvider(key);
 		}
-		
+
 		map = graph.createNodeMap();
 		graph.addDataProvider(key, map);
 		return map;
 	}
-	
+
 	private LabelInfo getLabelInfo(Node viewNode) {
-		LabelInfo info = (LabelInfo)labelInfoMap.get(viewNode);
+		LabelInfo info = (LabelInfo) labelInfoMap.get(viewNode);
 		if (info == null) {
 			info = new LabelInfo();
 			labelInfoMap.set(viewNode, info);
 		}
 		return info;
 	}
-        
-    public static NodeLabel configAnnotationLabel(NodeLabel annotationLabel, boolean isPeptide){
-    	annotationLabel.setModel(NodeLabel.EIGHT_POS);
-    	if(isPeptide) { 
-    		annotationLabel.setPosition(NodeLabel.N);
-    	} else {
-    		annotationLabel.setPosition(NodeLabel.NW);
-    	}
-    	
-    	annotationLabel.setTextColor(ANOTATION_COLOR);
 
-    	return annotationLabel;
-    }
+	public static NodeLabel configAnnotationLabel(NodeLabel annotationLabel,
+			boolean isPeptide) {
+		annotationLabel.setModel(NodeLabel.EIGHT_POS);
+		if (isPeptide) {
+			annotationLabel.setPosition(NodeLabel.N);
+		} else {
+			annotationLabel.setPosition(NodeLabel.NW);
+		}
+
+		annotationLabel.setTextColor(ANOTATION_COLOR);
+
+		return annotationLabel;
+	}
 }
