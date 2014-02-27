@@ -42,6 +42,7 @@ import org.helm.editor.utility.NotationParser;
 import org.helm.editor.worker.PDBFileGenerator;
 import org.helm.notation.tools.ComplexNotationParser;
 import org.helm.notation.tools.StructureParser;
+import org.helm.notation.tools.xHelmNotationParser;
 
 /**
  * treat everything in the drawing pane as one structure
@@ -102,7 +103,8 @@ public class TextMenuAction extends AbstractAction {
 			} else if (textType.equals(XHELM_TEXT_TYPE)) {
 				text = ComplexNotationParser.getCanonicalNotation(notation,
 						MonomerStoreCache.getInstance()
-								.getCombinedMonomerStore()); //TODO XHELM XML
+								.getCombinedMonomerStore());
+				text = xHelmNotationParser.writeXHELM(text, MonomerStoreCache.getInstance().getCombinedMonomerStore());
 			} else if (textType.equals(SMILES_TEXT_TYPE)) {
 				String smiles = ComplexNotationParser
 						.getComplexPolymerSMILES(notation);

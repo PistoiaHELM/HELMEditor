@@ -123,7 +123,7 @@ public class FileMenuAction extends TextMenuAction {
 			}
 
 			String textToSave = null;
-			if (textType.equals(NOTATION_TEXT_TYPE) || textType.equals(XHELM_TEXT_TYPE)) {
+			if (textType.equals(NOTATION_TEXT_TYPE)) {
 				StringBuilder sb = new StringBuilder();
 				try {
 					for (String helm : notations) {
@@ -143,6 +143,10 @@ public class FileMenuAction extends TextMenuAction {
 							Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 				}
 				textToSave = sb.toString();
+			} else if (textType.equals(XHELM_TEXT_TYPE)) {
+				textToSave = xHelmNotationParser.writeXHELM(notation,
+						MonomerStoreCache.getInstance()
+								.getCombinedMonomerStore());
 			} else if (textType.equals(CANONICAL_HELM_TEXT_TYPE)) {
 				StringBuilder sb = new StringBuilder();
 				try {
@@ -255,7 +259,7 @@ public class FileMenuAction extends TextMenuAction {
 
 			xHELMRootElement = doc.getRootElement();
 
-		} catch (JDOMException | IOException ex) {
+		} catch (Exception ex) {
 			JOptionPane.showMessageDialog(editor.getFrame(), "The input file "
 					+ fileName + " could not be read!", title,
 					JOptionPane.WARNING_MESSAGE);
@@ -271,8 +275,7 @@ public class FileMenuAction extends TextMenuAction {
 			// read monomers to store
 			store = xHelmNotationParser.getMonomerStore(xHELMRootElement);
 
-		} catch (MonomerException | IOException | JDOMException
-				| NotationException | StructureException ex) {
+		} catch (Exception ex) {
 			JOptionPane.showMessageDialog(editor.getFrame(),
 					"The HELM code could not be read!", title,
 					JOptionPane.WARNING_MESSAGE);

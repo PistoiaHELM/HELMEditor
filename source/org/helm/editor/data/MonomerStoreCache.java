@@ -56,7 +56,7 @@ public class MonomerStoreCache {
 					.getMonomerStore();
 			if (this.internalMonomerStore == null)
 				return;
-		} catch (MonomerException | IOException | JDOMException e1) {
+		} catch (Exception e1) {
 			Logger.getLogger(MonomerStoreCache.class.getName()).log(
 					Level.SEVERE, e1.getMessage());
 			return;
@@ -68,26 +68,28 @@ public class MonomerStoreCache {
 
 		// all externals when applicable
 		if (this.externalMonomerStore != null)
-			for (String polymerType : this.externalMonomerStore.getMonomerDB().keySet()) {
-				for (Monomer mon : this.externalMonomerStore.getMonomers(polymerType)
-						.values()) {
+			for (String polymerType : this.externalMonomerStore.getMonomerDB()
+					.keySet()) {
+				for (Monomer mon : this.externalMonomerStore.getMonomers(
+						polymerType).values()) {
 					try {
 						combinedMonomerStore.addNewMonomer(mon);
-					} catch (IOException | MonomerException e) {
+					} catch (Exception e) {
 						notAdded++;
 					}
 				}
 			}
 		// internals when their alternate id is not contained in externals
-		for (String polymerType : this.internalMonomerStore.getMonomerDB().keySet()) {
-			for (Monomer mon : this.internalMonomerStore.getMonomers(polymerType)
-					.values()) {
+		for (String polymerType : this.internalMonomerStore.getMonomerDB()
+				.keySet()) {
+			for (Monomer mon : this.internalMonomerStore.getMonomers(
+					polymerType).values()) {
 				try {
 					if (!combinedMonomerStore.hasMonomer(polymerType,
 							mon.getAlternateId())) {
 						combinedMonomerStore.addNewMonomer(mon);
 					}
-				} catch (IOException | MonomerException e) {
+				} catch (Exception e) {
 					notAdded++;
 				}
 			}
@@ -100,7 +102,7 @@ public class MonomerStoreCache {
 									+ " monomers could not be added to combined monomer library.");
 
 		MonomerFactory.resetDBChanged();
-		
+
 	}
 
 	/**
