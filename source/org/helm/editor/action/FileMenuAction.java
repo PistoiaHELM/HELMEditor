@@ -30,7 +30,6 @@ import java.awt.event.ActionEvent;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,16 +42,12 @@ import org.helm.editor.editor.MacromoleculeEditor;
 import org.helm.editor.utility.ExceptionHandler;
 import org.helm.editor.utility.NotationParser;
 import org.helm.editor.worker.PDBFileGenerator;
-import org.helm.notation.MonomerException;
 import org.helm.notation.MonomerStore;
-import org.helm.notation.NotationException;
-import org.helm.notation.StructureException;
 import org.helm.notation.tools.ComplexNotationParser;
 import org.helm.notation.tools.StructureParser;
 import org.helm.notation.tools.xHelmNotationParser;
 import org.jdom.Document;
 import org.jdom.Element;
-import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 
 /**
@@ -291,8 +286,8 @@ public class FileMenuAction extends TextMenuAction {
 			return;
 		}
 
-		String notation = editor.getNotation();
-		if (null != notation && notation.trim().length() > 0) {
+		String editorNotation = editor.getNotation();
+		if (null != editorNotation && editorNotation.trim().length() > 0) {
 			int result = JOptionPane
 					.showConfirmDialog(
 							editor.getFrame(),
@@ -301,20 +296,29 @@ public class FileMenuAction extends TextMenuAction {
 							JOptionPane.QUESTION_MESSAGE);
 			if (JOptionPane.YES_OPTION == result) {
 				editor.reset();
-				notation = editor.getNotation();
+				editorNotation = editor.getNotation();
 			}
 		}
 
-		if (null == notation || notation.trim().length() == 0) {
-			notation = helmString;
+		try {
+			editor.getFrame().setCursor(
+					Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+
+			String standardNote = ComplexNotationParser.standardize(helmString,
+					MonomerStoreCache.getInstance().getCombinedMonomerStore());
+			editorNotation = ComplexNotationParser.getCombinedComlexNotation(
+					editorNotation, standardNote);
+
+		} catch (Exception ex) {
+			ExceptionHandler.handleException(ex);
+			return;
+		} finally {
+			editor.getFrame().setCursor(
+					Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 		}
 
-		editor.getFrame().setCursor(
-				Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-
 		editor.synchronizeZoom();
-		ModelController.notationUpdated(notation, editor.getOwnerCode());
-
+		ModelController.notationUpdated(editorNotation, editor.getOwnerCode());
 	}
 
 	private void loadNotationFile(String fileName, String title) {
@@ -379,8 +383,8 @@ public class FileMenuAction extends TextMenuAction {
 			}
 		}
 
-		String notation = editor.getNotation();
-		if (null != notation && notation.trim().length() > 0) {
+		String editorNotation = editor.getNotation();
+		if (null != editorNotation && editorNotation.trim().length() > 0) {
 			int result = JOptionPane
 					.showConfirmDialog(
 							editor.getFrame(),
@@ -389,12 +393,12 @@ public class FileMenuAction extends TextMenuAction {
 							JOptionPane.QUESTION_MESSAGE);
 			if (JOptionPane.YES_OPTION == result) {
 				editor.reset();
-				notation = editor.getNotation();
+				editorNotation = editor.getNotation();
 			}
 		}
 
-		if (null == notation || notation.trim().length() == 0) {
-			notation = notations.get(0);
+		if (null == editorNotation || editorNotation.trim().length() == 0) {
+			editorNotation = notations.get(0);
 			notations.remove(0);
 		}
 
@@ -403,8 +407,8 @@ public class FileMenuAction extends TextMenuAction {
 					Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 			for (String note : notations) {
 				String standardNote = ComplexNotationParser.standardize(note);
-				notation = ComplexNotationParser.getCombinedComlexNotation(
-						notation, standardNote);
+				editorNotation = ComplexNotationParser
+						.getCombinedComlexNotation(editorNotation, standardNote);
 			}
 		} catch (Exception ex) {
 			ExceptionHandler.handleException(ex);
@@ -415,7 +419,7 @@ public class FileMenuAction extends TextMenuAction {
 		}
 
 		editor.synchronizeZoom();
-		ModelController.notationUpdated(notation, editor.getOwnerCode());
+		ModelController.notationUpdated(editorNotation, editor.getOwnerCode());
 
 	}
 }
