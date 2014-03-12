@@ -17,6 +17,7 @@ import org.helm.editor.data.EditorEdgeInfoData;
 import org.helm.editor.data.GraphManager;
 import org.helm.editor.data.EdgeMapKeys;
 import org.helm.editor.data.MonomerInfo;
+import org.helm.editor.data.MonomerStoreCache;
 import org.helm.editor.data.NodeMapKeys;
 import org.helm.editor.io.EdgeInputHandler;
 import org.helm.editor.io.EdgeOutputHandler;
@@ -32,7 +33,9 @@ import org.helm.notation.model.Monomer;
 import java.security.NoSuchAlgorithmException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import org.jdom.JDOMException;
+
 import y.base.DataProvider;
 import y.io.IOHandler;
 import y.io.YGFIOHandler;
@@ -62,6 +65,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 import javax.swing.JRootPane;
 import javax.swing.JToolBar;
+
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Image;
@@ -81,10 +85,13 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.Iterator;
 import java.util.ResourceBundle;
+
 import javax.swing.JOptionPane;
 import javax.swing.JSplitPane;
 import javax.swing.JToggleButton;
+
 import org.graphdrawing.graphml.GraphMLConstants;
+
 import y.anim.AnimationPlayer;
 import y.base.Edge;
 import y.base.EdgeMap;
@@ -456,6 +463,7 @@ public abstract class GUIBase {
     public void reset() {
         view.getGraph2D().clear();
         graphManager.reset();
+        MonomerStoreCache.getInstance().clearCustomMonomerDB();
         tabbedSequenceViewPanel.init(view.getGraph2D(), graphManager);
         view.fitContent();
         view.updateView();

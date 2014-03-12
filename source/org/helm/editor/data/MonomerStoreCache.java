@@ -1,10 +1,15 @@
 package org.helm.editor.data;
 
+import java.awt.Component;
 import java.io.IOException;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.swing.JOptionPane;
+
+import org.helm.editor.editor.MacromoleculeEditor;
 import org.helm.notation.MonomerException;
 import org.helm.notation.MonomerFactory;
 import org.helm.notation.MonomerStore;
@@ -132,16 +137,80 @@ public class MonomerStoreCache {
 		combineMonomerStores();
 	}
 
-	@Deprecated
 	/**
 	 * Adds monomers to the external Monomer Database. Existing monomers won't
-	 * be deleted. 
+	 * be deleted. A check for conflicting monomers is done before.
 	 * 
-	 * @param db monomer store to add
+	 * @param db
+	 *            monomer store to add
+	 * @throws MonomerException
+	 *             may occur when trying to add a monomer to the database
+	 * @throws IOException
+	 *             may occur when trying to add a monomer to the database
+	 * @throws IllegalArgumentException
+	 *             when at least one conflict was found.
 	 */
-	public void addExternalMonomers(MonomerStore store) {
-		// TODO merge
-		this.externalMonomerStore = store;
+	public void addExternalMonomers(Component owner, MonomerStore store)
+			throws IOException, MonomerException, IllegalArgumentException {
+		if (this.externalMonomerStore == null
+				|| this.externalMonomerStore.getMonomerDB() == null) {
+			setExternalMonomers(store);
+			return;
+		}
+
+		LinkedList<String> conflicts = findConflictingMonomers(store);
+		if (conflicts.size() > 0) {
+			JOptionPane.showMessageDialog(owner,
+					"Conflicting monomers were found: " + conflicts.toString());
+		}
+
+		for (String polymerType : store.getMonomerDB().keySet()) {
+			for (Monomer newMonomer : store.getMonomers(polymerType).values()) {
+				this.externalMonomerStore.addMonomer(newMonomer);
+			}
+		}
+
+		combineMonomerStores();
+	}
+
+	/**
+	 * This function checks for conflicts. The given store is compared to the
+	 * already saved MonomerStore. When a monomer with same ID is contained in
+	 * both stores, the smiles(structure) must be the same, else we have a
+	 * conflict.
+	 * 
+	 * @param store
+	 *            the store to check
+	 * @return list of all conflicting alternateIDs. Empty list when no
+	 *         conflicts were found.
+	 */
+	private LinkedList<String> findConflictingMonomers(MonomerStore store) {
+		LinkedList<String> conflictingIDs = new LinkedList<String>();
+
+		Monomer savedMonomerToCheck = null;
+
+		// compare this parameter to storage
+		for (String polymerType : store.getMonomerDB().keySet()) {
+			for (Monomer newMonomer : store.getMonomers(polymerType).values()) {
+				// When alternateID is already registered -> check for equal
+				// smiles
+				if (this.externalMonomerStore.hasMonomer(polymerType,
+						newMonomer.getAlternateId())) {
+					savedMonomerToCheck = this.externalMonomerStore.getMonomer(
+							polymerType, newMonomer.getAlternateId());
+					if (savedMonomerToCheck != null) {
+						if (!savedMonomerToCheck.getCanSMILES().equals(
+								newMonomer.getCanSMILES())) {
+							// add conflict when alternateIDs equal and
+							// smiles/structure differs
+							conflictingIDs.add(newMonomer.getAlternateId());
+						}
+					}
+				}
+			}
+		}
+
+		return conflictingIDs;
 	}
 
 	/**

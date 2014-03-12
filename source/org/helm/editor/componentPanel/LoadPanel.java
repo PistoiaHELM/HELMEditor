@@ -188,10 +188,9 @@ public class LoadPanel extends JPanel {
 			
             String helm = xHelmNotationParser.getComplexNotationString(doc.getRootElement());
             MonomerStore store = xHelmNotationParser.getMonomerStore(doc.getRootElement());
-            MonomerStoreCache.getInstance().addExternalMonomers(store);
+            MonomerStoreCache.getInstance().addExternalMonomers(this, store);
             
             ComplexNotationParser.validateComplexNotation(helm, store);
-			MonomerStoreCache.getInstance().setExternalMonomers(store);
 			
 			String complexNotation = ComplexNotationParser
 					.standardize(helm, store);

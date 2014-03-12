@@ -279,8 +279,12 @@ public class FileMenuAction extends TextMenuAction {
 
 		try {
 			ComplexNotationParser.validateComplexNotation(helmString, store);
-			MonomerStoreCache.getInstance().setExternalMonomers(store);
-		} catch (Exception ex) {
+			MonomerStoreCache.getInstance().addExternalMonomers(this.editor.getFrame(), store);
+		} catch(IllegalArgumentException ex) {
+			JOptionPane.showMessageDialog(editor.getFrame(),
+					ex.getMessage(), title, JOptionPane.WARNING_MESSAGE);
+		}
+		catch (Exception ex) {
 			JOptionPane.showMessageDialog(editor.getFrame(),
 					"Invalid Notation!", title, JOptionPane.WARNING_MESSAGE);
 			return;
