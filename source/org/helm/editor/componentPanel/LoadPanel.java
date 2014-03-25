@@ -48,6 +48,7 @@ import org.helm.editor.controller.ModelController;
 import org.helm.editor.data.MonomerStoreCache;
 import org.helm.editor.editor.MacromoleculeEditor;
 import org.helm.editor.utility.NotationParser;
+import org.helm.notation.MonomerFactory;
 import org.helm.notation.MonomerStore;
 import org.helm.notation.tools.ComplexNotationParser;
 import org.helm.notation.tools.NucleotideConverter;
@@ -179,21 +180,27 @@ public class LoadPanel extends JPanel {
 					ex);
 		}
 	}
-	
+
 	private void loadXHELMNotation(String inputText) {
 		try {
 			String existingNotation = editor.getNotation();
-			
+
 			Document doc = new SAXBuilder().build(new StringReader(inputText));
-			
-            String helm = xHelmNotationParser.getComplexNotationString(doc.getRootElement());
-            MonomerStore store = xHelmNotationParser.getMonomerStore(doc.getRootElement());
-            MonomerStoreCache.getInstance().addExternalMonomers(this, store);
-            
-            ComplexNotationParser.validateComplexNotation(helm, store);
-			
-			String complexNotation = ComplexNotationParser
-					.standardize(helm, store);
+
+			String helm = xHelmNotationParser.getComplexNotationString(doc
+					.getRootElement());
+			MonomerStore store = xHelmNotationParser.getMonomerStore(doc
+					.getRootElement());
+
+			// add monomers, but cancel loading when adding failed
+			if (!MonomerStoreCache.getInstance().addExternalMonomers(this,
+					store))
+				return;
+
+			ComplexNotationParser.validateComplexNotation(helm, store);
+
+			String complexNotation = ComplexNotationParser.standardize(helm,
+					store);
 
 			String newNotation = null;
 			if (null != existingNotation

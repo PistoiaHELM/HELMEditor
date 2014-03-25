@@ -143,6 +143,7 @@ public class MonomerStoreCache {
 	 * 
 	 * @param db
 	 *            monomer store to add
+	 * @return true when added successfully, else false.
 	 * @throws MonomerException
 	 *             may occur when trying to add a monomer to the database
 	 * @throws IOException
@@ -150,18 +151,19 @@ public class MonomerStoreCache {
 	 * @throws IllegalArgumentException
 	 *             when at least one conflict was found.
 	 */
-	public void addExternalMonomers(Component owner, MonomerStore store)
+	public boolean addExternalMonomers(Component owner, MonomerStore store)
 			throws IOException, MonomerException, IllegalArgumentException {
 		if (this.externalMonomerStore == null
 				|| this.externalMonomerStore.getMonomerDB() == null) {
 			setExternalMonomers(store);
-			return;
+			return true;
 		}
 
 		LinkedList<String> conflicts = findConflictingMonomers(store);
 		if (conflicts.size() > 0) {
 			JOptionPane.showMessageDialog(owner,
 					"Conflicting monomers were found: " + conflicts.toString());
+			return false;
 		}
 
 		for (String polymerType : store.getMonomerDB().keySet()) {
@@ -171,6 +173,8 @@ public class MonomerStoreCache {
 		}
 
 		combineMonomerStores();
+
+		return true;
 	}
 
 	/**
