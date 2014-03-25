@@ -281,7 +281,7 @@ public class FileMenuAction extends TextMenuAction {
 			ComplexNotationParser.validateComplexNotation(helmString, store);
 			// add monomers, but cancel when adding failed.
 			if (!MonomerStoreCache.getInstance().addExternalMonomers(
-					this.editor.getFrame(), store))
+					this.editor.getFrame(), store,helmString))
 				return;
 		} catch (IllegalArgumentException ex) {
 			JOptionPane.showMessageDialog(editor.getFrame(), ex.getMessage(),

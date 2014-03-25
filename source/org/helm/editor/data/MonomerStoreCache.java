@@ -7,15 +7,153 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.swing.JOptionPane;
+import javax.swing.*;
 
 import org.helm.editor.editor.MacromoleculeEditor;
 import org.helm.notation.MonomerException;
 import org.helm.notation.MonomerFactory;
 import org.helm.notation.MonomerStore;
+import org.helm.notation.NotationException;
 import org.helm.notation.model.Monomer;
+import org.helm.notation.tools.ComplexNotationParser;
 import org.helm.notation.tools.DeepCopy;
 import org.jdom.JDOMException;
+
+
+
+
+
+import java.awt.event.*;
+ 
+
+class EditConflictsDialog extends JDialog {
+	/** Generated UID */
+	private static final long serialVersionUID = 7754084536776806279L;
+
+	// private JTextField tfLeftBoundary;
+	private JTextField tfNewIdentifier;
+
+	private String newIdentifier;
+
+	public enum ModalResult {
+		OK, CANCEL
+	}
+
+	private ModalResult result;
+
+	/**
+	 * Builds the dialog including the layout
+	 */
+	public EditConflictsDialog(JFrame frame, String identifier) {
+		super(frame, true);
+
+		setLocationRelativeTo(frame);
+		 
+
+		JButton btnOK = new JButton("Ok");
+		btnOK.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				okButtonActionPerformed(evt);
+			}
+		});
+		JButton btnCancel = new JButton("Cancel");
+		btnCancel.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				cancelButtonActionPerformed(evt);
+			}
+		});
+
+		StringBuffer sb = new StringBuffer();
+		sb.append(identifier);
+		sb.append(" is already registered with a different structure");
+
+		JLabel lblLeftBoundary = new JLabel(sb.toString());
+		//
+		// tfLeftBoundary = new JTextField();
+		// tfLeftBoundary.setSize(50, 10);
+		// tfLeftBoundary.setMaximumSize(tfLeftBoundary.getSize());
+		// //tfLeftBoundary.addFocusListener(buildFocusListener(tfLeftBoundary));
+
+		JLabel lblRightBoundary = new JLabel(
+				"Please enter an alternative identifier");
+		tfNewIdentifier = new JTextField("");
+		tfNewIdentifier.setSize(50, 10);
+		tfNewIdentifier.setMaximumSize(tfNewIdentifier.getSize());
+		// tfRightBoundary.addFocusListener(buildFocusListener(tfRightBoundary));
+
+		GroupLayout layout = new GroupLayout(getContentPane());
+		getContentPane().setLayout(layout);
+		layout.setAutoCreateContainerGaps(true);
+		layout.setAutoCreateGaps(true);
+
+		layout.setVerticalGroup(layout
+				.createSequentialGroup()
+				.addGroup(
+						layout.createParallelGroup().addComponent(
+								lblLeftBoundary))
+				.addGroup(
+						layout.createParallelGroup()
+								.addComponent(lblRightBoundary)
+								.addComponent(tfNewIdentifier))
+				.addGroup(
+						layout.createParallelGroup().addComponent(btnCancel)
+								.addComponent(btnOK)));
+		layout.setHorizontalGroup(layout
+				.createSequentialGroup()
+				.addGroup(
+						layout.createParallelGroup()
+								.addComponent(lblLeftBoundary)
+								.addComponent(lblRightBoundary)
+								.addComponent(btnCancel))
+				.addGroup(layout.createParallelGroup()
+
+				.addComponent(tfNewIdentifier).addComponent(btnOK)));
+
+		getContentPane().requestFocus();
+
+		setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+		setTitle("Resolve Conflict");
+		setMinimumSize(new java.awt.Dimension(400, 140));
+
+	}
+
+	/**
+	 * Action for OK Button.
+	 * 
+	 * @param evt
+	 */
+	private void okButtonActionPerformed(ActionEvent evt) {
+		
+		if (tfNewIdentifier.getText().length()>0) {
+			newIdentifier = tfNewIdentifier.getText();
+			result = ModalResult.OK;
+			
+			this.dispose();
+		}
+		
+		
+	}
+
+	/**
+	 * Action for Cancel Button.
+	 * 
+	 * @param evt
+	 */
+	private void cancelButtonActionPerformed(ActionEvent evt) {
+		result = ModalResult.CANCEL;
+		this.dispose();
+	}
+
+	public String getNewIdentifier() {
+		return newIdentifier;
+	}
+	
+	public ModalResult getResult() {
+		return result;
+	}
+
+}
+
 
 /**
  * Describes a database containing 2 monomer stores: 1. Store that is held by
@@ -25,6 +163,11 @@ import org.jdom.JDOMException;
  * 
  */
 public class MonomerStoreCache {
+	
+	public enum ModalResult {
+		OK, CANCEL
+	}
+	
 	private static MonomerStoreCache _instance = null;
 
 	private MonomerStore internalMonomerStore;
@@ -151,7 +294,7 @@ public class MonomerStoreCache {
 	 * @throws IllegalArgumentException
 	 *             when at least one conflict was found.
 	 */
-	public boolean addExternalMonomers(Component owner, MonomerStore store)
+	public boolean addExternalMonomers(JFrame owner, MonomerStore store,String helmString)
 			throws IOException, MonomerException, IllegalArgumentException {
 		if (this.externalMonomerStore == null
 				|| this.externalMonomerStore.getMonomerDB() == null) {
@@ -159,13 +302,19 @@ public class MonomerStoreCache {
 			return true;
 		}
 
-		LinkedList<String> conflicts = findConflictingMonomers(store);
+		LinkedList<Monomer> conflicts = findConflictingMonomers(store);
 		if (conflicts.size() > 0) {
-			JOptionPane.showMessageDialog(owner,
-					"Conflicting monomers were found: " + conflicts.toString());
-			return false;
+			
+			boolean resolved=resolveConflicts(conflicts, store, helmString,owner);
+			
+//			JOptionPane.showMessageDialog(owner,
+//					"Conflicting monomers were found: " + conflicts.toString());
+			if	(!resolved) {
+				return false;
+			}
+			
 		}
-
+		System.out.println(store);
 		for (String polymerType : store.getMonomerDB().keySet()) {
 			for (Monomer newMonomer : store.getMonomers(polymerType).values()) {
 				this.externalMonomerStore.addMonomer(newMonomer);
@@ -177,6 +326,39 @@ public class MonomerStoreCache {
 		return true;
 	}
 
+	private boolean resolveConflicts(LinkedList<Monomer> list,MonomerStore store,String helmString,JFrame owner){
+		
+		 for (Monomer monomer : list){
+				EditConflictsDialog dialog=new EditConflictsDialog(owner,monomer.getAlternateId());
+				dialog.setVisible(true);
+				dialog.setLocationRelativeTo(owner);
+				if	(dialog.getResult()==EditConflictsDialog.ModalResult.OK){
+					System.out.println(dialog.getNewIdentifier());
+					System.out.println(helmString);
+					String newHelmString;
+					String oldIdentifier=monomer.getAlternateId();
+					String newIdentifier=dialog.getNewIdentifier();
+					monomer.setAlternateId(newIdentifier);
+					System.out.println(store.getMonomers("PEPTIDE"));
+//					try {
+//						newHelmString=ComplexNotationParser.replaceMonomer(helmString, monomer.getPolymerType(), oldIdentifier, newIdentifier, store);
+//					} catch (MonomerException | IOException | JDOMException
+//							| NotationException e) {
+//						// TODO Auto-generated catch block
+//						e.printStackTrace();
+//						return false;
+//					}
+				//	System.out.println(newHelmString);
+					
+				} 
+				else{
+					return false;
+				}
+			
+		 }
+		return true;
+		
+	}
 	/**
 	 * This function checks for conflicts. The given store is compared to the
 	 * already saved MonomerStore. When a monomer with same ID is contained in
@@ -188,8 +370,8 @@ public class MonomerStoreCache {
 	 * @return list of all conflicting alternateIDs. Empty list when no
 	 *         conflicts were found.
 	 */
-	private LinkedList<String> findConflictingMonomers(MonomerStore store) {
-		LinkedList<String> conflictingIDs = new LinkedList<String>();
+	private LinkedList<Monomer> findConflictingMonomers(MonomerStore store) {
+		LinkedList<Monomer> conflictingIDs = new LinkedList<Monomer>();
 
 		Monomer savedMonomerToCheck = null;
 
@@ -207,7 +389,7 @@ public class MonomerStoreCache {
 								newMonomer.getCanSMILES())) {
 							// add conflict when alternateIDs equal and
 							// smiles/structure differs
-							conflictingIDs.add(newMonomer.getAlternateId());
+							conflictingIDs.add(newMonomer);
 						}
 					}
 				}
