@@ -280,8 +280,9 @@ public class FileMenuAction extends TextMenuAction {
 		try {
 			ComplexNotationParser.validateComplexNotation(helmString, store);
 			// add monomers, but cancel when adding failed.
-			if (!MonomerStoreCache.getInstance().addExternalMonomers(
-					this.editor.getFrame(), store,helmString))
+			helmString = MonomerStoreCache.getInstance().addExternalMonomers(
+					this.editor.getFrame(), store, helmString);
+			if (helmString == null)
 				return;
 		} catch (IllegalArgumentException ex) {
 			JOptionPane.showMessageDialog(editor.getFrame(), ex.getMessage(),

@@ -193,8 +193,9 @@ public class LoadPanel extends JPanel {
 					.getRootElement());
 
 			// add monomers, but cancel loading when adding failed
-			if (!MonomerStoreCache.getInstance().addExternalMonomers(editor.getFrame(),
-					store,helm))
+			helm = MonomerStoreCache.getInstance().addExternalMonomers(editor.getFrame(),
+					store,helm);
+			if (helm == null)
 				return;
 
 			ComplexNotationParser.validateComplexNotation(helm, store);
