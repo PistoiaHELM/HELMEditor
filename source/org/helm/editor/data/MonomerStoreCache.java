@@ -166,7 +166,7 @@ public class MonomerStoreCache {
 		if (this.externalMonomerStore == null
 				|| this.externalMonomerStore.getMonomerDB() == null) {
 			setExternalMonomers(store);
-			return helmString;
+			//return helmString;
 		}
 
 		LinkedList<Monomer> conflicts = findConflictingMonomers(store);
@@ -268,9 +268,9 @@ public class MonomerStoreCache {
 			for (Monomer newMonomer : store.getMonomers(polymerType).values()) {
 				// When alternateID is already registered -> check for equal
 				// smiles
-				if (this.externalMonomerStore.hasMonomer(polymerType,
+				if (this.internalMonomerStore.hasMonomer(polymerType,
 						newMonomer.getAlternateId())) {
-					savedMonomerToCheck = this.externalMonomerStore.getMonomer(
+					savedMonomerToCheck = this.internalMonomerStore.getMonomer(
 							polymerType, newMonomer.getAlternateId());
 					if (savedMonomerToCheck != null) {
 						if (!savedMonomerToCheck.getCanSMILES().equals(
