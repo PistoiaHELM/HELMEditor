@@ -101,6 +101,7 @@ import org.helm.editor.utility.xmlparser.parser.TemplateParsingException;
 import org.helm.editor.utility.xmlparser.validator.ValidationTemplateExcaption;
 import org.helm.notation.MonomerException;
 import org.helm.notation.MonomerFactory;
+import org.helm.notation.MonomerStore;
 import org.helm.notation.NotationException;
 import org.helm.notation.NucleotideFactory;
 import org.helm.notation.StructureException;
@@ -2374,7 +2375,7 @@ public class MacromoleculeEditor extends GUIBase implements DataListener,
 		}
 	}
 
-	public void updateNotation(String notation) {
+	public void updateNotation(String notation, MonomerStore monomerStore) {
 		try {
 			if (notation == null || notation.equals("")
 					|| notation.equals("$$$$")) {
@@ -2387,8 +2388,8 @@ public class MacromoleculeEditor extends GUIBase implements DataListener,
 			// }
 
 			ComplexNotationParser.validateComplexNotation(notation,
-					MonomerStoreCache.getInstance().getCombinedMonomerStore());
-			GraphPair pair = NotationParser.getGraphPair(notation);
+					monomerStore);
+			GraphPair pair = NotationParser.getGraphPair(notation, monomerStore);
 
 			// set the graph and the graph manager
 			view.setGraph2D(pair.getGraph());
@@ -2517,7 +2518,7 @@ public class MacromoleculeEditor extends GUIBase implements DataListener,
 		try {
 
 			// always update graph in the editor..
-			updateNotation(event.getData());
+			updateNotation(event.getData(), MonomerStoreCache.getInstance().getCombinedMonomerStore());
 
 			updateAnnotator();
 			graphManager.getAnnotator().annotateAllBasePosition();
