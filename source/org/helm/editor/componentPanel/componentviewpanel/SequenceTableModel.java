@@ -21,13 +21,17 @@
  ******************************************************************************/
 package org.helm.editor.componentPanel.componentviewpanel;
 
+import org.helm.editor.data.MonomerStoreCache;
 import org.helm.editor.utility.ExceptionHandler;
+import org.helm.notation.MonomerStore;
 import org.helm.notation.tools.ComplexNotationParser;
 import org.helm.notation.tools.ExtinctionCoefficientCalculator;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.swing.table.AbstractTableModel;
 
 public class SequenceTableModel extends AbstractTableModel {
@@ -54,10 +58,11 @@ public class SequenceTableModel extends AbstractTableModel {
 
     public void init(String notation) {
         try {
-            String[] compNotations = ComplexNotationParser.decompose(notation);
+        	MonomerStore monomerStore=MonomerStoreCache.getInstance().getCombinedMonomerStore();
+            String[] compNotations = ComplexNotationParser.decompose(notation,monomerStore);
             List<SequenceTableDataModel> list = new ArrayList<SequenceTableDataModel>();
             for (int rowNumber = 1; rowNumber<=compNotations.length; rowNumber++) {
-                SequenceTableDataModel dataModel = SequenceTableDataModel.createSequenceTableDataModel(compNotations[rowNumber-1]);
+                SequenceTableDataModel dataModel = SequenceTableDataModel.createSequenceTableDataModel(compNotations[rowNumber-1],monomerStore);
                 dataModel.setAnnotation(String.valueOf(rowNumber));
                 list.add(dataModel);
             }

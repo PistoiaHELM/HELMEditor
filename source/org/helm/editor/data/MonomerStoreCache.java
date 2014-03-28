@@ -343,11 +343,6 @@ public class MonomerStoreCache {
 			sb.append(" is already registered with a different structure");
 
 			JLabel lblLeftBoundary = new JLabel(sb.toString());
-			//
-			// tfLeftBoundary = new JTextField();
-			// tfLeftBoundary.setSize(50, 10);
-			// tfLeftBoundary.setMaximumSize(tfLeftBoundary.getSize());
-			// //tfLeftBoundary.addFocusListener(buildFocusListener(tfLeftBoundary));
 
 			JLabel lblRightBoundary = new JLabel(
 					"Please enter an alternative identifier");

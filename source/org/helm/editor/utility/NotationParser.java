@@ -29,15 +29,18 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.helm.editor.data.EdgeMapKeys;
 import org.helm.editor.data.EditorEdgeInfoData;
 import org.helm.editor.data.GraphManager;
 import org.helm.editor.data.GraphPair;
 import org.helm.editor.data.MonomerInfo;
+import org.helm.editor.data.MonomerStoreCache;
 import org.helm.editor.data.NodeMapKeys;
 import org.helm.editor.monomerui.SimpleElemetFactory;
 import org.helm.notation.MonomerException;
 import org.helm.notation.MonomerFactory;
+import org.helm.notation.MonomerStore;
 import org.helm.notation.NotationException;
 import org.helm.notation.StructureException;
 import org.helm.notation.model.Attachment;
@@ -49,6 +52,7 @@ import org.helm.notation.tools.ComplexNotationParser;
 import org.helm.notation.tools.NucleotideSequenceParser;
 import org.helm.notation.tools.SimpleNotationParser;
 import org.jdom.JDOMException;
+
 import y.algo.Cycles;
 import y.algo.GraphChecker;
 import y.base.Edge;
@@ -207,10 +211,18 @@ public class NotationParser {
             targetAttachment = null;
         }
     }
+    
+    public static String transferDynamicChemicalModifiersToMonomers(String notation) throws NotationException, MonomerException, JDOMException, IOException {
+    	return transferDynamicChemicalModifiersToMonomers(notation, MonomerStoreCache.getInstance().getCombinedMonomerStore());
+    }
 
     // TY
-    public static String transferDynamicChemicalModifiersToMonomers(String notation) {
-        int p = notation.indexOf("{");
+    public static String transferDynamicChemicalModifiersToMonomers(String notation, MonomerStore monomerStore) throws NotationException, MonomerException, JDOMException, IOException {
+    	
+    
+		notation=ComplexNotationParser.getNotationByReplacingSmiles(notation,monomerStore);
+		
+       /* int p = notation.indexOf("{");
         while (p > 0) {
             int p2 = notation.indexOf("}", p + 1);
             if (p2 < p) {
@@ -223,11 +235,18 @@ public class NotationParser {
                 notation = notation.substring(0, p + 1) + monomer.getAlternateId() + notation.substring(p2);
             }
             p = notation.indexOf("{", p + 1);
-        }
+        }*/
 
+  
+    	
         return notation;
     }
 
+    public static GraphPair getGraphPair(String notation)
+            throws NotationException, MonomerException, IOException, JDOMException, StructureException {
+    	return getGraphPair(notation, MonomerStoreCache.getInstance().getCombinedMonomerStore());
+    }
+    
     /**
      * translate string notation to an (Graph2D, GraphManager) pair
      *
@@ -235,15 +254,15 @@ public class NotationParser {
      * @return a (graph, graphmanager) pair
      * @throws org.helm.notation.NotationException
      */
-    public static GraphPair getGraphPair(String notation)
+    public static GraphPair getGraphPair(String notation, MonomerStore monomerStore)
             throws NotationException, MonomerException, IOException, JDOMException, StructureException {
 
         //validate notation input
-        ComplexPolymer cp = ComplexNotationParser.parse(notation);
+        ComplexPolymer cp = ComplexNotationParser.parse(notation, monomerStore);
 
 
         // TY
-        notation = transferDynamicChemicalModifiersToMonomers(notation);
+        notation = transferDynamicChemicalModifiersToMonomers(notation, monomerStore);
 
 
         ArrayList<String> notationComponentsList = new ArrayList<String>();
@@ -289,7 +308,7 @@ public class NotationParser {
 
         // all polymers in this notation, <polymerName(RNA1), polymer Graph>
 //        String allNodeString = ComplexNotationParser.getAllNodeString(notation);
-        List<PolymerNode> polymerNodes = getPolymerList(notation);
+        List<PolymerNode> polymerNodes = getPolymerList(notation,monomerStore);
 
         //all nodes belongs to a certain sequence <sequnce name, sequence graph>
         Map<String, NodeCursor> nodeCursorMap = new HashMap<String, NodeCursor>();
@@ -761,8 +780,8 @@ public class NotationParser {
      * @return a list of polymers that is in this structure
      * @throws org.helm.notation.NotationException
      */
-    public static List<PolymerNode> getPolymerList(String complexNotation) throws NotationException, StructureException, MonomerException, JDOMException, IOException {
-        List<PolymerNode> list = ComplexNotationParser.getPolymerNodeList(ComplexNotationParser.getAllNodeString(complexNotation));
+    public static List<PolymerNode> getPolymerList(String complexNotation,MonomerStore monomerStore) throws NotationException, StructureException, MonomerException, JDOMException, IOException {
+        List<PolymerNode> list = ComplexNotationParser.getPolymerNodeList(ComplexNotationParser.getAllNodeString(complexNotation),monomerStore);
         String anotationString = ComplexNotationParser.getAllNodeLabelString(complexNotation);
         if (anotationString != null && !anotationString.equalsIgnoreCase("")) {
             String[] anotations = anotationString.split(ComplexNotationParser.LIST_LEVEL_DELIMITER_REGEX);

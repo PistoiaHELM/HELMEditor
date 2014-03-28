@@ -82,7 +82,7 @@ public class StructureFrame extends JFrame {
 		return list;
 	}
 
-	// loop through CHEM monomers by comparing canonical smiles
+	// loop through monomers by comparing canonical smiles
 	// if no monomer finder, register the smiles in monomer database as a
 	// session temporary record
 	public static Monomer getMonomerBySmiles(String smiles) {
@@ -244,9 +244,10 @@ public class StructureFrame extends JFrame {
 		} catch (Exception e) {
 		}
 
-		if (monomer == null
-				|| monomerInfo.getPolymerType().compareTo("CHEM") != 0)
-			return null;
+		//other monomers can be edited now too
+		//if (monomer == null
+		//		|| monomerInfo.getPolymerType().compareTo("CHEM") != 0)
+		//	return null;
 
 		if (frame == null) {
 			frame = new StructureFrame();

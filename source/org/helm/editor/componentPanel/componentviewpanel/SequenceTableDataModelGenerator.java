@@ -27,8 +27,8 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 import org.jdesktop.swingworker.SwingWorker;
-
-
+import org.helm.editor.data.MonomerStoreCache;
+import org.helm.notation.MonomerStore;
 import org.helm.notation.tools.ComplexNotationParser;
 
 @Deprecated
@@ -49,6 +49,8 @@ public class SequenceTableDataModelGenerator extends SwingWorker<Void, Void> {
 
     @Override
     protected Void doInBackground() throws Exception {
+    	
+    	MonomerStore monomerStore=MonomerStoreCache.getInstance().getCombinedMonomerStore();
 
         // render the notation, then get the new one before decompose
 //		Graph2DView viewer = new Graph2DView();
@@ -70,7 +72,7 @@ public class SequenceTableDataModelGenerator extends SwingWorker<Void, Void> {
         // In this collection we have right list of components
         ArrayList<String> components = new ArrayList<String>();
 
-        Collections.addAll(components, ComplexNotationParser.decompose(sortedNotation));
+        Collections.addAll(components, ComplexNotationParser.decompose(sortedNotation,monomerStore));
 
         // In this collection we have right order
         Queue<String> orderedComponents = new LinkedList<String>();
@@ -86,7 +88,7 @@ public class SequenceTableDataModelGenerator extends SwingWorker<Void, Void> {
                 if (components.get(j).contains(currentSplit)) {
                     String component = components.get(j);
 
-                    SequenceTableDataModel tableModel = SequenceTableDataModel.createSequenceTableDataModel(component);
+                    SequenceTableDataModel tableModel = SequenceTableDataModel.createSequenceTableDataModel(component,monomerStore);
                     tableModel.setAnnotation(String.valueOf(rowNumber));
 
                     rowNumber++;
