@@ -21,9 +21,12 @@
  ******************************************************************************/
 package org.helm.editor.componentPanel.componentviewpanel;
 
+import org.helm.editor.data.MonomerStoreCache;
+import org.helm.notation.MonomerStore;
 import org.helm.notation.model.MoleculeInfo;
 import org.helm.notation.tools.ComplexNotationParser;
 import org.helm.notation.tools.ExtinctionCoefficientCalculator;
+
 import java.text.DecimalFormat;
 import java.util.Set;
 import java.util.TreeSet;
@@ -93,7 +96,7 @@ public class SequenceTableDataModel {
         this.molFormula = molFormula;
     }
 
-    public static SequenceTableDataModel createSequenceTableDataModel(String notation) {
+    public static SequenceTableDataModel createSequenceTableDataModel(String notation,MonomerStore monomerStore) {
 
         SequenceTableDataModel dataModel = new SequenceTableDataModel();
         // ---- sequence ----
@@ -106,7 +109,8 @@ public class SequenceTableDataModel {
         try {
 //            String smiles = ComplexNotationParser.getComplexPolymerSMILES(notation);
 //            MoleculeInfo mi = StructureParser.getMoleculeInfo(smiles);
-            MoleculeInfo mi = ComplexNotationParser.getMoleculeInfo(notation);
+        	
+            MoleculeInfo mi = ComplexNotationParser.getMoleculeInfo(notation,monomerStore);
             dataModel.molWt = decimalFormat.format(mi.getMolecularWeight());
             dataModel.molFormula = mi.getMolecularFormula();
         } catch (Exception e) {
@@ -116,7 +120,7 @@ public class SequenceTableDataModel {
 
         // -- extinction coefficient
         try {
-            float result = ExtinctionCoefficientCalculator.getInstance().calculateFromComplexNotation(notation, ExtinctionCoefficientCalculator.RNA_UNIT_TYPE);
+            float result = ExtinctionCoefficientCalculator.getInstance().calculateFromComplexNotation(notation, ExtinctionCoefficientCalculator.RNA_UNIT_TYPE,monomerStore);
             dataModel.extCoeff = decimalFormat.format(result);
 
         } catch (Exception e) {

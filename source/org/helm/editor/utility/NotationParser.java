@@ -308,7 +308,7 @@ public class NotationParser {
 
         // all polymers in this notation, <polymerName(RNA1), polymer Graph>
 //        String allNodeString = ComplexNotationParser.getAllNodeString(notation);
-        List<PolymerNode> polymerNodes = getPolymerList(notation);
+        List<PolymerNode> polymerNodes = getPolymerList(notation,monomerStore);
 
         //all nodes belongs to a certain sequence <sequnce name, sequence graph>
         Map<String, NodeCursor> nodeCursorMap = new HashMap<String, NodeCursor>();
@@ -780,8 +780,8 @@ public class NotationParser {
      * @return a list of polymers that is in this structure
      * @throws org.helm.notation.NotationException
      */
-    public static List<PolymerNode> getPolymerList(String complexNotation) throws NotationException, StructureException, MonomerException, JDOMException, IOException {
-        List<PolymerNode> list = ComplexNotationParser.getPolymerNodeList(ComplexNotationParser.getAllNodeString(complexNotation));
+    public static List<PolymerNode> getPolymerList(String complexNotation,MonomerStore monomerStore) throws NotationException, StructureException, MonomerException, JDOMException, IOException {
+        List<PolymerNode> list = ComplexNotationParser.getPolymerNodeList(ComplexNotationParser.getAllNodeString(complexNotation),monomerStore);
         String anotationString = ComplexNotationParser.getAllNodeLabelString(complexNotation);
         if (anotationString != null && !anotationString.equalsIgnoreCase("")) {
             String[] anotations = anotationString.split(ComplexNotationParser.LIST_LEVEL_DELIMITER_REGEX);
