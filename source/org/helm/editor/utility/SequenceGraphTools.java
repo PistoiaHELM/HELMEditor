@@ -807,6 +807,19 @@ public class SequenceGraphTools {
 
 	public static boolean isChemicalModifier(Node node)
 			throws MonomerException, IOException, JDOMException {
+		
+		return isModifierOfType(node, Monomer.CHEMICAL_POLYMER_TYPE);
+	}
+	
+	public static boolean isPeptideModifier(Node node)
+			throws MonomerException, IOException, JDOMException {
+		
+		return isModifierOfType(node, Monomer.PEPTIDE_POLYMER_TYPE);
+	}
+		
+	
+	private static boolean isModifierOfType(Node node,String polymerType)
+			throws MonomerException, IOException, JDOMException {
 		if (node == null)
 			return false;
 
@@ -815,8 +828,7 @@ public class SequenceGraphTools {
 				.getDataProvider(NodeMapKeys.MONOMER_REF);
 
 		MonomerInfo monomerInfo = (MonomerInfo) monomerInfoMap.get(node);
-		return monomerInfo.getPolymerType().equalsIgnoreCase(
-				Monomer.CHEMICAL_POLYMER_TYPE);
+		return monomerInfo.getPolymerType().equalsIgnoreCase(polymerType);
 	}
 
 }

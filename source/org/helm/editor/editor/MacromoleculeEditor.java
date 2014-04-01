@@ -451,7 +451,8 @@ public class MacromoleculeEditor extends GUIBase implements DataListener,
 							}
 							popup.show(ev.getComponent(), ev.getX(), ev.getY());
 
-							if (SequenceGraphTools.isChemicalModifier(v)) {
+							//SM 2014-03-31 allow editing monomer structure for peptides
+							if (SequenceGraphTools.isChemicalModifier(v) || SequenceGraphTools.isPeptideModifier(v)) {
 								editChemicalModifierItem.setEnabled(true);
 							} else {
 								editChemicalModifierItem.setEnabled(false);

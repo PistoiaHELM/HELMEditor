@@ -27,7 +27,11 @@ import chemaxon.struc.Molecule;
 import chemaxon.struc.MolAtom;
 
 import java.awt.BorderLayout;
+
 import javax.swing.JPanel;
+
+
+
 import java.util.*;
 
 /**

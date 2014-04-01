@@ -21,10 +21,14 @@
  ******************************************************************************/
 package org.helm.editor.editor;
 
+import org.helm.notation.MonomerFactory;
+import org.helm.notation.MonomerStore;
 import org.helm.notation.model.*;
 import org.helm.editor.data.MonomerStoreCache;
 import org.helm.editor.data.MonomerInfo;
 import org.helm.editor.utility.GraphUtils;
+
+
 
 import javax.swing.*;
 
@@ -46,6 +50,7 @@ public class StructureFrame extends JFrame {
 
 	private static int iX = 0;
 	private static StructureFrame frame = null;
+	private Monomer monomer;
 
 	private StructureFrame() {
 		super();
@@ -65,6 +70,9 @@ public class StructureFrame extends JFrame {
 	public static List<String> getRAtoms(String smiles) {
 		java.util.ArrayList<String> list = new java.util.ArrayList<String>();
 		int p = smiles.indexOf("|$");
+		if (p < 0) {
+			p = smiles.indexOf("|r,$");
+		}
 		if (p < 0)
 			return list;
 		smiles = smiles.substring(p + 2);
@@ -85,11 +93,13 @@ public class StructureFrame extends JFrame {
 	// loop through CHEM monomers by comparing canonical smiles
 	// if no monomer finder, register the smiles in monomer database as a
 	// session temporary record
-	public static Monomer getMonomerBySmiles(String smiles) {
+	public static Monomer getMonomerBySmiles(String smiles,String polymerType, MonomerStore storeToAdd) {
+		
+		
 		Map<String, Monomer> map = null;
 		try {
 			map = MonomerStoreCache.getInstance().getCombinedMonomerStore()
-					.getMonomerDB().get("CHEM");
+					.getMonomerDB().get(polymerType);
 			// map =
 			// org.helm.notation.MonomerFactory.getInstance().getMonomerDB().get("CHEM");
 		} catch (Exception e) {
@@ -105,7 +115,7 @@ public class StructureFrame extends JFrame {
 				break;
 			}
 		}
-
+		
 		if (monomer == null) {
 			// no monomer define, then a new should be created
 			boolean r1 = false;
@@ -126,20 +136,30 @@ public class StructureFrame extends JFrame {
 				return null;
 
 			// if not, then create new one
+			
+			
 			monomer = new Monomer();
-			monomer.setMonomerType("Undefined");
-			monomer.setPolymerType("CHEM");
+  			monomer.setPolymerType(polymerType);
 			monomer.setCanSMILES(smiles);
 			monomer.setName("Dynamic");
 
 			// make sure it assigns a unique alternaeId
 			String alternateId = null;
 			while (true) {
-				alternateId = "CM#" + (++iX);
+				alternateId = "AM#" + (++iX);
 				if (!map.containsKey(alternateId))
 					break;
 			}
 			monomer.setAlternateId(alternateId);
+			
+			if (polymerType == Monomer.CHEMICAL_POLYMER_TYPE) {
+				monomer.setMonomerType(Monomer.UNDEFINED_MOMONER_TYPE);
+				
+			} else {
+				monomer.setMonomerType(Monomer.BACKBONE_MOMONER_TYPE);
+				monomer.setNaturalAnalog("X");
+			}
+			
 			monomer.setNewMonomer(true);
 
 			int index = 0;
@@ -155,9 +175,11 @@ public class StructureFrame extends JFrame {
 
 			// add the new monomer to the dictionary
 			try {
-				org.helm.notation.MonomerFactory.getInstance().addNewMonomer(
+				storeToAdd.addNewMonomer(
 						monomer);
-				map.put(monomer.getAlternateId(), monomer);
+				MonomerFactory.setDBChanged( true);
+				//map.put(monomer.getAlternateId(), monomer);
+				
 			} catch (Exception e) {
 				// JOptionPane.showMessageDialog(null, e.getMessage(), "Error",
 				// JOptionPane.WARNING_MESSAGE);
@@ -181,8 +203,10 @@ public class StructureFrame extends JFrame {
 			return;
 		}
 
+		MonomerStore store = MonomerStoreCache.getInstance().getMonomerStore(this.monomer);
+		
 		// return the monomer corresponding to the smiles
-		Monomer monomer = getMonomerBySmiles(smiles);
+		Monomer monomer = getMonomerBySmiles(smiles,this.monomer.getPolymerType(), store);
 		if (monomer == null) {
 			String msg = "Connection points R atoms not defined correctly.  Please use R1, R2 and R3 only.";
 			JOptionPane.showMessageDialog(editor.getFrame(), msg, "Error",
@@ -230,8 +254,11 @@ public class StructureFrame extends JFrame {
 			s = monomer.getCanSMILES();
 		}
 
+		
+		this.monomer = monomer;
 		structurePanel.setEditMode(true);
 		structurePanel.setMol(s);
+		
 	}
 
 	public static JFrame showDialog(MacromoleculeEditor editor,
@@ -245,7 +272,8 @@ public class StructureFrame extends JFrame {
 		}
 
 		if (monomer == null
-				|| monomerInfo.getPolymerType().compareTo("CHEM") != 0)
+				|| //monomerInfo.getPolymerType().compareTo("CHEM") != 0)
+				!(monomerInfo.getPolymerType().equals("CHEM") || monomerInfo.getPolymerType().equals("PEPTIDE")))
 			return null;
 
 		if (frame == null) {

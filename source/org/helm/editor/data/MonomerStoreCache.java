@@ -60,6 +60,26 @@ public class MonomerStoreCache {
 	}
 
 	/**
+	 * get the monomer store a monomer belongs to
+	 * @param monomer
+	 * @return
+	 */
+	public MonomerStore getMonomerStore( Monomer monomer) {
+		String polymerType = monomer.getPolymerType();
+		String alternateId = monomer.getAlternateId();
+		
+		if ( this.externalMonomerStore!= null && this.externalMonomerStore.hasMonomer(polymerType, alternateId)) {
+			return this.externalMonomerStore;
+		}
+		else if ( this.internalMonomerStore.hasMonomer(polymerType, alternateId)) {
+			return this.internalMonomerStore;
+		}
+		else {
+			return null;
+		}
+	}
+	
+	/**
 	 * Store synchronization. All external monomers are included, together with
 	 * every internal monomer with an alternate id that is not yet included in
 	 * the externals. This ensures that every id is used only once.
@@ -177,8 +197,6 @@ public class MonomerStoreCache {
 			boolean resolved = resolveConflicts(conflicts, newNames, store,
 					owner);
 
-			// JOptionPane.showMessageDialog(owner,
-			// "Conflicting monomers were found: " + conflicts.toString());
 			if (!resolved) {
 				return null;
 			}
@@ -188,8 +206,10 @@ public class MonomerStoreCache {
 		System.out.println(conflicts);
 		LinkedList<String> oldNames = new LinkedList<String>();
 		int monomerIndex = -1;
+		//add monomers in store to externalStore
 		for (String polymerType : store.getMonomerDB().keySet()) {
 			for (Monomer newMonomer : store.getMonomers(polymerType).values()) {
+				//add monomer if there isn't a conflict
 				monomerIndex = conflicts.lastIndexOf(newMonomer);
 				if (monomerIndex < 0)
 					this.externalMonomerStore.addMonomer(newMonomer);
@@ -223,7 +243,14 @@ public class MonomerStoreCache {
 
 		return newHelmString;
 	}
-
+	/**
+	 * for the list of conflicts the user is asked to enter alternate ids
+	 * @param list
+	 * @param newNames
+	 * @param store
+	 * @param owner
+	 * @return
+	 */
 	private boolean resolveConflicts(LinkedList<Monomer> list,
 			LinkedList<String> newNames, MonomerStore store, JFrame owner) {
 
@@ -233,10 +260,7 @@ public class MonomerStoreCache {
 			dialog.setVisible(true);
 			dialog.setLocationRelativeTo(owner);
 			if (dialog.getResult() == ModalResult.OK) {
-				System.out.println(dialog.getNewIdentifier());
-				newNames.add(dialog.getNewIdentifier());
-
-				System.out.println(store.getMonomers("PEPTIDE"));
+				newNames.add(dialog.getNewIdentifier());			
 
 			} else {
 				return false;
