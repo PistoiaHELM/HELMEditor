@@ -69,13 +69,15 @@ public class StructureFrame extends JFrame {
 	// Get all R atoms from a given smiles string
 	public static List<String> getRAtoms(String smiles) {
 		java.util.ArrayList<String> list = new java.util.ArrayList<String>();
+		int offset=2;
 		int p = smiles.indexOf("|$");
 		if (p < 0) {
 			p = smiles.indexOf("|r,$");
+			offset=4;
 		}
 		if (p < 0)
 			return list;
-		smiles = smiles.substring(p + 2);
+		smiles = smiles.substring(p + offset);
 		p = smiles.indexOf("$|");
 		if (p > 0)
 			smiles = smiles.substring(0, p);
