@@ -22,15 +22,20 @@
 package org.helm.editor.action;
 
 import chemaxon.struc.Molecule;
+
+import org.helm.editor.data.MonomerStoreCache;
 import org.helm.editor.editor.ChemicalStructureViewer;
 import org.helm.editor.editor.MacromoleculeEditor;
 import org.helm.editor.utility.ExceptionHandler;
+import org.helm.notation.MonomerStore;
 import org.helm.notation.tools.ComplexNotationParser;
 import org.helm.notation.tools.StructureParser;
+
 import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 
@@ -77,10 +82,13 @@ public class ShowMolecularStructureAction extends AbstractAction {
                 JOptionPane.showMessageDialog(editor.getFrame(), warningMsg, "Molecular Structure", JOptionPane.WARNING_MESSAGE);
             } else {
         
+            	//SM 2014-04-14 show structure did fail for monomers coming from xhelm (XHELM-15)
+            	MonomerStore store=MonomerStoreCache.getInstance().getCombinedMonomerStore();
+            	
                 //TY
-                notation = org.helm.editor.utility.NotationParser.transferDynamicChemicalModifiersToMonomers(notation);
+                notation = org.helm.editor.utility.NotationParser.transferDynamicChemicalModifiersToMonomers(notation,store);
         
-                smiles = ComplexNotationParser.getComplexPolymerSMILES(notation);
+                smiles = ComplexNotationParser.getComplexPolymerSMILES(notation,store);
                 Molecule mol  = StructureParser.getMolecule(smiles);
                 mol.dearomatize();
                 viewer.setStructure(mol);
