@@ -215,8 +215,9 @@ public class LoadPanel extends JPanel {
 			editor.synchronizeZoom();
 			ModelController.notationUpdated(newNotation, _ownerCode);
 		} catch (Exception ex) {
+			// JF: HELM-24: "Error Loading HELM" durch " Error loading XHELM" ersetzt
 			JOptionPane.showMessageDialog(editor.getFrame(), ex.getMessage(),
-					"Error Loading HELM Notation", JOptionPane.ERROR_MESSAGE);
+					"Error Loading XHELM Notation", JOptionPane.ERROR_MESSAGE);
 			Logger.getLogger(LoadPanel.class.getName()).log(Level.SEVERE, null,
 					ex);
 		}
