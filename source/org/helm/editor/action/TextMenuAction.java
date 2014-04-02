@@ -160,7 +160,8 @@ public class TextMenuAction extends AbstractAction {
 	protected TextFileFilter getTextFileFilter(String textType) {
 		TextFileFilter fileFilter = null;
 		if (textType.equals(NOTATION_TEXT_TYPE)) {
-			fileFilter = new TextFileFilter("helm",
+			//JF: XHELM-23 Punkt vor helm als ersten Parameter, da sonst auch xhelm-Dateien angezeigt werden
+			fileFilter = new TextFileFilter(".helm",
 					"HELM Notation File (*.helm)");
 		} else if (textType.equals(CANONICAL_HELM_TEXT_TYPE)) {
 			fileFilter = new TextFileFilter("chelm",
