@@ -327,7 +327,20 @@ public class Graph2NotationTranslator {
                 positionNodeMap.setInt(startingNode, monomerCount++);
                 parentNodeMap.set(startingNode, hyperNode);
 
+                boolean containsSmiles = false;
+                StringBuilder codeWithSmiles = new StringBuilder();
+                
+                if ( monomer.getAlternateId().startsWith("AM#")) {
+                	containsSmiles = true;
+                	codeWithSmiles.append("["+monomer.getCanSMILES()+"]");
+                }
+                else {
+                	codeWithSmiles.append(getMonomerString(monomerInfo));
+                }
+                
                 code.append(getMonomerString(monomerInfo));
+                
+          
                 successors = startingNode.successors();
                 Set<Node> visitedPeptides = new HashSet<Node>();
                 visitedPeptides.add(startingNode);
@@ -335,7 +348,10 @@ public class Graph2NotationTranslator {
                 while (successors != null && successors.ok()) {
                 	Node currentNode = successors.node(); 
                     monomerInfo = (MonomerInfo) nodeMap.get(currentNode);
+                    monomer = GraphUtils.getMonomerDB().get(monomerInfo.getPolymerType()).get(monomerInfo.getMonomerID());
                     if (MonomerInfoUtils.isPeptidePolymer(currentNode)) {
+                    	
+                     
                     	
                     	//cycle
                     	if (visitedPeptides.contains(currentNode)) {
@@ -351,7 +367,18 @@ public class Graph2NotationTranslator {
                         monomerInfo = (MonomerInfo) nodeMap.get(currentNode);
                         code.append(".");
                         code.append(getMonomerString(monomerInfo));
-
+                         
+		  
+                        codeWithSmiles.append(".");
+                        if ( monomer.getAlternateId().startsWith("AM#")) {
+                        	containsSmiles = true;
+                        	codeWithSmiles.append("["+monomer.getCanSMILES()+"]");
+                        }
+                        else {
+                        	codeWithSmiles.append(getMonomerString(monomerInfo));
+                        }
+                        
+                        
                         successors = currentNode.successors();
 
                         successors.toFirst();
@@ -363,7 +390,10 @@ public class Graph2NotationTranslator {
                     }
                 
                 }
-
+				//SM: ad hoc monomers should be exported as inline smiles code 
+                if ( containsSmiles) {
+                	smilesMaps.set(hyperNode, codeWithSmiles.toString());
+                }
                 hyperNodeNameMap.set(hyperNode, Monomer.PEPTIDE_POLYMER_TYPE + peptideCount);
                 hyperNodeMapPolymerType.set(hyperNode, Monomer.PEPTIDE_POLYMER_TYPE);
                 hyperNodeMapPolymerName.set(hyperNode, code.toString());
@@ -378,7 +408,7 @@ public class Graph2NotationTranslator {
                 
                 // TY
                 String c = code.toString();
-                if (c != null && c.length() > 3 && c.startsWith("CM#"))
+                if (c != null && c.length() > 3 && c.startsWith("AM#"))
                     smilesMaps.set(hyperNode, monomer.getCanSMILES());
 
                 hyperNodeNameMap.set(hyperNode, Monomer.CHEMICAL_POLYMER_TYPE + chemCount);

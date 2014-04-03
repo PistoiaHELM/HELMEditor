@@ -70,7 +70,7 @@ public class NotationCoreCreator implements NotationCreator{
             } else if (type.equalsIgnoreCase(Monomer.PEPTIDE_POLYMER_TYPE)) {
                 peptideCount++;
                 
-                notation.append( createNotationString(currentNode, nameMap, hyperNodePolymerNotationMap, null, type, peptideCount) );
+                notation.append( createNotationString(currentNode, nameMap, hyperNodePolymerNotationMap, smilesMap, type, peptideCount) );
             } else if (type.equalsIgnoreCase(Monomer.CHEMICAL_POLYMER_TYPE)){
                 chemCount++;
                 
@@ -99,6 +99,7 @@ public class NotationCoreCreator implements NotationCreator{
         
         // TY
         String smiles = smilesMap == null ? null : (String)smilesMap.get(hyperNode);
+   
         notationString.append(smiles != null ? smiles : (String) hyperNodePolymerNatationMap.get(hyperNode) );
         
         
