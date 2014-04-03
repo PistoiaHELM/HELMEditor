@@ -83,7 +83,7 @@ public class MoleculePropertyAction extends AbstractAction {
 
         String smiles = null;
         try {
-            smiles = ComplexNotationParser.getComplexPolymerSMILES(notation);
+            smiles = ComplexNotationParser.getComplexPolymerSMILES(notation,editor.getMonomerStore());
         } catch (Exception ex) {
             Logger.getLogger(MoleculePropertyAction.class.getName()).log(Level.SEVERE, null, ex);
         }

@@ -274,7 +274,7 @@ public class StructureFrame extends JFrame {
 		}
 
 		if (monomer == null
-				|| //monomerInfo.getPolymerType().compareTo("CHEM") != 0)
+				|| //support peptide and chem
 				!(monomerInfo.getPolymerType().equals("CHEM") || monomerInfo.getPolymerType().equals("PEPTIDE")))
 			return null;
 		
