@@ -29,6 +29,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.helm.editor.data.EdgeMapKeys;
 import org.helm.editor.data.EditorEdgeInfoData;
@@ -236,6 +238,17 @@ public class NotationParser {
             }
             p = notation.indexOf("{", p + 1);
         }*/
+		
+		
+		//XHELM-28:remove smiles code between $$$ and $ at the end of the notation coming from editor.getSelectedNotation()
+		Pattern p=Pattern.compile("\\$\\$\\$(.+\\|(r,)?\\$.+)\\$$");
+		
+		Matcher m=p.matcher(notation);
+		while(m.find()){
+		    //System.out.println(m.group(1));
+		    notation=notation.replace(m.group(1), "");
+		}
+
 
   
     	
