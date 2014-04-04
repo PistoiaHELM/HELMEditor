@@ -40,6 +40,7 @@ import org.helm.editor.utility.ClipBoardProcessor;
 import org.helm.editor.utility.ExceptionHandler;
 import org.helm.editor.utility.NotationParser;
 import org.helm.editor.worker.PDBFileGenerator;
+import org.helm.notation.MonomerStore;
 import org.helm.notation.tools.ComplexNotationParser;
 import org.helm.notation.tools.StructureParser;
 import org.helm.notation.tools.xHelmNotationParser;
@@ -85,6 +86,7 @@ public class TextMenuAction extends AbstractAction {
 			title = "Save " + textType;
 		}
 		String notation = editor.getNotation();
+		MonomerStore store=editor.getMonomerStore();
 		if (null == notation || notation.trim().length() == 0) {
 			JOptionPane.showMessageDialog(editor.getFrame(),
 					"Structure is empty!", title, JOptionPane.WARNING_MESSAGE);
@@ -99,24 +101,23 @@ public class TextMenuAction extends AbstractAction {
 				text = NotationParser.addChemMonomerBracket(notation);
 				;
 			} else if (textType.equals(CANONICAL_HELM_TEXT_TYPE)) {
-				text = ComplexNotationParser.getCanonicalNotation(notation);
+				text = ComplexNotationParser.getCanonicalNotation(notation,store);
 			} else if (textType.equals(XHELM_TEXT_TYPE)) {
 				text = ComplexNotationParser.getCanonicalNotation(notation,
-						MonomerStoreCache.getInstance()
-								.getCombinedMonomerStore());
-				text = xHelmNotationParser.writeXHELM(text, MonomerStoreCache.getInstance().getCombinedMonomerStore());
+						store);
+				text = xHelmNotationParser.writeXHELM(text, store);
 			} else if (textType.equals(SMILES_TEXT_TYPE)) {
 				String smiles = ComplexNotationParser
-						.getComplexPolymerSMILES(notation);
+						.getComplexPolymerSMILES(notation,store);
 				Molecule mol = StructureParser.getMolecule(smiles);
 				mol.dearomatize();
 				mol.clean(2, null);
 				text = mol.exportToFormat("smiles");
 			} else if (textType.equals(PDB_TEXT_TYPE)) {
-				new PDBFileGenerator(editor, notation, this).execute();
+				new PDBFileGenerator(editor, notation, this,store).execute();
 			} else if (textType.equals(MOLFILE_TEXT_TYPE)) {
 				String smiles = ComplexNotationParser
-						.getComplexPolymerSMILES(notation);
+						.getComplexPolymerSMILES(notation,store);
 				Molecule mol = StructureParser.getMolecule(smiles);
 				mol.dearomatize();
 				mol.clean(2, null);

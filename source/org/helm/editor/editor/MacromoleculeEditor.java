@@ -2425,6 +2425,12 @@ public class MacromoleculeEditor extends GUIBase implements DataListener,
 		}
 
 	}
+	
+	
+	public MonomerStore getMonomerStore(){
+		return MonomerStoreCache.getInstance().getCombinedMonomerStore();
+		
+	}
 
 	/**
 	 * produce the canonical notation for this graph

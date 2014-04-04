@@ -23,11 +23,15 @@ package org.helm.editor.worker;
 
 import org.helm.editor.action.TextMenuAction;
 import org.helm.editor.editor.MacromoleculeEditor;
+import org.helm.notation.MonomerStore;
 import org.helm.notation.tools.ComplexNotationParser;
+
 import java.awt.Cursor;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.swing.JOptionPane;
+
 import org.jdesktop.swingworker.SwingWorker;
 import org.openbabel.OBConversion;
 import org.openbabel.OBMol;
@@ -42,16 +46,18 @@ public class PDBFileGenerator extends SwingWorker<String, Void> {
     private MacromoleculeEditor editor;
     private String HELMNotation;
     private TextMenuAction menuAction;
+    private MonomerStore monomerStore;
 
-    public PDBFileGenerator(MacromoleculeEditor editor, String HELMNotation, TextMenuAction menuAction) {
+    public PDBFileGenerator(MacromoleculeEditor editor, String HELMNotation, TextMenuAction menuAction,MonomerStore monomerStore) {
         this.editor = editor;
         this.HELMNotation = HELMNotation;
         this.menuAction = menuAction;
+        this.monomerStore=monomerStore;
     }
 
     @Override
     protected String doInBackground() throws Exception {
-        String smiles = ComplexNotationParser.getComplexPolymerSMILES(HELMNotation);
+        String smiles = ComplexNotationParser.getComplexPolymerSMILES(this.HELMNotation,this.monomerStore);
         String pdb = SMILES2OpenBabelPDB(smiles);
         return pdb;
     }
