@@ -104,8 +104,7 @@ public class TextMenuAction extends AbstractAction {
 			} else if (textType.equals(CANONICAL_HELM_TEXT_TYPE)) {
 				text = ComplexNotationParser.getCanonicalNotation(notation,store);
 			} else if (textType.equals(XHELM_TEXT_TYPE)) {
-				text = ComplexNotationParser.getCanonicalNotation(notation,
-						store);
+				text = NotationParser.addChemMonomerBracket(notation);
 				text = xHelmNotationExporter.writeXHELM(text, store);
 			} else if (textType.equals(SMILES_TEXT_TYPE)) {
 				String smiles = ComplexNotationParser
