@@ -191,14 +191,16 @@ public class LoadPanel extends JPanel {
 					.getRootElement());
 			MonomerStore store = xHelmNotationParser.getMonomerStore(doc
 					.getRootElement());
-
+			//processes notation and writes inline monomers to store
+			ComplexNotationParser.validateComplexNotation(helm, store);
+			
 			// add monomers, but cancel loading when adding failed
 			helm = MonomerStoreCache.getInstance().addExternalMonomers(editor.getFrame(),
 					store,helm);
 			if (helm == null)
 				return;
 
-			ComplexNotationParser.validateComplexNotation(helm, store);
+			
 
 			String complexNotation = ComplexNotationParser.standardize(helm,
 					store);
