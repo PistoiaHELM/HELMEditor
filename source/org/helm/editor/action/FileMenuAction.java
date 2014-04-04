@@ -45,6 +45,7 @@ import org.helm.editor.worker.PDBFileGenerator;
 import org.helm.notation.MonomerStore;
 import org.helm.notation.tools.ComplexNotationParser;
 import org.helm.notation.tools.StructureParser;
+import org.helm.notation.tools.xHelmNotationExporter;
 import org.helm.notation.tools.xHelmNotationParser;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -139,7 +140,7 @@ public class FileMenuAction extends TextMenuAction {
 				}
 				textToSave = sb.toString();
 			} else if (textType.equals(XHELM_TEXT_TYPE)) {
-				textToSave = xHelmNotationParser.writeXHELM(notation,
+				textToSave = xHelmNotationExporter.writeXHELM(notation,
 						MonomerStoreCache.getInstance()
 								.getCombinedMonomerStore());
 			} else if (textType.equals(CANONICAL_HELM_TEXT_TYPE)) {

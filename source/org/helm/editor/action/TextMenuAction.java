@@ -43,6 +43,7 @@ import org.helm.editor.worker.PDBFileGenerator;
 import org.helm.notation.MonomerStore;
 import org.helm.notation.tools.ComplexNotationParser;
 import org.helm.notation.tools.StructureParser;
+import org.helm.notation.tools.xHelmNotationExporter;
 import org.helm.notation.tools.xHelmNotationParser;
 
 /**
@@ -105,7 +106,7 @@ public class TextMenuAction extends AbstractAction {
 			} else if (textType.equals(XHELM_TEXT_TYPE)) {
 				text = ComplexNotationParser.getCanonicalNotation(notation,
 						store);
-				text = xHelmNotationParser.writeXHELM(text, store);
+				text = xHelmNotationExporter.writeXHELM(text, store);
 			} else if (textType.equals(SMILES_TEXT_TYPE)) {
 				String smiles = ComplexNotationParser
 						.getComplexPolymerSMILES(notation,store);
