@@ -338,7 +338,7 @@ public class MonomerMergeManager extends javax.swing.JDialog {
 						"Register Success", JOptionPane.INFORMATION_MESSAGE);
 				setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 
-			} catch (IOException | MonomerException | JDOMException e) {
+			} catch (Exception e) {
 				Logger.getLogger(MonomerMergeManager.class.getName()).log(
 						Level.SEVERE, null, e);
 				JOptionPane.showMessageDialog(getParent(),
