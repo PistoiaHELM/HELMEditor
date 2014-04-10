@@ -79,6 +79,34 @@ public class MonomerStoreCache {
 		}
 	}
 	
+	public MonomerStore getExternalStoreOnlyMonomers() {
+		if (this.externalMonomerStore != null) {
+			MonomerStore store=new MonomerStore();
+			for (String polymerType :this.externalMonomerStore.getPolymerTypeSet()){
+				for (Monomer m: this.externalMonomerStore.getMonomers(polymerType).values()){
+					if (this.internalMonomerStore.getMonomer(polymerType, m.getAlternateId())==null){
+						
+						try {
+							store.addMonomer(m);
+						} catch (Exception e) {
+							e.printStackTrace();
+							Logger.getLogger(MonomerStoreCache.class.getName())
+							.log(Level.WARNING,
+									"Error ocurred when adding "+m.getAlternateId()+"to monomer store for merging");
+
+						}
+						
+					}
+				}
+				
+			}
+			return store;
+			
+		} else
+			return null;
+
+	}
+	
 	/**
 	 * Store synchronization. All external monomers are included, together with
 	 * every internal monomer with an alternate id that is not yet included in

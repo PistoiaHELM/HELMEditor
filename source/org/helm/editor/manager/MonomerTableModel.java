@@ -23,6 +23,7 @@ package org.helm.editor.manager;
 
 import org.helm.editor.data.MonomerStoreCache;
 import org.helm.notation.MonomerFactory;
+import org.helm.notation.MonomerStore;
 import org.helm.notation.model.Monomer;
 
 import java.util.ArrayList;
@@ -48,7 +49,12 @@ public class MonomerTableModel extends AbstractTableModel {
 	private String[] polymerTypes;
 
 	public MonomerTableModel(String polymerType) {
-		init(polymerType);
+		this(polymerType, MonomerStoreCache.getInstance().getCombinedMonomerStore());		
+	}
+	
+	
+	public MonomerTableModel(String polymerType,MonomerStore monomerStore) {
+		init(polymerType,monomerStore);
 	}
 
 	public int getRowCount() {
@@ -94,15 +100,21 @@ public class MonomerTableModel extends AbstractTableModel {
 		return polymerTypes;
 	}
 
-	private void init(String polymerType) {
+	
+	
+	private void init(String polymerType, MonomerStore monomerStore) {
+
 		this.polymerType = polymerType;
 		columnNames = new String[] { "Symbol", "Natural Analog", "Name",
 				"Structure" };
 
+		if	(monomerStore==null) {
+			return;
+		}
 		Map<String, Map<String, Monomer>> map = null;
 		try {
-			map = MonomerStoreCache.getInstance().getCombinedMonomerStore()
-					.getMonomerDB();
+			
+			map = monomerStore.getMonomerDB();
 			// map = MonomerFactory.getInstance().getMonomerDB();
 		} catch (Exception ex) {
 			Logger.getLogger(MonomerTableModel.class.getName()).log(
@@ -119,12 +131,15 @@ public class MonomerTableModel extends AbstractTableModel {
 			polymerTypes = typeSet.toArray(new String[typeSet.size()]);
 
 			Map<String, Monomer> tmpMap = map.get(polymerType);
-			Set keyset = tmpMap.keySet();
-			for (Iterator i = keyset.iterator(); i.hasNext();) {
-				String key = (String) i.next();
-				Monomer m = tmpMap.get(key);
-				monomers.add(m);
+			if (null != tmpMap) {
+				Set keyset = tmpMap.keySet();
+				for (Iterator i = keyset.iterator(); i.hasNext();) {
+					String key = (String) i.next();
+					Monomer m = tmpMap.get(key);
+					monomers.add(m);
+				}
 			}
 		}
 	}
+	
 }

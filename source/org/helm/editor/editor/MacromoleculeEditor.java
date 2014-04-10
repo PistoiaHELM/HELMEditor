@@ -61,6 +61,7 @@ import org.helm.editor.action.ConvertNotationAction;
 import org.helm.editor.action.FileMenuAction;
 import org.helm.editor.action.MoleculePropertyAction;
 import org.helm.editor.action.MonomerManagerAction;
+import org.helm.editor.action.MonomerMergeAction;
 import org.helm.editor.action.NucleotideManagerAction;
 import org.helm.editor.action.OligonucleotideFragmentAction;
 import org.helm.editor.action.ProteinEditorAction;
@@ -2157,6 +2158,8 @@ public class MacromoleculeEditor extends GUIBase implements DataListener,
 		toolsMenu.add(new OligonucleotideFragmentAction(this));
 		toolsMenu.add(new JSeparator(JSeparator.HORIZONTAL));
 		toolsMenu.add(new ShowChooseUIDialog(this));
+		toolsMenu.add(new JSeparator(JSeparator.HORIZONTAL));
+		toolsMenu.add(new MonomerMergeAction(this));
 		menuBar.add(toolsMenu);
 
 		JMenu editMenu = new JMenu("Edit");
