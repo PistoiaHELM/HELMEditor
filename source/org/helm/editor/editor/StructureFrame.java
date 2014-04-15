@@ -24,9 +24,11 @@ package org.helm.editor.editor;
 import org.helm.notation.MonomerFactory;
 import org.helm.notation.MonomerStore;
 import org.helm.notation.model.*;
+import org.helm.notation.tools.SimpleNotationParser;
 import org.helm.editor.data.MonomerStoreCache;
 import org.helm.editor.data.MonomerInfo;
 import org.helm.editor.utility.GraphUtils;
+
 
 
 
@@ -97,11 +99,10 @@ public class StructureFrame extends JFrame {
 	// session temporary record
 	public static Monomer getMonomerBySmiles(String smiles,String polymerType, MonomerStore storeToAdd) {
 		
-		
+		MonomerStore combinedMonomerStore = MonomerStoreCache.getInstance().getCombinedMonomerStore();
 		Map<String, Monomer> map = null;
 		try {
-			map = MonomerStoreCache.getInstance().getCombinedMonomerStore()
-					.getMonomerDB().get(polymerType);
+			map = combinedMonomerStore.getMonomerDB().get(polymerType);
 			// map =
 			// org.helm.notation.MonomerFactory.getInstance().getMonomerDB().get("CHEM");
 		} catch (Exception e) {
@@ -144,11 +145,14 @@ public class StructureFrame extends JFrame {
   			monomer.setPolymerType(polymerType);
 			monomer.setCanSMILES(smiles);
 			monomer.setName("Dynamic");
+			monomer.setAdHocMonomer( true);
 
 			// make sure it assigns a unique alternaeId
 			String alternateId = null;
 			while (true) {
-				alternateId = "AM#" + (++iX);
+				//alternateId = "AM#" + (++iX);
+				alternateId = SimpleNotationParser.generateNextAdHocMonomerID(polymerType, combinedMonomerStore);
+
 				if (!map.containsKey(alternateId))
 					break;
 			}
@@ -162,7 +166,7 @@ public class StructureFrame extends JFrame {
 				monomer.setNaturalAnalog("X");
 			}
 			
-			monomer.setNewMonomer(true);
+
 
 			int index = 0;
 			for (String r : rs) {
@@ -179,7 +183,7 @@ public class StructureFrame extends JFrame {
 			try {
 				storeToAdd.addNewMonomer(
 						monomer);
-				MonomerFactory.setDBChanged( true);
+				
 				//map.put(monomer.getAlternateId(), monomer);
 				
 			} catch (Exception e) {

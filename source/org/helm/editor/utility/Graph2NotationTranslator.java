@@ -330,7 +330,7 @@ public class Graph2NotationTranslator {
                 boolean containsSmiles = false;
                 StringBuilder codeWithSmiles = new StringBuilder();
                 
-                if ( monomer.getAlternateId().startsWith("AM#")) {
+                if ( monomer.isAdHocMonomer()) {
                 	containsSmiles = true;
                 	codeWithSmiles.append("["+monomer.getCanSMILES()+"]");
                 }
@@ -370,7 +370,7 @@ public class Graph2NotationTranslator {
                          
 		  
                         codeWithSmiles.append(".");
-                        if ( monomer.getAlternateId().startsWith("AM#")) {
+                        if ( monomer.isAdHocMonomer()) {
                         	containsSmiles = true;
                         	codeWithSmiles.append("["+monomer.getCanSMILES()+"]");
                         }
@@ -406,10 +406,14 @@ public class Graph2NotationTranslator {
                 positionNodeMap.setInt(startingNode, 1);
                 
                 
-                // TY
-                String c = code.toString();
-                if (c != null && c.length() > 3 && c.startsWith("AM#"))
+                if(monomer.isAdHocMonomer()){
                     smilesMaps.set(hyperNode, monomer.getCanSMILES());
+                }
+                
+                // TY
+//                String c = code.toString();
+//                if (c != null && c.length() > 3 && c.startsWith("AM#"))
+//                    smilesMaps.set(hyperNode, monomer.getCanSMILES());
 
                 hyperNodeNameMap.set(hyperNode, Monomer.CHEMICAL_POLYMER_TYPE + chemCount);
                 hyperNodeMapPolymerType.set(hyperNode, Monomer.CHEMICAL_POLYMER_TYPE);

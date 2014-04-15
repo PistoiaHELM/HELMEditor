@@ -78,7 +78,7 @@ public class MonomerMergeManager extends javax.swing.JDialog {
 		polymerTypeLabel.setText("Polymer Type");
 
 		MonomerStore store = MonomerStoreCache.getInstance()
-				.getExternalStoreOnlyMonomers();
+				.getUnregisteredMonomers();
 		if (store != null && store.getPolymerTypeSet().size() > 0) {
 
 			Set<String> polymerTypeSet = store.getPolymerTypeSet();
@@ -286,7 +286,7 @@ public class MonomerMergeManager extends javax.swing.JDialog {
 	
 	public void refreshContent(String polymerType) {
 		MonomerStore store = MonomerStoreCache.getInstance()
-				.getExternalStoreOnlyMonomers();
+				.getUnregisteredMonomers();
 
 		MonomerTableModel model = new MonomerTableModel(polymerType, store);
 		monomerTable.setModel(model);
@@ -312,7 +312,7 @@ public class MonomerMergeManager extends javax.swing.JDialog {
 		String polymerType = (String) polymerTypeComboBox.getSelectedItem();
 		monomerTable
 				.setModel(new MonomerTableModel(polymerType, MonomerStoreCache
-						.getInstance().getExternalStoreOnlyMonomers()));
+						.getInstance().getUnregisteredMonomers()));
 	}
 
 	private void closeButtonActionPerformed(java.awt.event.ActionEvent evt) {
@@ -327,7 +327,16 @@ public class MonomerMergeManager extends javax.swing.JDialog {
 					.getMonomerList().get(row);
 			try {
 				setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-				MonomerFactory.getInstance().addNewMonomer(monomer);
+
+				monomer.setNewMonomer(false);
+				monomer.setAdHocMonomer(false);
+
+
+				MonomerStore localStore = MonomerFactory.getInstance().getMonomerStore();
+				if (!localStore.hasMonomer(monomer.getPolymerType(), monomer.getAlternateId())){
+					localStore.addMonomer(monomer);		
+				} 
+								
 				MonomerFactory.getInstance().saveMonomerCache();
 
 				refreshContent(getPolymerType());

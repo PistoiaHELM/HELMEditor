@@ -311,11 +311,11 @@ public class FileMenuAction extends TextMenuAction {
 		try {
 			editor.getFrame().setCursor(
 					Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-
+			MonomerStore monomerStore=MonomerStoreCache.getInstance().getCombinedMonomerStore();
 			String standardNote = ComplexNotationParser.standardize(helmString,
-					MonomerStoreCache.getInstance().getCombinedMonomerStore());
+					monomerStore);
 			editorNotation = ComplexNotationParser.getCombinedComlexNotation(
-					editorNotation, standardNote);
+					editorNotation, standardNote,monomerStore);
 
 		} catch (Exception ex) {
 			ExceptionHandler.handleException(ex);

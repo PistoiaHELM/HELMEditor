@@ -2,6 +2,8 @@ package org.helm.editor.data;
 
 import java.awt.Component;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.logging.Level;
@@ -79,9 +81,9 @@ public class MonomerStoreCache {
 		}
 	}
 	
-	public MonomerStore getExternalStoreOnlyMonomers() {
-		if (this.externalMonomerStore != null) {
-			MonomerStore store=new MonomerStore();
+	public MonomerStore getUnregisteredMonomers() {
+		MonomerStore store=new MonomerStore();
+		if (this.externalMonomerStore != null) {			
 			for (String polymerType :this.externalMonomerStore.getPolymerTypeSet()){
 				for (Monomer m: this.externalMonomerStore.getMonomers(polymerType).values()){
 					if (this.internalMonomerStore.getMonomer(polymerType, m.getAlternateId())==null){
@@ -100,10 +102,31 @@ public class MonomerStoreCache {
 				}
 				
 			}
-			return store;
+		}
+		if (this.internalMonomerStore !=null){
+			for (String polymerType :this.internalMonomerStore.getPolymerTypeSet()){
+			for (Monomer m: this.internalMonomerStore.getMonomers(polymerType).values()){
+				if (m.isNewMonomer()){						
+					try {
+						store.addMonomer(m);
+					} catch (Exception e) {
+						e.printStackTrace();
+						Logger.getLogger(MonomerStoreCache.class.getName())
+						.log(Level.WARNING,
+								"Error ocurred when adding "+m.getAlternateId()+"to monomer store for merging");
+
+					}
+					
+				}
+			}
 			
-		} else
-			return null;
+		}
+			
+		}	
+		
+			
+			
+		return store;
 
 	}
 	
@@ -129,27 +152,33 @@ public class MonomerStoreCache {
 		int notAdded = 0;
 
 		// all externals when applicable
-		if (this.externalMonomerStore != null)
+		if (this.externalMonomerStore != null) {
 			for (String polymerType : this.externalMonomerStore.getMonomerDB()
 					.keySet()) {
-				for (Monomer mon : this.externalMonomerStore.getMonomers(
-						polymerType).values()) {
+				Map<String, Monomer> externalMonomerMap = this.externalMonomerStore.getMonomers(
+						polymerType);
+				for (Monomer mon : externalMonomerMap.values()) {
 					try {
-						combinedMonomerStore.addNewMonomer(mon);
+						//combinedMonomerStore.addNewMonomer(mon);						
+						combinedMonomerStore.addMonomer(mon);
+						
 					} catch (Exception e) {
 						notAdded++;
 					}
 				}
 			}
+		}
 		// internals when their alternate id is not contained in externals
 		for (String polymerType : this.internalMonomerStore.getMonomerDB()
 				.keySet()) {
-			for (Monomer mon : this.internalMonomerStore.getMonomers(
-					polymerType).values()) {
+			Map<String, Monomer> internalMonomerMap = this.internalMonomerStore.getMonomers(
+					polymerType);
+			for (Monomer mon : internalMonomerMap.values()) {
 				try {
 					if (!combinedMonomerStore.hasMonomer(polymerType,
-							mon.getAlternateId())) {
-						combinedMonomerStore.addNewMonomer(mon);
+							mon.getAlternateId())) {						
+						//combinedMonomerStore.addNewMonomer(mon);
+						combinedMonomerStore.addMonomer(mon);
 					}
 				} catch (Exception e) {
 					notAdded++;
@@ -194,6 +223,9 @@ public class MonomerStoreCache {
 		combineMonomerStores();
 	}
 
+	
+	
+	
 	/**
 	 * Adds monomers to the external Monomer Database. Existing monomers won't
 	 * be deleted. A check for conflicting monomers is done before.
@@ -216,6 +248,10 @@ public class MonomerStoreCache {
 			setExternalMonomers(store);
 			//return helmString;
 		}
+			
+			
+		
+		
 
 		LinkedList<Monomer> conflicts = findConflictingMonomers(store);
 		LinkedList<String> newNames = new LinkedList<String>();
@@ -239,14 +275,14 @@ public class MonomerStoreCache {
 			for (Monomer newMonomer : store.getMonomers(polymerType).values()) {
 				//add monomer if there isn't a conflict
 				monomerIndex = conflicts.lastIndexOf(newMonomer);
-				if (monomerIndex < 0)
-					this.externalMonomerStore.addMonomer(newMonomer);
-				else // rename
-				{
+				if (monomerIndex >= 0) {
 					oldNames.add(newMonomer.getAlternateId());
 					newMonomer.setAlternateId(newNames.get(monomerIndex));
-					this.externalMonomerStore.addMonomer(newMonomer);
 				}
+				
+				this.externalMonomerStore.addMonomer(newMonomer);
+				
+
 			}
 		}
 
