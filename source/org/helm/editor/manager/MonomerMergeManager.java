@@ -333,9 +333,17 @@ public class MonomerMergeManager extends javax.swing.JDialog {
 
 
 				MonomerStore localStore = MonomerFactory.getInstance().getMonomerStore();
+				//monomer comes from external store
 				if (!localStore.hasMonomer(monomer.getPolymerType(), monomer.getAlternateId())){
 					localStore.addMonomer(monomer);		
 				} 
+				//monomer is already in local store
+				else
+				{
+					Monomer m=localStore.getMonomer(monomer.getPolymerType(), monomer.getAlternateId());
+					m.setNewMonomer(false);
+					m.setAdHocMonomer(false);
+				}
 								
 				MonomerFactory.getInstance().saveMonomerCache();
 
