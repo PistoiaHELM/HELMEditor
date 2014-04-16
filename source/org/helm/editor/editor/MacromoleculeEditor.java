@@ -590,7 +590,7 @@ public class MacromoleculeEditor extends GUIBase implements DataListener,
 			}
 		});
 
-		editChemicalModifierItem = new JMenuItem("Edit Chemical Modifier");
+		editChemicalModifierItem = new JMenuItem("Edit Monomer Structure");
 		editChemicalModifierItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				editChemicalStructure();
