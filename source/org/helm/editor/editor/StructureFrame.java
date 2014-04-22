@@ -25,9 +25,11 @@ import org.helm.notation.MonomerFactory;
 import org.helm.notation.MonomerStore;
 import org.helm.notation.model.*;
 import org.helm.notation.tools.SimpleNotationParser;
+import org.helm.notation.tools.StructureParser;
 import org.helm.editor.data.MonomerStoreCache;
 import org.helm.editor.data.MonomerInfo;
 import org.helm.editor.utility.GraphUtils;
+
 
 
 
@@ -112,8 +114,13 @@ public class StructureFrame extends JFrame {
 		Iterator<Monomer> it = map.values().iterator();
 		while (it.hasNext()) {
 			Monomer m = it.next();
-			String smi = m.getCanSMILES();
-			if (smi != null && smi.compareTo(smiles) == 0) {
+			//String smi = m.getCanSMILES();
+			
+			String monomerSmiles = StructureParser.getSmilesFromExtendedSmiles(m.getCanSMILES());
+			String newSmiles=StructureParser.getSmilesFromExtendedSmiles(smiles);
+			
+			
+			if (monomerSmiles != null && monomerSmiles.compareTo(newSmiles) == 0) {
 				monomer = m;
 				break;
 			}
