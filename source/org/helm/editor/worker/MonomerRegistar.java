@@ -47,7 +47,9 @@ public class MonomerRegistar extends SwingWorker<Void, Void> {
 
     @Override
     protected Void doInBackground() throws Exception {
-	MonomerFactory.getInstance().addNewMonomer(manager.getMonomerViewer().getMonomer());
+	//MonomerFactory.getInstance().addNewMonomer(manager.getMonomerViewer().getMonomer());
+    //Monomer with new flag are not saved automatically anymore
+    MonomerFactory.getInstance().getMonomerStore().addMonomer(manager.getMonomerViewer().getMonomer(), true);
 	//save monomer db to local file after successful update
         try {
             MonomerFactory.getInstance().saveMonomerCache();
