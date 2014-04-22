@@ -27,6 +27,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -145,7 +146,19 @@ public class MonomerViewer extends JPanel {
 		naturalAnalogTextField.setEditable(modifiable);
 		attachmentTable.setEnabled(modifiable);
 	}
+	
+	public void setIdEditable(boolean modifiable){
+		idTextField.setEditable(modifiable);
+	}
 
+	public void setNameEditable(boolean modifiable){
+		nameTextField.setEditable(modifiable);
+	}
+	
+	public void setNaturalAnalogEditable(boolean modifiable){
+		naturalAnalogTextField.setEditable(modifiable);
+	}
+	
 	private JPanel createViewerPanel() {
 		msketchPane = new MSketchPane();
 		msketchPane.setBorder(BorderFactory.createEtchedBorder());
@@ -446,13 +459,12 @@ public class MonomerViewer extends JPanel {
 			Monomer m = getMonomer();
 			MonomerParser.validateMonomer(m);
 
-			/*
-			 * MonomerFactory monomerFactory = MonomerFactory.getInstance();
-			 * Map<String, Map<String, Monomer>> monomerDB =
-			 * monomerFactory.getMonomerDB();
-			 */
-			Map<String, Map<String, Monomer>> monomerDB = MonomerStoreCache
-					.getInstance().getCombinedMonomerStore().getMonomerDB();
+			
+			MonomerFactory monomerFactory = MonomerFactory.getInstance();
+			Map<String, Map<String, Monomer>> monomerDB = monomerFactory.getMonomerDB();
+			
+//			Map<String, Map<String, Monomer>> monomerDB = MonomerStoreCache
+//					.getInstance().getCombinedMonomerStore().getMonomerDB();
 
 			Map<String, Monomer> idMap = monomerDB.get(m.getPolymerType());
 			Monomer[] monomers = idMap.values().toArray(new Monomer[0]);
@@ -471,30 +483,62 @@ public class MonomerViewer extends JPanel {
 
 			// for structure that contains any atom, it is ok for smiles and
 			// attachment to be the same
-			/*
-			 * Map<String, Monomer> smilesMap = monomerFactory
-			 * .getSmilesMonomerDB();
-			 */
-			Map<String, Monomer> smilesMap = MonomerStoreCache.getInstance()
-					.getCombinedMonomerStore().getSmilesMonomerDB();
-			if (smilesMap.containsKey(m.getCanSMILES())) {
-				Monomer existM = smilesMap.get(m.getCanSMILES());
-				boolean sameAttachment = m.attachmentEquals(existM);
-				if (sameAttachment) {
-					boolean containsAnyAtom = m.containAnyAtom();
-					if (!containsAnyAtom) {
-						JOptionPane.showMessageDialog(
-								this,
-								"Monomer with the same structure already exists in "
-										+ existM.getPolymerType()
-										+ " with monomer ID of "
-										+ existM.getAlternateId(),
-								"Monomer Validation Error",
-								JOptionPane.ERROR_MESSAGE);
-						return false;
+			
+			Map<String, Monomer> smilesMap = monomerFactory.getSmilesMonomerDB();
+			 
+			System.out.println(m.getCanSMILES());
+//			Map<String, Monomer> smilesMap = MonomerStoreCache.getInstance()
+//					.getCombinedMonomerStore().getSmilesMonomerDB();
+			
+			//iterate over smilesMap and compare only the smiles part without the rests
+			String smiles=StructureParser.getSmilesFromExtendedSmiles(m.getCanSMILES());
+			Iterator<Monomer> it = smilesMap.values().iterator();
+			while (it.hasNext()) {
+				Monomer existM = it.next();
+				if	(existM.getCanSMILES()==null){
+					continue;
+				}
+				String monomerSmiles = StructureParser.getSmilesFromExtendedSmiles(existM.getCanSMILES());
+				
+				
+				
+				if (monomerSmiles != null && monomerSmiles.compareTo(smiles) == 0) {
+					boolean sameAttachment = m.attachmentEquals(existM);
+					if (sameAttachment) {
+						boolean containsAnyAtom = m.containAnyAtom();
+						if (!containsAnyAtom) {
+							JOptionPane.showMessageDialog(
+									this,
+									"Monomer with the same structure already exists in "
+											+ existM.getPolymerType()
+											+ " with monomer ID of "
+											+ existM.getAlternateId(),
+									"Monomer Validation Error",
+									JOptionPane.ERROR_MESSAGE);
+							return false;
+						}
 					}
 				}
 			}
+			
+//			if (smilesMap.containsKey(m.getCanSMILES())) {
+//				Monomer existM = smilesMap.get(m.getCanSMILES());
+//				boolean sameAttachment = m.attachmentEquals(existM);
+//				if (sameAttachment) {
+//					boolean containsAnyAtom = m.containAnyAtom();
+//					if (!containsAnyAtom) {
+//						JOptionPane.showMessageDialog(
+//								this,
+//								"Monomer with the same structure already exists in "
+//										+ existM.getPolymerType()
+//										+ " with monomer ID of "
+//										+ existM.getAlternateId(),
+//								"Monomer Validation Error",
+//								JOptionPane.ERROR_MESSAGE);
+//						return false;
+//					}
+//				}
+//			}
 
 			return true;
 
