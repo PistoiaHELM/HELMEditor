@@ -62,6 +62,7 @@ import org.helm.notation.MonomerFactory;
 import org.helm.notation.model.Attachment;
 import org.helm.notation.model.Monomer;
 import org.helm.notation.tools.MonomerParser;
+import org.helm.notation.tools.SimpleNotationParser;
 import org.helm.notation.tools.StructureParser;
 
 import java.awt.Component;
@@ -503,8 +504,12 @@ public class MonomerViewer extends JPanel {
 				
 				
 				if (monomerSmiles != null && monomerSmiles.compareTo(smiles) == 0) {
+					
+					 
+					boolean isAdhocMonomer=m.getAlternateId().startsWith(SimpleNotationParser.getAdHocMonomerIDPrefix(m.getPolymerType()));
+
 					boolean sameAttachment = m.attachmentEquals(existM);
-					if (sameAttachment) {
+					if (sameAttachment || isAdhocMonomer) {
 						boolean containsAnyAtom = m.containAnyAtom();
 						if (!containsAnyAtom) {
 							JOptionPane.showMessageDialog(
