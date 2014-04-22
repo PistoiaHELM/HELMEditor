@@ -27,9 +27,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import org.helm.editor.data.GraphPair;
 import org.helm.editor.utility.NotationParser;
 import org.helm.notation.MonomerException;
+import org.helm.notation.MonomerFactory;
+import org.helm.notation.MonomerStore;
 import org.helm.notation.NotationException;
 import org.helm.notation.StructureException;
 import org.helm.notation.model.Monomer;
@@ -51,8 +54,9 @@ public class NotationParserSample {
             System.out.println(graphPair.getGraph());
             // End new test
 
+            MonomerStore monomerStore=MonomerFactory.getInstance().getMonomerStore();
             String notation = "RNA1{R(A)P.[mR]P.[mR](U)P.[mR](T)P.[dR](U)}$$$$";
-            ArrayList<PolymerNode> polymerNodeList = (ArrayList<PolymerNode>) NotationParser.getPolymerList(notation);
+            ArrayList<PolymerNode> polymerNodeList = (ArrayList<PolymerNode>) NotationParser.getPolymerList(notation,monomerStore);
             for (PolymerNode node : polymerNodeList) {
                 if (node.getType().equalsIgnoreCase(Monomer.NUCLIEC_ACID_POLYMER_TYPE)) {
                     ArrayList<Nucleotide> nucleotideList = (ArrayList<Nucleotide>) SimpleNotationParser.getNucleotideList(node.getLabel());
