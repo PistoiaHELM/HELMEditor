@@ -345,7 +345,7 @@ public class MonomerMergeManager extends javax.swing.JDialog {
 				MonomerStore externalStore=MonomerStoreCache.getInstance().getExternalStore();
 				
 				// monomer comes from external store
-				if (externalStore.hasMonomer(polymerType,
+				if (externalStore!=null && externalStore.hasMonomer(polymerType,
 						alternateId)) {
 					Monomer extMon=externalStore.getMonomer(polymerType, alternateId);
 					
