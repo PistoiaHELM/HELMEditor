@@ -1636,6 +1636,8 @@ public class MacromoleculeEditor extends GUIBase implements DataListener,
 			ExceptionHandler.handleException(e);
 		}
 	}
+	
+	
 
 	/**
 	 * anotate a nucleotide to be sense or antisense
@@ -1743,6 +1745,19 @@ public class MacromoleculeEditor extends GUIBase implements DataListener,
 		postFlip(graphHider, view);
 	}
 
+	public void replaceAlternateId( String currentId, String newId) {
+		Graph2D graph = view.getGraph2D();
+		Node[] nodes = graph.getNodeArray();
+		NodeMap nodeMap = (NodeMap) graph
+				.getDataProvider(NodeMapKeys.MONOMER_REF);
+		for ( Node node : nodes) {
+			MonomerInfo monomerInfo = (MonomerInfo) nodeMap.get(node);
+			if ( monomerInfo.getMonomerID().equals( currentId)) {
+				monomerInfo.setMonomerID(newId);
+			}
+		}
+
+	}
 	/**
 	 * clear all hydrogen bond
 	 */
@@ -2578,7 +2593,7 @@ public class MacromoleculeEditor extends GUIBase implements DataListener,
 			ExceptionHandler.handleException(ex);
 		}
 	}
-		
+	
 	
 	public void reset() {
 		super.reset();

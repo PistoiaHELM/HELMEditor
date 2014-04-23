@@ -82,6 +82,10 @@ public class MonomerStoreCache {
 	}
 	
 	
+	public MonomerStore getExternalStore(){
+		return this.externalMonomerStore;
+	}
+	
 	
 	
 	public MonomerStore getUnregisteredMonomers() {

@@ -53,9 +53,9 @@ public class MonomerMergeManager extends javax.swing.JDialog {
 
 		viewer = MonomerViewer.getNamedInstance("MonomerMergeManager");
 		viewer.setModifiableStatus(false);
-//		viewer.setIdEditable(true);
-//		viewer.setNameEditable(true);
-//		viewer.setNaturalAnalogEditable(true);
+		viewer.setIdEditable(true);
+		viewer.setNameEditable(true);
+		viewer.setNaturalAnalogEditable(true);
 		monomerViewerPanel.add(viewer);
 	}
 
@@ -333,24 +333,22 @@ public class MonomerMergeManager extends javax.swing.JDialog {
 
 				
 
-//				Monomer tmp = viewer.getMonomer();
-//				
+				Monomer tmp = viewer.getEditedMonomer();
+				
+								
 				String alternateId = monomer.getAlternateId();
-//				String tmpAlternateId = tmp.getAlternateId();
-//				
 				String polymerType = monomer.getPolymerType();
-//				
-//				boolean monomerChanged = !alternateId.equals(
-//						tmpAlternateId)
-//						|| !monomer.getName().equals(tmp.getName());
-
+				
+				
 				MonomerStore localStore = MonomerFactory.getInstance()
 						.getMonomerStore();
-				
+				MonomerStore externalStore=MonomerStoreCache.getInstance().getExternalStore();
 				
 				// monomer comes from external store
-				if (!localStore.hasMonomer(polymerType,
+				if (externalStore.hasMonomer(polymerType,
 						alternateId)) {
+					Monomer extMon=externalStore.getMonomer(polymerType, alternateId);
+					
 					
 					
 					//check if monomer structure already exists in local db
@@ -359,35 +357,37 @@ public class MonomerMergeManager extends javax.swing.JDialog {
 						return;
 					}
 
-					monomer.setNewMonomer(false);
-					monomer.setAdHocMonomer(false);
+					extMon.setNewMonomer(false);
+					extMon.setAdHocMonomer(false);					
 					
-//					if (monomerChanged) {
-//						monomer.setAlternateId(tmpAlternateId);
-//						monomer.setName(tmp.getName());
-//					}
-
-					localStore.addMonomer(monomer, true);
+				
+					extMon.setAlternateId(tmp.getAlternateId());
+					extMon.setName(tmp.getName());
+					extMon.setNaturalAnalog(tmp.getNaturalAnalog());
+					
+					localStore.addMonomer(extMon, true);
 				}
-				// monomer is already in local store
+				// monomer comes from local store
 				else {
-					Monomer m = localStore.getMonomer(polymerType,
+					Monomer locMon = localStore.getMonomer(polymerType,
 							alternateId);
-					m.setNewMonomer(false);
-					m.setAdHocMonomer(false);
-
-//					if (monomerChanged) {
-//						m.setAlternateId(tmpAlternateId);
-//						m.setName(tmp.getName());
-//						MonomerFactory.setDBChanged(true);
-//					}
+					locMon.setNewMonomer(false);
+					locMon.setAdHocMonomer(false);
+					
+					locMon.setAlternateId(tmp.getAlternateId());
+					locMon.setName(tmp.getName());
+					locMon.setNaturalAnalog(tmp.getNaturalAnalog());
+					MonomerFactory.setDBChanged(true);
+					
 				}
 
 				MonomerFactory.getInstance().saveMonomerCache();
 
 				refreshContent(getPolymerType());
 				getEditor().updatePolymerPanels();
-				//getEditor().replaceAlternateId(alternateId, tmpAlternateId);
+				getEditor().replaceAlternateId(alternateId, tmp.getAlternateId());
+				
+				getEditor().onDropCompleteEvent(null);
 								
 				
 				JOptionPane.showMessageDialog(getParent(),
