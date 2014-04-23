@@ -90,7 +90,9 @@ public class MonomerViewer extends JPanel {
 	private boolean modifiable = true;
 	private static Map<String, MonomerViewer> namedInstances = new HashMap<String, MonomerViewer>();
 	private static MonomerViewer instance;
-
+	
+	private Monomer monomer;
+	
 	private MonomerViewer() {
 		this(true);
 	}
@@ -358,8 +360,12 @@ public class MonomerViewer extends JPanel {
 					null, ex);
 		}
 	}
-
+	
 	public Monomer getMonomer() {
+		return this.monomer;
+	}
+
+	public Monomer getEditedMonomer() {
 		String newSmiles = mviewPane.getM(0, "cxsmiles:u");
 		String molfile = mviewPane.getM(0, "mol");
 		String monomerId = idTextField.getText();
@@ -378,11 +384,12 @@ public class MonomerViewer extends JPanel {
 		tmpM.setCanSMILES(newSmiles);
 		tmpM.setMolfile(molfile);
 		tmpM.setAttachmentList(attachments);
+		
 		return tmpM;
 	}
 
-	public String getMonomerXML() throws MonomerException {
-		Monomer monomer = getMonomer();
+	public String getEditedMonomerXML() throws MonomerException {
+		Monomer monomer = getEditedMonomer();
 		Element monomerElement = MonomerParser.getMonomerElement(monomer);
 		XMLOutputter outputter = new XMLOutputter(Format.getCompactFormat());
 		return outputter.outputString(monomerElement);
@@ -405,6 +412,8 @@ public class MonomerViewer extends JPanel {
 	}
 
 	public void setMonomer(Monomer monomer) {
+		this.monomer = monomer;
+		
 		if (monomer != null) {
 			if (monomer.getMolfile() != null) {
 				mviewPane.setM(0, monomer.getMolfile());
@@ -457,7 +466,7 @@ public class MonomerViewer extends JPanel {
 
 	public boolean isValidNewMonomer() {
 		try {
-			Monomer m = getMonomer();
+			Monomer m = getEditedMonomer();
 			MonomerParser.validateMonomer(m);
 
 			
@@ -506,7 +515,10 @@ public class MonomerViewer extends JPanel {
 				if (monomerSmiles != null && monomerSmiles.compareTo(smiles) == 0) {
 					
 					 
-					boolean isAdhocMonomer=m.getAlternateId().startsWith(SimpleNotationParser.getAdHocMonomerIDPrefix(m.getPolymerType()));
+					boolean isAdhocMonomer= false;
+					if(this.monomer != null) {
+						isAdhocMonomer = this.monomer.isAdHocMonomer();
+					}
 
 					boolean sameAttachment = m.attachmentEquals(existM);
 					if (sameAttachment || isAdhocMonomer) {

@@ -81,6 +81,9 @@ public class MonomerStoreCache {
 		}
 	}
 	
+	
+	
+	
 	public MonomerStore getUnregisteredMonomers() {
 		MonomerStore store=new MonomerStore();
 		if (this.externalMonomerStore != null) {			
@@ -379,8 +382,13 @@ public class MonomerStoreCache {
 	 * Clears all custom monomers in the database.
 	 */
 	public void clearCustomMonomerDB() {
-		if (this.externalMonomerStore != null)
+		if (this.externalMonomerStore != null){
 			this.externalMonomerStore.clearMonomers();
+			//reload combined Store
+			MonomerFactory.setDBChanged(true);
+		}
+		
+		
 	}
 
 	/**
