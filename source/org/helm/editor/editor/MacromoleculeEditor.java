@@ -2578,4 +2578,11 @@ public class MacromoleculeEditor extends GUIBase implements DataListener,
 			ExceptionHandler.handleException(ex);
 		}
 	}
+		
+	
+	public void reset() {
+		super.reset();
+		updatePolymerPanels();
+	
+	}
 }
