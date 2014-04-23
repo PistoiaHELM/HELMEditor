@@ -250,15 +250,17 @@ public class MonomerStoreCache {
 	public String addExternalMonomers(JFrame owner, MonomerStore store,
 			String helmString) throws IOException, MonomerException,
 			IllegalArgumentException {
-		if (this.externalMonomerStore == null
+		/*if (this.externalMonomerStore == null
 				|| this.externalMonomerStore.getMonomerDB() == null) {
 			setExternalMonomers(store);
 			//return helmString;
+		}*/
+		
+		if (this.externalMonomerStore == null) {
+			this.externalMonomerStore=new MonomerStore();
 		}
-			
-			
 		
-		
+			
 
 		LinkedList<Monomer> conflicts = findConflictingMonomers(store);
 		LinkedList<String> newNames = new LinkedList<String>();
@@ -277,10 +279,10 @@ public class MonomerStoreCache {
 		System.out.println(conflicts);
 		LinkedList<String> oldNames = new LinkedList<String>();
 		int monomerIndex = -1;
-		//add monomers in store to externalStore
+		//add monomers to externalStore
 		for (String polymerType : store.getMonomerDB().keySet()) {
 			for (Monomer newMonomer : store.getMonomers(polymerType).values()) {
-				//add monomer if there isn't a conflict
+				//rename monomer if there is a conflict
 				monomerIndex = conflicts.lastIndexOf(newMonomer);
 				if (monomerIndex >= 0) {
 					oldNames.add(newMonomer.getAlternateId());
