@@ -452,12 +452,13 @@ public class MacromoleculeEditor extends GUIBase implements DataListener,
 							}
 							popup.show(ev.getComponent(), ev.getX(), ev.getY());
 
-							//SM 2014-03-31 allow editing monomer structure for peptides
-							if (SequenceGraphTools.isChemicalModifier(v) || SequenceGraphTools.isPeptideModifier(v)) {
+							//SM 2014-03-31 allow editing monomer structure for peptides,chem and nucleobases
+							if (SequenceGraphTools.isChemicalModifier(v) || SequenceGraphTools.isPeptideModifier(v) || SequenceGraphTools.isRNABranchModifier(v)) {
 								editChemicalModifierItem.setEnabled(true);
 							} else {
 								editChemicalModifierItem.setEnabled(false);
 							}
+							//editChemicalModifierItem.setEnabled(true);
 							if (v != null) {
 								graph.setSelected(v, true);
 							}

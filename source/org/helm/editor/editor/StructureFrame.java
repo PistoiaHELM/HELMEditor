@@ -23,6 +23,7 @@ package org.helm.editor.editor;
 
 import org.helm.notation.MonomerFactory;
 import org.helm.notation.MonomerStore;
+import org.helm.notation.StructureException;
 import org.helm.notation.model.*;
 import org.helm.notation.tools.SimpleNotationParser;
 import org.helm.notation.tools.StructureParser;
@@ -34,10 +35,15 @@ import org.helm.editor.utility.GraphUtils;
 
 
 
+
+
+
+
 import javax.swing.*;
 
 import java.awt.event.*;
 import java.awt.*;
+import java.io.IOException;
 import java.util.Map;
 import java.util.Iterator;
 import java.util.List;
@@ -99,7 +105,7 @@ public class StructureFrame extends JFrame {
 	// loop through monomers by comparing canonical smiles
 	// if no monomer finder, register the smiles in monomer database as a
 	// session temporary record
-	public static Monomer getMonomerBySmiles(String smiles,String polymerType, MonomerStore storeToAdd) {
+	public static Monomer getMonomerBySmiles(String smiles,String polymerType, MonomerStore storeToAdd,Monomer editedMonomer) {
 		
 		MonomerStore combinedMonomerStore = MonomerStoreCache.getInstance().getCombinedMonomerStore();
 		Map<String, Monomer> map = null;
@@ -110,17 +116,31 @@ public class StructureFrame extends JFrame {
 		} catch (Exception e) {
 		}
 		Monomer monomer = null;
+		
+		String uniqueSmiles=null;
+		try {
+			uniqueSmiles = StructureParser.getUniqueExtendedSMILES(smiles);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		
 		// first check if there is some predefined monomer
 		Iterator<Monomer> it = map.values().iterator();
 		while (it.hasNext()) {
 			Monomer m = it.next();
 			//String smi = m.getCanSMILES();
 			
-			String monomerSmiles = StructureParser.getSmilesFromExtendedSmiles(m.getCanSMILES());
-			String newSmiles=StructureParser.getSmilesFromExtendedSmiles(smiles);
+			String monomerSmiles=null;
+			try {
+				monomerSmiles = StructureParser.getUniqueExtendedSMILES(m.getCanSMILES());
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 			
 			
-			if (monomerSmiles != null && monomerSmiles.compareTo(newSmiles) == 0) {
+			
+			if (monomerSmiles != null && monomerSmiles.compareTo(uniqueSmiles) == 0) {
 				monomer = m;
 				break;
 			}
@@ -153,6 +173,7 @@ public class StructureFrame extends JFrame {
 			monomer.setCanSMILES(smiles);
 			monomer.setName("Dynamic");
 			monomer.setAdHocMonomer( true);
+			
 
 			// make sure it assigns a unique alternaeId
 			String alternateId = null;
@@ -168,9 +189,14 @@ public class StructureFrame extends JFrame {
 			if (polymerType == Monomer.CHEMICAL_POLYMER_TYPE) {
 				monomer.setMonomerType(Monomer.UNDEFINED_MOMONER_TYPE);
 				
-			} else {
+			}
+			else if (polymerType.equals(Monomer.NUCLIEC_ACID_POLYMER_TYPE)) {
+				monomer.setMonomerType(editedMonomer.getMonomerType());
+				monomer.setNaturalAnalog(editedMonomer.getNaturalAnalog());
+			}
+			else {
 				monomer.setMonomerType(Monomer.BACKBONE_MOMONER_TYPE);
-				monomer.setNaturalAnalog("X");
+				monomer.setNaturalAnalog(editedMonomer.getNaturalAnalog());
 			}
 			
 
@@ -219,7 +245,7 @@ public class StructureFrame extends JFrame {
 		MonomerStore store = MonomerStoreCache.getInstance().getMonomerStore(this.monomer);
 		
 		// return the monomer corresponding to the smiles
-		Monomer monomer = getMonomerBySmiles(smiles,this.monomer.getPolymerType(), store);
+		Monomer monomer = getMonomerBySmiles(smiles,this.monomer.getPolymerType(), store,this.monomer);
 		if (monomer == null) {
 			String msg = "Connection points R atoms not defined correctly.  Please use R1, R2 and R3 only.";
 			JOptionPane.showMessageDialog(editor.getFrame(), msg, "Error",
@@ -284,9 +310,9 @@ public class StructureFrame extends JFrame {
 		} catch (Exception e) {
 		}
 
-		if (monomer == null
-				|| //support peptide and chem
-				!(monomerInfo.getPolymerType().equals("CHEM") || monomerInfo.getPolymerType().equals("PEPTIDE")))
+		if (monomer == null)
+				 //support peptide and chem
+				//|| !(monomerInfo.getPolymerType().equals("CHEM") || monomerInfo.getPolymerType().equals("PEPTIDE")))
 			return null;
 		
 		if (frame == null) {

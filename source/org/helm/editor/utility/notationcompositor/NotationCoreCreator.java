@@ -66,7 +66,7 @@ public class NotationCoreCreator implements NotationCreator{
             if (type.equalsIgnoreCase(Monomer.NUCLIEC_ACID_POLYMER_TYPE)) {
                 rnaCount++;
                 
-                notation.append( createNotationString(currentNode, nameMap, hyperNodePolymerNotationMap, null, type, rnaCount) );
+                notation.append( createNotationString(currentNode, nameMap, hyperNodePolymerNotationMap, smilesMap, type, rnaCount) );
             } else if (type.equalsIgnoreCase(Monomer.PEPTIDE_POLYMER_TYPE)) {
                 peptideCount++;
                 

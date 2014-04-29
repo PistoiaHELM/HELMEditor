@@ -409,6 +409,7 @@ public class NotationParser {
      */
     public static Graph2D loadNucleicAcidMonomerSequence(String polymerNotation, boolean withStarting) throws MonomerException, IOException, JDOMException, NotationException, StructureException {
 
+    	MonomerStore monomerStore= MonomerStoreCache.getInstance().getCombinedMonomerStore();
         Graph2D sequenceGraph = new Graph2D();
 
         NodeMap monomerInfoNodeMap = sequenceGraph.createNodeMap();
@@ -421,7 +422,7 @@ public class NotationParser {
 
         GraphCopier copier = SequenceGraphTools.getGraphCopier(sequenceGraph);
 
-        List<Nucleotide> nucList = SimpleNotationParser.getNucleotideList(polymerNotation);
+        List<Nucleotide> nucList = SimpleNotationParser.getNucleotideList(polymerNotation,monomerStore);
 
         Node pNode = null;
         Node baseNode = null;
@@ -485,8 +486,8 @@ public class NotationParser {
 //                    }
                 }
 
-                if (nuc.getBaseMonomer() != null) {
-                    baseName = nuc.getBaseMonomer().getAlternateId();
+                if (nuc.getBaseMonomer(monomerStore) != null) {
+                    baseName = nuc.getBaseMonomer(monomerStore).getAlternateId();
                     baseNode = copier.copy(SimpleElemetFactory.getInstance().createMonomerNode(Monomer.NUCLIEC_ACID_POLYMER_TYPE, baseName), sequenceGraph).firstNode();
 //                    baseNode = copier.copy(NodeFactory.createNucleicAcidBaseNode(baseName), sequenceGraph).firstNode();
                 }
@@ -868,7 +869,7 @@ public class NotationParser {
 
         Monomer sMonomer = nuc.getSugarMonomer();
         Monomer pMonomer = nuc.getPhosphateMonomer();
-        Monomer bMonomer = nuc.getBaseMonomer();
+        Monomer bMonomer = nuc.getBaseMonomer(MonomerStoreCache.getInstance().getCombinedMonomerStore());
 
         Node sNode = null;
         Node pNode = null;

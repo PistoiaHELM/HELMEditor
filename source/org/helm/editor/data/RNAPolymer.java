@@ -25,6 +25,7 @@ package org.helm.editor.data;
 import java.util.BitSet;
 import java.util.List;
 
+import org.helm.notation.MonomerStore;
 import org.helm.notation.NotationException;
 import org.helm.notation.model.Monomer;
 import org.helm.notation.model.Nucleotide;
@@ -143,19 +144,21 @@ public class RNAPolymer {
         modifiedPosphatePos = new BitSet[size];
         modifiedBasePos = new BitSet[size];
         sugarCodes = new String[size][];
+        
+        MonomerStore monomerStore=MonomerStoreCache.getInstance().getCombinedMonomerStore();
         for (int i = 0; i < size; i++) {
             PolymerNode node = nodes.get(i);
             List<Nucleotide> bases = SimpleNotationParser.getNucleotideList(node.getLabel(), false);
 
             singleLetterSeq[i] = getSingleLetterSequence(bases);
 
-            modifiedBaseOrSugarPos[i] = getModifiedBaseOrSugarPositions(bases);
+            modifiedBaseOrSugarPos[i] = getModifiedBaseOrSugarPositions(bases,monomerStore);
 
             modifiedPosphatePos[i] = getModifiedPosphatePositions(bases);
 
             sugarCodes[i] = getSugarCodes(bases);
 
-            modifiedBasePos[i] = getModifiedBasePositions(bases);
+            modifiedBasePos[i] = getModifiedBasePositions(bases,monomerStore);
         }
 
         initializeBasePairing();
@@ -189,7 +192,7 @@ public class RNAPolymer {
         return result.toString();
     }
 
-    private BitSet getModifiedBasePositions(List<Nucleotide> bases) throws Exception {
+    private BitSet getModifiedBasePositions(List<Nucleotide> bases,MonomerStore monomerStore) throws Exception {
 
         BitSet bits = new BitSet();
 
@@ -204,14 +207,14 @@ public class RNAPolymer {
         for (int j = 0; j < baseCount; j++) {
             Nucleotide n = bases.get(j);
 
-            if ((n.getBaseMonomer() != null && n.getBaseMonomer().isModified())) {
+            if ((n.getBaseMonomer(monomerStore) != null && n.getBaseMonomer(monomerStore).isModified())) {
                 bits.set(j);
             }
         }
         return bits;
     }
 
-    private BitSet getModifiedBaseOrSugarPositions(List<Nucleotide> bases) throws Exception {
+    private BitSet getModifiedBaseOrSugarPositions(List<Nucleotide> bases,MonomerStore monomerStore) throws Exception {
 
         BitSet bits = new BitSet();
 
@@ -226,7 +229,7 @@ public class RNAPolymer {
         for (int j = 0; j < baseCount; j++) {
             Nucleotide n = bases.get(j);
 
-            if ((n.getBaseMonomer() != null && n.getBaseMonomer().isModified()) || (n.getSugarMonomer() != null && n.getSugarMonomer().isModified())) {
+            if ((n.getBaseMonomer(monomerStore) != null && n.getBaseMonomer(monomerStore).isModified()) || (n.getSugarMonomer() != null && n.getSugarMonomer().isModified())) {
                 bits.set(j);
             }
         }

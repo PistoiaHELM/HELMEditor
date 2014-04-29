@@ -176,6 +176,8 @@ public class Graph2NotationTranslator {
             monomer = GraphUtils.getMonomerDB().get(monomerInfo.getPolymerType()).get(monomerInfo.getMonomerID());
 
             StringBuilder code = new StringBuilder();
+            StringBuilder codeWithSmiles = new StringBuilder();
+            boolean containsSmiles = false;
             monomerCount = 0;
             String polyType = monomerInfo.getPolymerType();
             String anotation = graphManager.getAnnotation(startingNode);
@@ -186,6 +188,11 @@ public class Graph2NotationTranslator {
 
             if (polyType.equalsIgnoreCase(Monomer.NUCLIEC_ACID_POLYMER_TYPE)) {
             	Set<Node> visitedRNA = new HashSet<Node>();
+            	
+            	//boolean containsSmiles = false;
+                
+              
+                
             	if (MonomerInfoUtils.isPMonomer(startingNode)) {
             		visitedRNA.add(startingNode);
             	}
@@ -204,7 +211,10 @@ public class Graph2NotationTranslator {
 
                     monomerInfo = (MonomerInfo) nodeMap.get(pNode);
 
-                    code.append(getMonomerString(monomerInfo));
+                    String monomerString = getMonomerString(monomerInfo);
+                    
+                    code.append(monomerString);
+                    codeWithSmiles.append(monomerString);
 
                     parentNodeMap.set(pNode, hyperNode);
                     successors = pNode.successors();
@@ -215,6 +225,7 @@ public class Graph2NotationTranslator {
                             rNode = successors.node();
                             //append seperator if there is a next unit
                             code.append(".");
+                            codeWithSmiles.append(".");
                             break;
                         }
                     }
@@ -222,6 +233,14 @@ public class Graph2NotationTranslator {
                     monomerCount = 1;
                     parentNodeMap.set(startingNode, hyperNode);
                     positionNodeMap.setInt(startingNode, monomerCount++);
+                    if (monomer.isAdHocMonomer()){
+                    	containsSmiles=true;
+                    	codeWithSmiles.append("(["+monomer.getCanSMILES()+"])");
+                    }
+                    else
+                    {
+                    	codeWithSmiles.append("("+getMonomerString(monomerInfo)+")");
+                    }
                     code.append("(");
                     code.append(getMonomerString(monomerInfo));
                     code.append(")");
@@ -270,21 +289,41 @@ public class Graph2NotationTranslator {
                     }
                     //r node
                     monomerInfo = (MonomerInfo) nodeMap.get(rNode);
-                    code.append(getMonomerString(monomerInfo));
+                    
+                    String monomerString = getMonomerString(monomerInfo);
+                    code.append(monomerString);
+                    codeWithSmiles.append(monomerString);
+                    
                     positionNodeMap.set(rNode, monomerCount++);
                     if (baseNode != null) {
                         positionNodeMap.setInt(baseNode, monomerCount++);
 
                         monomerInfo = (MonomerInfo) nodeMap.get(baseNode);
+                        monomer = GraphUtils.getMonomerDB().get(monomerInfo.getPolymerType()).get(monomerInfo.getMonomerID());
+
                         code.append("(");
                         code.append(getMonomerString(monomerInfo));
                         code.append(")");
+                        if (monomer.isAdHocMonomer()){
+                        	containsSmiles=true;
+                        	codeWithSmiles.append("(["+monomer.getCanSMILES()+"])");
+                        }
+                        else
+                        {
+                        	codeWithSmiles.append("("+getMonomerString(monomerInfo)+")");
+                        }
                     }
                     if (pNode != null) {
                         positionNodeMap.setInt(pNode, monomerCount++);
                         parentNodeMap.set(pNode, hyperNode);
+
                         monomerInfo = (MonomerInfo) nodeMap.get(pNode);
-                        code.append(getMonomerString(monomerInfo));
+                        monomer = GraphUtils.getMonomerDB().get(monomerInfo.getPolymerType()).get(monomerInfo.getMonomerID());
+
+                        monomerString = getMonomerString(monomerInfo);
+                        code.append(monomerString);
+                        codeWithSmiles.append(monomerString);
+                        
                         successors = pNode.successors();
                         if (successors.ok()) {
                             if (successors.size() > 1) {
@@ -310,6 +349,7 @@ public class Graph2NotationTranslator {
                         rNode = null;
                     }
                     code.append(".");
+                    codeWithSmiles.append(".");
                 }
                 
                 if (startingNode.inDegree() > 0) {
@@ -319,7 +359,15 @@ public class Graph2NotationTranslator {
                 if (code.lastIndexOf(".") != -1) {
                     code.deleteCharAt(code.lastIndexOf("."));
                 }
+                
+                if (codeWithSmiles.lastIndexOf(".") != -1) {
+                	codeWithSmiles.deleteCharAt(codeWithSmiles.lastIndexOf("."));
+                }
                 hyperNodeNameMap.set(hyperNode, Monomer.NUCLIEC_ACID_POLYMER_TYPE + rnaCount);
+                
+
+                
+             
 
             } else if (polyType.equalsIgnoreCase(Monomer.PEPTIDE_POLYMER_TYPE)) {
                 peptideCount++;
@@ -327,8 +375,8 @@ public class Graph2NotationTranslator {
                 positionNodeMap.setInt(startingNode, monomerCount++);
                 parentNodeMap.set(startingNode, hyperNode);
 
-                boolean containsSmiles = false;
-                StringBuilder codeWithSmiles = new StringBuilder();
+                
+                //StringBuilder codeWithSmiles = new StringBuilder();
                 
                 if ( monomer.isAdHocMonomer()) {
                 	containsSmiles = true;
@@ -426,6 +474,10 @@ public class Graph2NotationTranslator {
                 }
             }
             hyperNodeMapPolymerName.set(hyperNode, code.toString());
+          //SM: ad hoc monomers should be exported as inline smiles code 
+            if ( containsSmiles) {
+            	smilesMaps.set(hyperNode, codeWithSmiles.toString());
+            }
 
         }
         

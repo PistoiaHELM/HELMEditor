@@ -371,12 +371,19 @@ public class MonomerMergeManager extends javax.swing.JDialog {
 				else {
 					Monomer locMon = localStore.getMonomer(polymerType,
 							alternateId);
+					String oldId=locMon.getAlternateId();
+					
 					locMon.setNewMonomer(false);
 					locMon.setAdHocMonomer(false);
 					
 					locMon.setAlternateId(tmp.getAlternateId());
 					locMon.setName(tmp.getName());
 					locMon.setNaturalAnalog(tmp.getNaturalAnalog());
+					
+					Map<String,Monomer> monomers=localStore.getMonomerDB().get(polymerType);
+					Monomer m=monomers.remove(oldId);
+					monomers.put(locMon.getAlternateId(), m);
+										
 					MonomerFactory.setDBChanged(true);
 					
 				}

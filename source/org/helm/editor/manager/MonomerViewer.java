@@ -500,15 +500,14 @@ public class MonomerViewer extends JPanel {
 //			Map<String, Monomer> smilesMap = MonomerStoreCache.getInstance()
 //					.getCombinedMonomerStore().getSmilesMonomerDB();
 			
-			//iterate over smilesMap and compare only the smiles part without the rests
-			String smiles=StructureParser.getSmilesFromExtendedSmiles(m.getCanSMILES());
+			String smiles=StructureParser.getUniqueExtendedSMILES(m.getCanSMILES());
 			Iterator<Monomer> it = smilesMap.values().iterator();
 			while (it.hasNext()) {
 				Monomer existM = it.next();
 				if	(existM.getCanSMILES()==null){
 					continue;
 				}
-				String monomerSmiles = StructureParser.getSmilesFromExtendedSmiles(existM.getCanSMILES());
+				String monomerSmiles = StructureParser.getUniqueExtendedSMILES(existM.getCanSMILES());
 				
 				
 				

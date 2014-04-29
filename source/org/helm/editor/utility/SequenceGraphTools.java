@@ -816,6 +816,26 @@ public class SequenceGraphTools {
 		
 		return isModifierOfType(node, Monomer.PEPTIDE_POLYMER_TYPE);
 	}
+	
+	
+	public static boolean isRNABranchModifier(Node node)
+			throws MonomerException, IOException, JDOMException {
+		
+		if (node == null)
+			return false;
+
+		Graph2D graph = (Graph2D) node.getGraph();
+		NodeMap monomerInfoMap = (NodeMap) graph
+				.getDataProvider(NodeMapKeys.MONOMER_REF);
+
+		MonomerInfo monomerInfo = (MonomerInfo) monomerInfoMap.get(node);
+		
+		Monomer monomer = getMonomerDB().get(monomerInfo.getPolymerType()).get(
+				monomerInfo.getMonomerID());
+		
+		return monomer.getPolymerType().equalsIgnoreCase(Monomer.NUCLIEC_ACID_POLYMER_TYPE) && monomer.getMonomerType().equals(Monomer.BRANCH_MOMONER_TYPE);
+
+	}
 		
 	
 	private static boolean isModifierOfType(Node node,String polymerType)

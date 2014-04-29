@@ -65,8 +65,8 @@ public class NotationParserSample {
                         if (nc.getSugarMonomer() != null) {
                             System.out.println("--Suger: " + nc.getSugarMonomer().getName() + ", id = " + nc.getSugarMonomer().getId());
                         }
-                        if (nc.getBaseMonomer() != null) {
-                            System.out.println("--Base: " + nc.getBaseMonomer().getName() + ", id = " + nc.getSugarMonomer().getId());
+                        if (nc.getBaseMonomer(monomerStore) != null) {
+                            System.out.println("--Base: " + nc.getBaseMonomer(monomerStore).getName() + ", id = " + nc.getSugarMonomer().getId());
                         }
                         if (nc.getPhosphateMonomer() != null) {
                             System.out.println("--Phosphate: " + nc.getPhosphateMonomer().getName() + ", id = " + nc.getSugarMonomer().getId());
