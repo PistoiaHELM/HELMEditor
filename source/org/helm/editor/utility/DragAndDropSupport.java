@@ -1350,11 +1350,22 @@ public class DragAndDropSupport {
 				}
 			} else if (newMonomerInfo.getPolymerType().equals(
 					Monomer.PEPTIDE_POLYMER_TYPE)) {
+				
+				
 				List<Attachment> usedAttList = oldMonomerInfo
 						.getUsedAttachmentList();
 				List<Attachment> newAttList = newMonomerInfo
 						.getAttachmentList();
 
+				//2014-05-13 special handling for adhoc monomers:
+				//only check attachment count of both monomers, because adhoc monomers always have R-H attachments 
+				oldMonomer = MonomerStoreCache.getInstance().getCombinedMonomerStore().getMonomer(Monomer.PEPTIDE_POLYMER_TYPE, oldMonomerInfo.getMonomerID());
+				if (oldMonomer.isAdHocMonomer()){
+					if (usedAttList.size()==newAttList.size()){
+						return true;
+					}	
+				}
+				
 				boolean missing = false;
 				for (Attachment usedAtt : usedAttList) {
 					String usedID = usedAtt.getAlternateId();
