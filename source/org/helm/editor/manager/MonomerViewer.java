@@ -473,8 +473,6 @@ public class MonomerViewer extends JPanel {
 			MonomerFactory monomerFactory = MonomerFactory.getInstance();
 			Map<String, Map<String, Monomer>> monomerDB = monomerFactory.getMonomerDB();
 			
-//			Map<String, Map<String, Monomer>> monomerDB = MonomerStoreCache
-//					.getInstance().getCombinedMonomerStore().getMonomerDB();
 
 			Map<String, Monomer> idMap = monomerDB.get(m.getPolymerType());
 			Monomer[] monomers = idMap.values().toArray(new Monomer[0]);
@@ -496,65 +494,33 @@ public class MonomerViewer extends JPanel {
 			
 			Map<String, Monomer> smilesMap = monomerFactory.getSmilesMonomerDB();
 			 
-			System.out.println(m.getCanSMILES());
-//			Map<String, Monomer> smilesMap = MonomerStoreCache.getInstance()
-//					.getCombinedMonomerStore().getSmilesMonomerDB();
+
 			
 			String smiles=StructureParser.getUniqueExtendedSMILES(m.getCanSMILES());
-			Iterator<Monomer> it = smilesMap.values().iterator();
-			while (it.hasNext()) {
-				Monomer existM = it.next();
-				if	(existM.getCanSMILES()==null){
-					continue;
-				}
-				String monomerSmiles = StructureParser.getUniqueExtendedSMILES(existM.getCanSMILES());
-				
-				
-				
-				if (monomerSmiles != null && monomerSmiles.compareTo(smiles) == 0) {
-					
-					 
-					boolean isAdhocMonomer= false;
-					if(this.monomer != null) {
-						isAdhocMonomer = this.monomer.isAdHocMonomer();
-					}
+			if (smilesMap.containsKey(smiles)) {
+				Monomer existM = smilesMap.get(smiles);
 
-					boolean sameAttachment = m.attachmentEquals(existM);
-					if (sameAttachment || isAdhocMonomer) {
-						boolean containsAnyAtom = m.containAnyAtom();
-						if (!containsAnyAtom) {
-							JOptionPane.showMessageDialog(
-									this,
-									"Monomer with the same structure already exists in "
-											+ existM.getPolymerType()
-											+ " with monomer ID of "
-											+ existM.getAlternateId(),
-									"Monomer Validation Error",
-									JOptionPane.ERROR_MESSAGE);
-							return false;
-						}
+				boolean isAdhocMonomer = false;
+				if (this.monomer != null) {
+					isAdhocMonomer = this.monomer.isAdHocMonomer();
+				}
+
+				boolean sameAttachment = m.attachmentEquals(existM);
+				if (sameAttachment || isAdhocMonomer) {
+					boolean containsAnyAtom = m.containAnyAtom();
+					if (!containsAnyAtom) {
+						JOptionPane.showMessageDialog(
+								this,
+								"Monomer with the same structure already exists in "
+										+ existM.getPolymerType()
+										+ " with monomer ID of "
+										+ existM.getAlternateId(),
+								"Monomer Validation Error",
+								JOptionPane.ERROR_MESSAGE);
+						return false;
 					}
 				}
 			}
-			
-//			if (smilesMap.containsKey(m.getCanSMILES())) {
-//				Monomer existM = smilesMap.get(m.getCanSMILES());
-//				boolean sameAttachment = m.attachmentEquals(existM);
-//				if (sameAttachment) {
-//					boolean containsAnyAtom = m.containAnyAtom();
-//					if (!containsAnyAtom) {
-//						JOptionPane.showMessageDialog(
-//								this,
-//								"Monomer with the same structure already exists in "
-//										+ existM.getPolymerType()
-//										+ " with monomer ID of "
-//										+ existM.getAlternateId(),
-//								"Monomer Validation Error",
-//								JOptionPane.ERROR_MESSAGE);
-//						return false;
-//					}
-//				}
-//			}
 
 			return true;
 

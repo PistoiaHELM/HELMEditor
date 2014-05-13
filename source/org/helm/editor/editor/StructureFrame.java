@@ -102,56 +102,36 @@ public class StructureFrame extends JFrame {
 		return list;
 	}
 
-	// loop through monomers by comparing canonical smiles
-	// if no monomer finder, register the smiles in monomer database as a
+	// look for predefined monomer in smilesDB
+	// if no monomer can be found, register the smiles in monomer database as a
 	// session temporary record
-	public static Monomer getMonomerBySmiles(String smiles,String polymerType, MonomerStore storeToAdd,Monomer editedMonomer) {
-		
-		MonomerStore combinedMonomerStore = MonomerStoreCache.getInstance().getCombinedMonomerStore();
-		Map<String, Monomer> map = null;
-		try {
-			map = combinedMonomerStore.getMonomerDB().get(polymerType);
-			// map =
-			// org.helm.notation.MonomerFactory.getInstance().getMonomerDB().get("CHEM");
-		} catch (Exception e) {
-		}
+	public static Monomer getMonomerBySmiles(String smiles, String polymerType,
+			MonomerStore storeToAdd, Monomer editedMonomer) {
+
+		MonomerStore combinedMonomerStore = MonomerStoreCache.getInstance()
+				.getCombinedMonomerStore();
+
+		Map<String, Monomer> map = combinedMonomerStore.getMonomers(polymerType);
+		Map<String, Monomer> smilesDB = combinedMonomerStore
+				.getSmilesMonomerDB();
 		Monomer monomer = null;
-		
-		String uniqueSmiles=null;
+
+		String uniqueSmiles = null;
 		try {
 			uniqueSmiles = StructureParser.getUniqueExtendedSMILES(smiles);
 		} catch (Exception e) {
-			e.printStackTrace();
+			uniqueSmiles=smiles;
 		}
-		
-		
-		// first check if there is some predefined monomer
-		Iterator<Monomer> it = map.values().iterator();
-		while (it.hasNext()) {
-			Monomer m = it.next();
-			//String smi = m.getCanSMILES();
-			
-			String monomerSmiles=null;
-			try {
-				monomerSmiles = StructureParser.getUniqueExtendedSMILES(m.getCanSMILES());
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			
-			
-			
-			if (monomerSmiles != null && monomerSmiles.compareTo(uniqueSmiles) == 0) {
-				monomer = m;
-				break;
-			}
-		}
-		
-		if (monomer == null) {
-			// no monomer define, then a new should be created
+
+		// first check if a predefined monomer exists
+		if (smilesDB.containsKey(uniqueSmiles)) {
+			monomer = smilesDB.get(uniqueSmiles);
+		} else {
+			// no predefined monomer, then a new should be created
 			boolean r1 = false;
 			boolean r2 = false;
 			boolean r3 = false;
-			List<String> rs = getRAtoms(smiles);
+			List<String> rs = getRAtoms(uniqueSmiles);
 			for (String r : rs) {
 				if (r.compareTo("R1") == 0 && !r1)
 					r1 = true;
@@ -166,40 +146,35 @@ public class StructureFrame extends JFrame {
 				return null;
 
 			// if not, then create new one
-			
-			
+
 			monomer = new Monomer();
-  			monomer.setPolymerType(polymerType);
-			monomer.setCanSMILES(smiles);
+			monomer.setPolymerType(polymerType);
+			monomer.setCanSMILES(uniqueSmiles);
 			monomer.setName("Dynamic");
-			monomer.setAdHocMonomer( true);
-			
+			monomer.setAdHocMonomer(true);
 
 			// make sure it assigns a unique alternaeId
 			String alternateId = null;
 			while (true) {
-				//alternateId = "AM#" + (++iX);
-				alternateId = SimpleNotationParser.generateNextAdHocMonomerID(polymerType, combinedMonomerStore);
+				// alternateId = "AM#" + (++iX);
+				alternateId = SimpleNotationParser.generateNextAdHocMonomerID(
+						polymerType, combinedMonomerStore);
 
 				if (!map.containsKey(alternateId))
 					break;
 			}
 			monomer.setAlternateId(alternateId);
-			
+
 			if (polymerType == Monomer.CHEMICAL_POLYMER_TYPE) {
 				monomer.setMonomerType(Monomer.UNDEFINED_MOMONER_TYPE);
-				
-			}
-			else if (polymerType.equals(Monomer.NUCLIEC_ACID_POLYMER_TYPE)) {
+
+			} else if (polymerType.equals(Monomer.NUCLIEC_ACID_POLYMER_TYPE)) {
 				monomer.setMonomerType(editedMonomer.getMonomerType());
 				monomer.setNaturalAnalog(editedMonomer.getNaturalAnalog());
-			}
-			else {
+			} else {
 				monomer.setMonomerType(Monomer.BACKBONE_MOMONER_TYPE);
 				monomer.setNaturalAnalog(editedMonomer.getNaturalAnalog());
 			}
-			
-
 
 			int index = 0;
 			for (String r : rs) {
@@ -214,11 +189,7 @@ public class StructureFrame extends JFrame {
 
 			// add the new monomer to the dictionary
 			try {
-				storeToAdd.addNewMonomer(
-						monomer);
-				
-				//map.put(monomer.getAlternateId(), monomer);
-				
+				storeToAdd.addNewMonomer(monomer);
 			} catch (Exception e) {
 				// JOptionPane.showMessageDialog(null, e.getMessage(), "Error",
 				// JOptionPane.WARNING_MESSAGE);
