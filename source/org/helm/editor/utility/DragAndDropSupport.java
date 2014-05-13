@@ -1361,7 +1361,7 @@ public class DragAndDropSupport {
 				//only check attachment count of both monomers, because adhoc monomers always have R-H attachments 
 				oldMonomer = MonomerStoreCache.getInstance().getCombinedMonomerStore().getMonomer(Monomer.PEPTIDE_POLYMER_TYPE, oldMonomerInfo.getMonomerID());
 				if (oldMonomer.isAdHocMonomer()){
-					if (usedAttList.size()==newAttList.size()){
+					if (newAttList.size()>=usedAttList.size()){
 						return true;
 					}	
 				}
