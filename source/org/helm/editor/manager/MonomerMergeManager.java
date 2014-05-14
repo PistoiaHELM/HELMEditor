@@ -40,8 +40,6 @@ public class MonomerMergeManager extends javax.swing.JDialog {
 	private javax.swing.JPanel monomerListPanel;
 	private org.jdesktop.swingx.JXTable monomerTable;
 	private javax.swing.JPanel monomerViewerPanel;
-	private javax.swing.JComboBox polymerTypeComboBox;
-	private javax.swing.JLabel polymerTypeLabel;
 	private javax.swing.JButton registerButton;
 	private javax.swing.JScrollPane tableScrollPane;
 
@@ -66,8 +64,6 @@ public class MonomerMergeManager extends javax.swing.JDialog {
 
 	private void initComponents() {
 
-		polymerTypeLabel = new javax.swing.JLabel();
-
 		monomerListPanel = new javax.swing.JPanel();
 		tableScrollPane = new javax.swing.JScrollPane();
 		monomerTable = new org.jdesktop.swingx.JXTable();
@@ -79,38 +75,21 @@ public class MonomerMergeManager extends javax.swing.JDialog {
 		setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 		setTitle("HELM Editor Monomer Merge Dialog");
 
-		polymerTypeLabel.setText("Polymer Type");
-
+	
 		MonomerStore store = MonomerStoreCache.getInstance()
 				.getUnregisteredMonomers();
 		if (store != null && store.getPolymerTypeSet().size() > 0) {
 
-			Set<String> polymerTypeSet = store.getPolymerTypeSet();
 
-			String[] polymerTypes = Arrays.copyOf(polymerTypeSet.toArray(),
-					polymerTypeSet.toArray().length, String[].class);
-
-			polymerTypeComboBox = new javax.swing.JComboBox(polymerTypes);
-
-			String polymerType = (String) store.getPolymerTypeSet().toArray()[0];
-			polymerTypeComboBox.setSelectedItem(polymerType);
-
-			MonomerTableModel model = new MonomerTableModel(polymerType, store);
+			MonomerMergeTableModel model = new MonomerMergeTableModel(store.getAllMonomersList());
 			monomerTable.setModel(model);
 
 		} else {
-			polymerTypeComboBox = new javax.swing.JComboBox();
 			monomerTable.setModel(new javax.swing.table.DefaultTableModel(
 					new Object[][] {}, new String[] { "Symbol",
 							"Natural Analog", "Name", "Structure" }));
 		}
 
-		polymerTypeComboBox
-				.addActionListener(new java.awt.event.ActionListener() {
-					public void actionPerformed(java.awt.event.ActionEvent evt) {
-						polymerTypeComboBoxActionPerformed(evt);
-					}
-				});
 
 		monomerListPanel.setBorder(javax.swing.BorderFactory
 				.createTitledBorder("Monomer List"));
@@ -124,7 +103,7 @@ public class MonomerMergeManager extends javax.swing.JDialog {
 						int row = monomerTable.convertRowIndexToModel(rowIndex);
 						if (rowIndex >= 0
 								&& rowIndex < monomerTable.getRowCount()) {
-							Monomer monomer = ((MonomerTableModel) monomerTable
+							Monomer monomer = ((MonomerMergeTableModel) monomerTable
 									.getModel()).getMonomerList().get(row);
 							viewer.setMonomer(monomer);
 						}
@@ -246,32 +225,12 @@ public class MonomerMergeManager extends javax.swing.JDialog {
 												org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
 												org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
 												Short.MAX_VALUE)
-										.add(org.jdesktop.layout.GroupLayout.LEADING,
-												layout.createSequentialGroup()
-														.add(polymerTypeLabel)
-														.add(18, 18, 18)
-														.add(polymerTypeComboBox,
-																org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
-																115,
-																org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-														.add(38, 38, 38)
-										// .add(saveButton)
-										)).addContainerGap()));
+										).addContainerGap()));
 		layout.setVerticalGroup(layout
 				.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
 				.add(layout
 						.createSequentialGroup()
 						.addContainerGap()
-						.add(layout
-								.createParallelGroup(
-										org.jdesktop.layout.GroupLayout.BASELINE)
-								.add(polymerTypeLabel)
-								.add(polymerTypeComboBox,
-										org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
-										org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
-										org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-						// .add(saveButton)
-						)
 						.addPreferredGap(
 								org.jdesktop.layout.LayoutStyle.RELATED)
 						.add(monomerListPanel,
@@ -288,11 +247,11 @@ public class MonomerMergeManager extends javax.swing.JDialog {
 		pack();
 	}
 	
-	public void refreshContent(String polymerType) {
+	public void refreshContent() {
 		MonomerStore store = MonomerStoreCache.getInstance()
 				.getUnregisteredMonomers();
 
-		MonomerTableModel model = new MonomerTableModel(polymerType, store);
+		MonomerMergeTableModel model = new MonomerMergeTableModel(store.getAllMonomersList());
 		monomerTable.setModel(model);
 	}
 
@@ -305,19 +264,8 @@ public class MonomerMergeManager extends javax.swing.JDialog {
 		return viewer;
 	}
 
-	public String getPolymerType() {
-		return (String) polymerTypeComboBox.getSelectedItem();
-	}
-
 	
 
-	private void polymerTypeComboBoxActionPerformed(
-			java.awt.event.ActionEvent evt) {
-		String polymerType = (String) polymerTypeComboBox.getSelectedItem();
-		monomerTable
-				.setModel(new MonomerTableModel(polymerType, MonomerStoreCache
-						.getInstance().getUnregisteredMonomers()));
-	}
 
 	private void closeButtonActionPerformed(java.awt.event.ActionEvent evt) {
 		setVisible(false);
@@ -326,7 +274,7 @@ public class MonomerMergeManager extends javax.swing.JDialog {
 		int rowIndex = monomerTable.getSelectedRow();
 		int row = monomerTable.convertRowIndexToModel(rowIndex);
 		if (rowIndex >= 0 && rowIndex < monomerTable.getRowCount()) {
-			Monomer monomer = ((MonomerTableModel) monomerTable.getModel())
+			Monomer monomer = ((MonomerMergeTableModel) monomerTable.getModel())
 					.getMonomerList().get(row);
 			try {
 				setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
@@ -390,7 +338,7 @@ public class MonomerMergeManager extends javax.swing.JDialog {
 
 				MonomerFactory.getInstance().saveMonomerCache();
 
-				refreshContent(getPolymerType());
+				refreshContent();
 				getEditor().updatePolymerPanels();
 				getEditor().replaceAlternateId(alternateId, tmp.getAlternateId());
 				
