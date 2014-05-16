@@ -176,7 +176,7 @@ public class MacromoleculeEditor extends GUIBase implements DataListener,
 	private JMenuItem flipHorizontalItem;
 	private JMenuItem flipVerticalItem;
 	private JMenuItem rotateItem;
-	private JMenuItem editChemicalModifierItem;
+	//private JMenuItem editChemicalModifierItem;
 	/**
 	 * popup menu for user to anotate a nuceitide sequence as sense or anti
 	 * sense
@@ -222,6 +222,10 @@ public class MacromoleculeEditor extends GUIBase implements DataListener,
 	private MonomerInfoDialog monomerInfoDialog;
 	private PropertyManager userProperty;
 	private UIType type;
+	
+	
+	private AbstractAction editMonomerStructureAction;
+	
 
 	// private JMenuItem showSelectedStructItem;
 
@@ -347,6 +351,12 @@ public class MacromoleculeEditor extends GUIBase implements DataListener,
 		UIType type = userProperty.getUIType();
 		setupUIType(type);
 
+		editMonomerStructureAction=new AbstractAction("Edit Monomer Structure"){
+			public void actionPerformed(ActionEvent e) {
+				editChemicalStructure();
+			}
+		};
+		
 		initNodePopUp();
 
 		// ----------------------------------------------------------------
@@ -367,6 +377,9 @@ public class MacromoleculeEditor extends GUIBase implements DataListener,
 		});
 
 		initFirstNodePopup();
+		
+		
+		
 
 		// add the node property editor
 		view.addViewMode(new ViewMode() {
@@ -452,13 +465,13 @@ public class MacromoleculeEditor extends GUIBase implements DataListener,
 							}
 							popup.show(ev.getComponent(), ev.getX(), ev.getY());
 
-							//SM 2014-03-31 allow editing monomer structure for peptides,chem and nucleobases
-							if (SequenceGraphTools.isChemicalModifier(v) || SequenceGraphTools.isPeptideModifier(v) || SequenceGraphTools.isRNABranchModifier(v)) {
-								editChemicalModifierItem.setEnabled(true);
-							} else {
-								editChemicalModifierItem.setEnabled(false);
-							}
-							//editChemicalModifierItem.setEnabled(true);
+//							if (SequenceGraphTools.isChemicalModifier(v) || SequenceGraphTools.isPeptideModifier(v) || SequenceGraphTools.isRNABranchModifier(v)) {
+//								editChemicalModifierItem.setEnabled(true);
+//							} else {
+//								editChemicalModifierItem.setEnabled(false);
+//							}
+							
+							
 							if (v != null) {
 								graph.setSelected(v, true);
 							}
@@ -542,6 +555,10 @@ public class MacromoleculeEditor extends GUIBase implements DataListener,
 		firstNCSubMenu.add(append_P_Action);
 
 		firstNCNodePopup.add(firstNCSubMenu);
+		
+		firstNCNodePopup.addSeparator();
+		firstNCNodePopup.add(editMonomerStructureAction);
+		
 	}
 
 	private void initNodePopUp() {
@@ -591,12 +608,12 @@ public class MacromoleculeEditor extends GUIBase implements DataListener,
 			}
 		});
 
-		editChemicalModifierItem = new JMenuItem("Edit Monomer Structure");
-		editChemicalModifierItem.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				editChemicalStructure();
-			}
-		});
+//		editChemicalModifierItem = new JMenuItem("Edit Monomer Structure");
+//		editChemicalModifierItem.addActionListener(new ActionListener() {
+//			public void actionPerformed(ActionEvent e) {
+//				editChemicalStructure();
+//			}
+//		});
 
 		final JMenu copyMenu = buildCopyMenu();
 		final JMenu viewMenu = buildViewMenu();
@@ -622,9 +639,12 @@ public class MacromoleculeEditor extends GUIBase implements DataListener,
 		popup.addSeparator();
 		popup.add(molStructureMenu);
 		popup.addSeparator();
-		popup.add(editChemicalModifierItem);
+		popup.add(editMonomerStructureAction);
+		
+		
 	}
-
+	
+	
 	private void initInsertNucleotideMenu() {
 		insertNCNodePopup = new JPopupMenu("Insert a nucleotide ...");
 		JMenuItem nc_AItem = new JMenuItem("A");
@@ -737,7 +757,12 @@ public class MacromoleculeEditor extends GUIBase implements DataListener,
 		appendEndSubMenu.add(append_dT_Action);
 		appendEndSubMenu.addSeparator();
 		appendEndSubMenu.add(append_P_Action);
+		
 		appendEndNCNodPopup.add(appendEndSubMenu);
+		
+		appendEndNCNodPopup.addSeparator();
+		appendEndNCNodPopup.add(editMonomerStructureAction);
+		
 	}
 
 	private void initNucleotideAnnotationMenu() {

@@ -213,8 +213,18 @@ public class Graph2NotationTranslator {
 
                     String monomerString = getMonomerString(monomerInfo);
                     
+                                  
                     code.append(monomerString);
-                    codeWithSmiles.append(monomerString);
+                    
+                    if (monomer.isAdHocMonomer()){
+                    	containsSmiles=true;
+                    	codeWithSmiles.append("["+monomer.getCanSMILES()+"]");
+                    }
+                    else
+                    {
+                    	codeWithSmiles.append(monomerString);
+                    }
+                    
 
                     parentNodeMap.set(pNode, hyperNode);
                     successors = pNode.successors();
@@ -289,10 +299,21 @@ public class Graph2NotationTranslator {
                     }
                     //r node
                     monomerInfo = (MonomerInfo) nodeMap.get(rNode);
+                    monomer = GraphUtils.getMonomerDB().get(monomerInfo.getPolymerType()).get(monomerInfo.getMonomerID());
                     
                     String monomerString = getMonomerString(monomerInfo);
                     code.append(monomerString);
-                    codeWithSmiles.append(monomerString);
+                    
+                    if (monomer.isAdHocMonomer()){
+                    	containsSmiles=true;
+                    	codeWithSmiles.append("["+monomer.getCanSMILES()+"]");
+                    }
+                    else
+                    {
+                    	codeWithSmiles.append(monomerString);
+                    }
+                    
+                    
                     
                     positionNodeMap.set(rNode, monomerCount++);
                     if (baseNode != null) {
@@ -322,7 +343,14 @@ public class Graph2NotationTranslator {
 
                         monomerString = getMonomerString(monomerInfo);
                         code.append(monomerString);
-                        codeWithSmiles.append(monomerString);
+                        if (monomer.isAdHocMonomer()){
+                        	containsSmiles=true;
+                        	codeWithSmiles.append("["+monomer.getCanSMILES()+"]");
+                        }
+                        else
+                        {
+                        	codeWithSmiles.append(monomerString);
+                        }
                         
                         successors = pNode.successors();
                         if (successors.ok()) {
