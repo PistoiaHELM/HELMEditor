@@ -162,6 +162,10 @@ public class MonomerViewer extends JPanel {
 		naturalAnalogTextField.setEditable(modifiable);
 	}
 	
+	public void setAttachmentTableEditable(boolean modifiable){
+		attachmentTable.setEnabled(modifiable);
+	}
+	
 	private JPanel createViewerPanel() {
 		msketchPane = new MSketchPane();
 		msketchPane.setBorder(BorderFactory.createEtchedBorder());
