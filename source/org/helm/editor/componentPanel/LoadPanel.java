@@ -159,14 +159,13 @@ public class LoadPanel extends JPanel {
 			String processedInput = NotationParser
 					.removeChemMonomerBracket(inputText);
 
-			//standardize notation without validation
-			String complexNotation = ComplexNotationParser
-					.standardize(processedInput,false);
 
-			//validates format before parsing notation and adding temp monomers (XHELM-63) 
-			ComplexNotationParser
-					.validateComplexNotation(complexNotation);
+			//validates format (XHELM-63) 
+			ComplexNotationParser.validateComplexNotation(processedInput);
 
+			//first validate then standardize
+			String complexNotation = ComplexNotationParser.standardize(processedInput);
+			
 			
 			String newNotation = null;
 			if (null != existingNotation
@@ -208,7 +207,7 @@ public class LoadPanel extends JPanel {
 
 			
 
-			String complexNotation = ComplexNotationParser.standardize(helm,true,
+			String complexNotation = ComplexNotationParser.standardize(helm,
 					store);
 
 			String newNotation = null;

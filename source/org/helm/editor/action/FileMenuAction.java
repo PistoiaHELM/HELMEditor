@@ -312,7 +312,7 @@ public class FileMenuAction extends TextMenuAction {
 			editor.getFrame().setCursor(
 					Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 			MonomerStore monomerStore=MonomerStoreCache.getInstance().getCombinedMonomerStore();
-			String standardNote = ComplexNotationParser.standardize(helmString,true,
+			String standardNote = ComplexNotationParser.standardize(helmString,
 					monomerStore);
 			editorNotation = ComplexNotationParser.getCombinedComlexNotation(
 					editorNotation, standardNote,monomerStore);
