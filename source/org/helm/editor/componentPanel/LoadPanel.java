@@ -160,12 +160,8 @@ public class LoadPanel extends JPanel {
 					.removeChemMonomerBracket(inputText);
 
 
-			//validates format (XHELM-63) 
-			ComplexNotationParser.validateComplexNotation(processedInput);
-
-			//first validate then standardize
-			String complexNotation = ComplexNotationParser.standardize(processedInput);
-			
+			String complexNotation = ComplexNotationParser
+					.standardize(processedInput);	
 			
 			String newNotation = null;
 			if (null != existingNotation
