@@ -448,16 +448,16 @@ public class NotationParser {
 
             //nucleotide contains one monomer, suager and phosphate are the same
             //This is a bug that in the Nucleotide class in the toolkit, it returns both sugar monomer and phosphate monomer, if there is only one monomer
-            if (null != nuc.getSugarMonomer() && null != nuc.getPhosphateMonomer()
-                    && nuc.getSugarMonomer().getAlternateId().equals(nuc.getPhosphateMonomer().getAlternateId())) {
+            if (null != nuc.getSugarMonomer(monomerStore) && null != nuc.getPhosphateMonomer(monomerStore)
+                    && nuc.getSugarMonomer(monomerStore).getAlternateId().equals(nuc.getPhosphateMonomer(monomerStore).getAlternateId())) {
                 //first nucleotide is P
                 //las nucleotide is R
                 if (i == 0) {
-                    pName = nuc.getPhosphateMonomer().getAlternateId();
+                    pName = nuc.getPhosphateMonomer(monomerStore).getAlternateId();
                     pNode = copier.copy(SimpleElemetFactory.getInstance().createMonomerNode(Monomer.NUCLIEC_ACID_POLYMER_TYPE, pName), sequenceGraph).firstNode();
 //                    pNode = copier.copy(NodeFactory.createNucleicAcidBackboneNode(pName, Monomer.ID_P), sequenceGraph).firstNode();
                 } else if (i == nucList.size() - 1) {
-                    rName = nuc.getSugarMonomer().getAlternateId();
+                    rName = nuc.getSugarMonomer(monomerStore).getAlternateId();
                     rNode = copier.copy(SimpleElemetFactory.getInstance().createMonomerNode(Monomer.NUCLIEC_ACID_POLYMER_TYPE, rName), sequenceGraph).firstNode();
 //                    rNode = copier.copy(NodeFactory.createNucleicAcidBackboneNode(rName, Monomer.ID_R), sequenceGraph).firstNode();
                 }
@@ -465,8 +465,8 @@ public class NotationParser {
 
                 //parse each unit to get the name for p, r and base
 
-                if (nuc.getSugarMonomer() != null) {
-                    rName = nuc.getSugarMonomer().getAlternateId();
+                if (nuc.getSugarMonomer(monomerStore) != null) {
+                    rName = nuc.getSugarMonomer(monomerStore).getAlternateId();
                     rNode = copier.copy(SimpleElemetFactory.getInstance().createMonomerNode(Monomer.NUCLIEC_ACID_POLYMER_TYPE, rName), sequenceGraph).firstNode();
 //                    rNode = copier.copy(NodeFactory.createNucleicAcidBackboneNode(rName, Monomer.ID_R), sequenceGraph).firstNode();
                     if (null == firstRNode) {
@@ -492,8 +492,8 @@ public class NotationParser {
 //                    baseNode = copier.copy(NodeFactory.createNucleicAcidBaseNode(baseName), sequenceGraph).firstNode();
                 }
 
-                if (nuc.getPhosphateMonomer() != null) {
-                    pName = nuc.getPhosphateMonomer().getAlternateId();
+                if (nuc.getPhosphateMonomer(monomerStore) != null) {
+                    pName = nuc.getPhosphateMonomer(monomerStore).getAlternateId();
                     pNode = copier.copy(SimpleElemetFactory.getInstance().createMonomerNode(Monomer.NUCLIEC_ACID_POLYMER_TYPE, pName), sequenceGraph).firstNode();
 //                    pNode = copier.copy(NodeFactory.createNucleicAcidBackboneNode(pName, Monomer.ID_P), sequenceGraph).firstNode();
                 }
