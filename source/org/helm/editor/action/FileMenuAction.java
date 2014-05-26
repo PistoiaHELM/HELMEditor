@@ -278,6 +278,23 @@ public class FileMenuAction extends TextMenuAction {
 			return;
 		}
 
+		
+
+		String editorNotation = editor.getNotation();
+		if (null != editorNotation && editorNotation.trim().length() > 0) {
+			int result = JOptionPane
+					.showConfirmDialog(
+							editor.getFrame(),
+							"Structures exist in the sketch pane,\ndo you want to clear them before opening your file?",
+							title, JOptionPane.YES_NO_OPTION,
+							JOptionPane.QUESTION_MESSAGE);
+			if (JOptionPane.YES_OPTION == result) {
+				editor.reset();
+				editorNotation = editor.getNotation();
+			}
+		}
+		
+		
 		try {
 			ComplexNotationParser.validateComplexNotation(helmString, store);
 			// add monomers, but cancel when adding failed.
@@ -292,20 +309,6 @@ public class FileMenuAction extends TextMenuAction {
 			JOptionPane.showMessageDialog(editor.getFrame(),
 					"Invalid Notation!", title, JOptionPane.WARNING_MESSAGE);
 			return;
-		}
-
-		String editorNotation = editor.getNotation();
-		if (null != editorNotation && editorNotation.trim().length() > 0) {
-			int result = JOptionPane
-					.showConfirmDialog(
-							editor.getFrame(),
-							"Structures exist in the sketch pane,\ndo you want to clear them before opening your file?",
-							title, JOptionPane.YES_NO_OPTION,
-							JOptionPane.QUESTION_MESSAGE);
-			if (JOptionPane.YES_OPTION == result) {
-				editor.reset();
-				editorNotation = editor.getNotation();
-			}
 		}
 
 		try {
