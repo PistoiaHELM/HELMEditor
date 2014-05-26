@@ -314,6 +314,7 @@ public class MonomerMergeManager extends javax.swing.JDialog {
 					extMon.setName(tmp.getName());
 					extMon.setNaturalAnalog(tmp.getNaturalAnalog());
 					extMon.setAttachmentList(tmp.getAttachmentList());
+					extMon.setMolfile(tmp.getMolfile());
 					
 					localStore.addMonomer(extMon, true);
 				}
@@ -330,6 +331,7 @@ public class MonomerMergeManager extends javax.swing.JDialog {
 					locMon.setName(tmp.getName());
 					locMon.setNaturalAnalog(tmp.getNaturalAnalog());
 					locMon.setAttachmentList(tmp.getAttachmentList());
+					locMon.setMolfile(tmp.getMolfile());
 					
 					Map<String,Monomer> monomers=localStore.getMonomerDB().get(polymerType);
 					Monomer m=monomers.remove(oldId);
