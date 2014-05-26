@@ -165,7 +165,7 @@ public class StructureFrame extends JFrame {
 			}
 			monomer.setAlternateId(alternateId);
 
-			if (polymerType == Monomer.CHEMICAL_POLYMER_TYPE) {
+			if (polymerType.equals(Monomer.CHEMICAL_POLYMER_TYPE)) {
 				monomer.setMonomerType(Monomer.UNDEFINED_MOMONER_TYPE);
 
 			} else if (polymerType.equals(Monomer.NUCLIEC_ACID_POLYMER_TYPE)) {
