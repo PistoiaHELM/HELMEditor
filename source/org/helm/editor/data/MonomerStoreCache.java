@@ -250,18 +250,14 @@ public class MonomerStoreCache {
 	public String addExternalMonomers(JFrame owner, MonomerStore store,
 			String helmString) throws IOException, MonomerException,
 			IllegalArgumentException {
-		/*if (this.externalMonomerStore == null
-				|| this.externalMonomerStore.getMonomerDB() == null) {
-			setExternalMonomers(store);
-			//return helmString;
-		}*/
-		
+			
 		if (this.externalMonomerStore == null) {
 			this.externalMonomerStore=new MonomerStore();
 		}
 		
-			
+		Map<Monomer,Monomer> dupMonomers=findDuplicateAdhocMonomers(store);	
 
+		System.out.println("Duplicate monomer count: "+dupMonomers.size());
 		LinkedList<Monomer> conflicts = findConflictingMonomers(store);
 		LinkedList<String> newNames = new LinkedList<String>();
 
@@ -275,6 +271,8 @@ public class MonomerStoreCache {
 			}
 
 		}
+		
+		
 		System.out.println(store);
 		System.out.println(conflicts);
 		LinkedList<String> oldNames = new LinkedList<String>();
@@ -282,6 +280,13 @@ public class MonomerStoreCache {
 		//add monomers to externalStore
 		for (String polymerType : store.getMonomerDB().keySet()) {
 			for (Monomer newMonomer : store.getMonomers(polymerType).values()) {
+			
+				if (dupMonomers.containsKey(newMonomer)){
+					this.externalMonomerStore.addMonomer(dupMonomers.get(newMonomer));
+					continue;
+				}
+				
+				
 				//rename monomer if there is a conflict
 				monomerIndex = conflicts.lastIndexOf(newMonomer);
 				if (monomerIndex >= 0) {
@@ -289,6 +294,7 @@ public class MonomerStoreCache {
 					newMonomer.setAlternateId(newNames.get(monomerIndex));
 				}
 				
+			
 				this.externalMonomerStore.addMonomer(newMonomer);
 				
 
@@ -304,10 +310,8 @@ public class MonomerStoreCache {
 			newHelmString = ComplexNotationParser.replaceMonomer(newHelmString,
 					 conflicts.get(i).getPolymerType(), oldNames.get(i), newNames.get(i), getCombinedMonomerStore(), false);
 		} catch (JDOMException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (NotationException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		}
@@ -382,6 +386,29 @@ public class MonomerStoreCache {
 		}
 
 		return conflictingIDs;
+	}
+	
+	/**
+	 * This function checks if adhoc monomers from the given store are already contained in the 
+	 * internal store  
+	 * @param store
+	 * @return map of duplicate monomers:key is the adhoc monomer from the store, value is the duplicate monomer from internal store
+	 */
+	private Map<Monomer,Monomer> findDuplicateAdhocMonomers(MonomerStore store) {
+		Map<Monomer,Monomer> dupMonomers = new HashMap<Monomer,Monomer>();
+
+		
+		for (Monomer m:store.getAllMonomersList()){
+			if (m.isAdHocMonomer()){
+				Monomer dupMon=this.internalMonomerStore.getMonomer(m.getCanSMILES());
+				if (dupMon!=null){
+					dupMonomers.put(m, dupMon);
+				}
+			}
+		}
+		
+		return dupMonomers;
+
 	}
 
 	/**
