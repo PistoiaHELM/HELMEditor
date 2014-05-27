@@ -535,6 +535,18 @@ public class MonomerViewer extends JPanel {
 					"isValidNewMonomer", ex);
 			return false;
 		}
+		
+		
+	}
+	
+	
+	public void clear(){
+		mviewPane.setM(0, "");
+		idTextField.setText("");
+		nameTextField.setText("");
+		naturalAnalogTextField.setText("");
+		model.updateAttachments(null);
+				
 	}
 
 	class AttachmentTableModel extends AbstractTableModel {
@@ -638,6 +650,8 @@ public class MonomerViewer extends JPanel {
 		public String[] getIDsByRow(int row) {
 			return getData().get(row).getIds();
 		}
+		
+		
 	}
 
 	class AttachmentIDTableCellEditor extends DefaultCellEditor {

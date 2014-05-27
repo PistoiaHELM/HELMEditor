@@ -50,12 +50,15 @@ public class MonomerMergeManager extends javax.swing.JDialog {
 		initComponents();
 
 		viewer = MonomerViewer.getNamedInstance("MonomerMergeManager");
+		
+		
 		viewer.setModifiableStatus(false);
 		viewer.setIdEditable(true);
 		viewer.setNameEditable(true);
 		viewer.setNaturalAnalogEditable(true);
 		viewer.setAttachmentTableEditable(true);
 		monomerViewerPanel.add(viewer);
+		viewer.clear();
 	}
 
 	
@@ -349,6 +352,7 @@ public class MonomerMergeManager extends javax.swing.JDialog {
 				
 				getEditor().onDropCompleteEvent(null);
 								
+				viewer.clear();
 				
 				JOptionPane.showMessageDialog(getParent(),
 						"Successfully registered external monomer",
