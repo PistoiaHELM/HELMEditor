@@ -42,7 +42,9 @@ import org.helm.editor.editor.MacromoleculeEditor;
 import org.helm.editor.utility.ExceptionHandler;
 import org.helm.editor.utility.NotationParser;
 import org.helm.editor.worker.PDBFileGenerator;
+import org.helm.notation.MonomerFactory;
 import org.helm.notation.MonomerStore;
+import org.helm.notation.model.Monomer;
 import org.helm.notation.tools.ComplexNotationParser;
 import org.helm.notation.tools.StructureParser;
 import org.helm.notation.tools.xHelmNotationExporter;
@@ -279,6 +281,7 @@ public class FileMenuAction extends TextMenuAction {
 		}
 
 		
+		
 
 		String editorNotation = editor.getNotation();
 		if (null != editorNotation && editorNotation.trim().length() > 0) {
@@ -311,6 +314,9 @@ public class FileMenuAction extends TextMenuAction {
 			return;
 		}
 
+		
+	
+		
 		try {
 			editor.getFrame().setCursor(
 					Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
@@ -427,6 +433,20 @@ public class FileMenuAction extends TextMenuAction {
 		} finally {
 			editor.getFrame().setCursor(
 					Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+		}
+	
+		
+		try {
+			// refresh images for adhoc monomers
+			for (Monomer m : MonomerFactory.getInstance().getMonomerStore()
+					.getAllMonomersList()) {
+				if (m.isAdHocMonomer()) {
+					org.helm.editor.utility.MonomerNodeHelper
+							.generateImageFile(m, true);
+				}
+			}
+		} catch (Exception ex) {
+
 		}
 
 		editor.synchronizeZoom();

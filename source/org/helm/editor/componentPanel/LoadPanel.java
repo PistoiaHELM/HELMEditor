@@ -50,6 +50,7 @@ import org.helm.editor.editor.MacromoleculeEditor;
 import org.helm.editor.utility.NotationParser;
 import org.helm.notation.MonomerFactory;
 import org.helm.notation.MonomerStore;
+import org.helm.notation.model.Monomer;
 import org.helm.notation.tools.ComplexNotationParser;
 import org.helm.notation.tools.NucleotideConverter;
 import org.helm.notation.tools.PeptideSequenceParser;
@@ -171,7 +172,18 @@ public class LoadPanel extends JPanel {
 			} else {
 				newNotation = complexNotation;
 			}
+			try {
+				// refresh images for adhoc monomers
+				for (Monomer m : MonomerFactory.getInstance().getMonomerStore()
+						.getAllMonomersList()) {
+					if (m.isAdHocMonomer()) {
+						org.helm.editor.utility.MonomerNodeHelper
+								.generateImageFile(m, true);
+					}
+				}
+			} catch (Exception ex) {
 
+			}
 			editor.synchronizeZoom();
 			ModelController.notationUpdated(newNotation, _ownerCode);
 		} catch (Exception ex) {

@@ -255,7 +255,7 @@ public class MonomerStoreCache {
 			this.externalMonomerStore=new MonomerStore();
 		}
 		
-		Map<Monomer,Monomer> dupMonomers=findDuplicateAdhocMonomers(store);	
+		LinkedList<Monomer> dupMonomers=findDuplicateAdhocMonomers(store);	
 
 		System.out.println("Duplicate monomer count: "+dupMonomers.size());
 		LinkedList<Monomer> conflicts = findConflictingMonomers(store);
@@ -281,8 +281,7 @@ public class MonomerStoreCache {
 		for (String polymerType : store.getMonomerDB().keySet()) {
 			for (Monomer newMonomer : store.getMonomers(polymerType).values()) {
 			
-				if (dupMonomers.containsKey(newMonomer)){
-					this.externalMonomerStore.addMonomer(dupMonomers.get(newMonomer));
+				if (dupMonomers.lastIndexOf(newMonomer)>=0){
 					continue;
 				}
 				
@@ -296,6 +295,8 @@ public class MonomerStoreCache {
 				
 			
 				this.externalMonomerStore.addMonomer(newMonomer);
+				org.helm.editor.utility.MonomerNodeHelper.generateImageFile(
+						newMonomer, true);			
 				
 
 			}
@@ -392,17 +393,18 @@ public class MonomerStoreCache {
 	 * This function checks if adhoc monomers from the given store are already contained in the 
 	 * internal store  
 	 * @param store
-	 * @return map of duplicate monomers:key is the adhoc monomer from the store, value is the duplicate monomer from internal store
+	 * @return list of duplicate adhoc monomers in store
 	 */
-	private Map<Monomer,Monomer> findDuplicateAdhocMonomers(MonomerStore store) {
-		Map<Monomer,Monomer> dupMonomers = new HashMap<Monomer,Monomer>();
+	private LinkedList<Monomer> findDuplicateAdhocMonomers(MonomerStore store) {
+		
+		LinkedList<Monomer> dupMonomers = new LinkedList<Monomer>();
 
 		
 		for (Monomer m:store.getAllMonomersList()){
 			if (m.isAdHocMonomer()){
 				Monomer dupMon=this.internalMonomerStore.getMonomer(m.getCanSMILES());
 				if (dupMon!=null){
-					dupMonomers.put(m, dupMon);
+					dupMonomers.add(m);
 				}
 			}
 		}
