@@ -2190,6 +2190,7 @@ public class MacromoleculeEditor extends GUIBase implements DataListener,
 
 		JMenu toolsMenu = new JMenu("Tools");
 		toolsMenu.add(new MonomerManagerAction(this));
+		toolsMenu.add(new MonomerMergeAction(this));
 		toolsMenu.add(new NucleotideManagerAction(this));
 		toolsMenu.add(new ProteinEditorAction(this));
 		toolsMenu.add(new org.helm.editor.action.ADCEditorAction(this));
@@ -2199,8 +2200,7 @@ public class MacromoleculeEditor extends GUIBase implements DataListener,
 		toolsMenu.add(new OligonucleotideFragmentAction(this));
 		toolsMenu.add(new JSeparator(JSeparator.HORIZONTAL));
 		toolsMenu.add(new ShowChooseUIDialog(this));
-		toolsMenu.add(new JSeparator(JSeparator.HORIZONTAL));
-		toolsMenu.add(new MonomerMergeAction(this));
+				
 		menuBar.add(toolsMenu);
 
 		JMenu editMenu = new JMenu("Edit");

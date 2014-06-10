@@ -17,7 +17,7 @@ public class MonomerMergeAction extends AbstractAction {
 	 private MacromoleculeEditor editor;
 
 	    public MonomerMergeAction(MacromoleculeEditor editor) {
-	        super("Launch Monomer Merge Dialog ...");
+	        super("Launch Temporary Monomer Registration ...");
 	        this.editor = editor;
 	    }
 

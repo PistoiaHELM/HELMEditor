@@ -77,7 +77,7 @@ public class MonomerMergeManager extends javax.swing.JDialog {
 		closeButton = new javax.swing.JButton();
 
 		setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-		setTitle("HELM Editor Monomer Merge Dialog");
+		setTitle("HELM Editor Temporary Monomer Registration");
 
 	
 		MonomerStore store = MonomerStoreCache.getInstance()
