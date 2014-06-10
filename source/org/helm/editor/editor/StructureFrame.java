@@ -205,13 +205,14 @@ public class StructureFrame extends JFrame {
 
 	private void save() {
 		String smiles = structurePanel.getSmilesEx();
+		//salts should be allowed (XHELM-75)
 		// simple verification
-		if (smiles.indexOf(".") > 0) {
+		/*if (smiles.indexOf(".") > 0) {
 			String msg = "The structure has to be in one fragment.";
 			JOptionPane.showMessageDialog(editor.getFrame(), msg, "Error",
 					JOptionPane.WARNING_MESSAGE);
 			return;
-		}
+		}*/
 
 		MonomerStore store = MonomerStoreCache.getInstance().getMonomerStore(this.monomer);
 		
