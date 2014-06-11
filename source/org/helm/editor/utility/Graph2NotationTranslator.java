@@ -103,7 +103,7 @@ public class Graph2NotationTranslator {
         NodeMap hyperNodeMapPolymerName = (NodeMap) hyperGraph.getDataProvider(NodeMapKeys.HYPERNODE_POLYMER_NOTATION);
         
         hyperGraph.removeDataProvider(NodeMapKeys.EXSMIELS);
-        hyperGraph.addDataProvider(NodeMapKeys.EXSMIELS, graph.createNodeMap());
+        hyperGraph.addDataProvider(NodeMapKeys.EXSMIELS, hyperGraph.createNodeMap());
         NodeMap smilesMaps = (NodeMap) hyperGraph.getDataProvider(NodeMapKeys.EXSMIELS);
            
 
