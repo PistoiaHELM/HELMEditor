@@ -240,9 +240,8 @@ public class NotationParser {
         }*/
 		
 		
-		//XHELM-28:remove smiles code between $$$ and $ at the end of the notation coming from editor.getSelectedNotation()
-		Pattern p=Pattern.compile("\\$\\$\\$(.+\\|(r,)?\\$.+)\\$$");
-		
+		//Match and remove smiles code inside annotation part coming from editor.getSelectedNotation() XHELM-28/XHELM-76
+		Pattern p=Pattern.compile("\\$\\$(.+\\$.+)\\$$");
 		Matcher m=p.matcher(notation);
 		while(m.find()){
 		    //System.out.println(m.group(1));
