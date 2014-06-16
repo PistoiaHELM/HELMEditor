@@ -38,190 +38,195 @@ import java.util.Map;
  */
 public class PeptidePolymer {
 
-    private String complexNotation;
+	private String complexNotation;
 
-    private List<PolymerNode> nodes;
-    private List<PolymerEdge> edges;
-    private List<String> annotations; //put empty string if no annotation
-    private String[] singleLetterSeq = null;
-    private BitSet[] modifiedPos = null;
-    private int[][] connection = null;
-    public static final int EMPTY_DATA_MODE = 1;
-    public static final int VALID_DATA_MODE = 2;
-    public static final int INVALID_DATA_MODE = 3;
-    private int dataMode = VALID_DATA_MODE;
+	private List<PolymerNode> nodes;
+	private List<PolymerEdge> edges;
+	private List<String> annotations; // put empty string if no annotation
+	private String[] singleLetterSeq = null;
+	private BitSet[] modifiedPos = null;
+	private int[][] connection = null;
+	public static final int EMPTY_DATA_MODE = 1;
+	public static final int VALID_DATA_MODE = 2;
+	public static final int INVALID_DATA_MODE = 3;
+	private int dataMode = VALID_DATA_MODE;
 
-    public PeptidePolymer() {
-        this(null);
-    }
+	public PeptidePolymer() {
+		this(null);
+	}
 
-    public PeptidePolymer(String complexNotation) {
-        setNotation(complexNotation);
-    }
+	public PeptidePolymer(String complexNotation) {
+		setNotation(complexNotation);
+	}
 
-    public String getNotation() {
-        return complexNotation;
-    }
+	public String getNotation() {
+		return complexNotation;
+	}
 
-    public void setNotation(String notation) {
-        this.complexNotation = notation;
-        if (null == complexNotation || complexNotation.length() == 0) {
-            dataMode = EMPTY_DATA_MODE;
-        } else {
-            try {
-                ComplexPolymer cp = ComplexNotationParser.parse(complexNotation);
-                nodes = cp.getPolymerNodeList();
-                edges = cp.getPolymerEdgeList();
+	public void setNotation(String notation) {
+		this.complexNotation = notation;
+		if (null == complexNotation || complexNotation.length() == 0) {
+			dataMode = EMPTY_DATA_MODE;
+		} else {
+			try {
+				ComplexPolymer cp = ComplexNotationParser
+						.parse(complexNotation);
+				nodes = cp.getPolymerNodeList();
+				edges = cp.getPolymerEdgeList();
 
-                Map<String, String> annMap = cp.getPolymerNodeAnnotationMap();
-                if (null != annMap && annMap.size() >0) {
-                    annotations = new ArrayList<String>();
-                    for (PolymerNode node : nodes) {
-                        if (annMap.containsKey(node.getId())) {
-                            annotations.add(annMap.get(node.getId()));
-                        } else {
-                            annotations.add("");
-                        }
-                    }
+				Map<String, String> annMap = cp.getPolymerNodeAnnotationMap();
+				if (null != annMap && annMap.size() > 0) {
+					annotations = new ArrayList<String>();
+					for (PolymerNode node : nodes) {
+						if (annMap.containsKey(node.getId())) {
+							annotations.add(annMap.get(node.getId()));
+						} else {
+							annotations.add("");
+						}
+					}
 
-                } else {
-                    annotations = new ArrayList<String>();
-                    for (int i=0; i<nodes.size(); i++) {
-                        annotations.add("");
-                    }
-                }
+				} else {
+					annotations = new ArrayList<String>();
+					for (int i = 0; i < nodes.size(); i++) {
+						annotations.add("");
+					}
+				}
 
-                for (PolymerNode node : nodes) {
-                    if (!node.getType().equals(Monomer.PEPTIDE_POLYMER_TYPE)) {
-                        dataMode = INVALID_DATA_MODE;
-                        break;
-                    }
-                }
-            } catch (Exception ex) {
-                dataMode = INVALID_DATA_MODE;
-            }
+				for (PolymerNode node : nodes) {
+					if (!node.getType().equals(Monomer.PEPTIDE_POLYMER_TYPE)) {
+						dataMode = INVALID_DATA_MODE;
+						break;
+					}
+				}
+			} catch (Exception ex) {
+				dataMode = INVALID_DATA_MODE;
+			}
 
-            if (dataMode == VALID_DATA_MODE) {
-                try {
-                    int size = nodes.size();
+			if (dataMode == VALID_DATA_MODE) {
+				try {
+					int size = nodes.size();
 
-                    singleLetterSeq = new String[size];
-                    modifiedPos = new BitSet[size];
-                    for (int i = 0; i < size; i++) {
-                        PolymerNode node = nodes.get(i);
-                        singleLetterSeq[i] = SimpleNotationParser.getPeptideSequence(node.getLabel());
-                        modifiedPos[i] = getModifiedPositions(node.getLabel());
-                    }
+					singleLetterSeq = new String[size];
+					modifiedPos = new BitSet[size];
+					for (int i = 0; i < size; i++) {
+						PolymerNode node = nodes.get(i);
+						singleLetterSeq[i] = SimpleNotationParser
+								.getPeptideSequence(node.getLabel());
+						modifiedPos[i] = getModifiedPositions(node.getLabel());
+					}
 
-                    size = edges.size();
-                    connection = new int[size][4];
-                    for (int i = 0; i < size; i++) {
-                        PolymerEdge edge = edges.get(i);
-                        String sourceNode = edge.getSourceNode();
-                        int sourceSeqIndex = getSequenceIndex(sourceNode);
-                        int sourceMonIndex = edge.getSourceMonomerNumber();
+					size = edges.size();
+					connection = new int[size][4];
+					for (int i = 0; i < size; i++) {
+						PolymerEdge edge = edges.get(i);
+						String sourceNode = edge.getSourceNode();
+						int sourceSeqIndex = getSequenceIndex(sourceNode);
+						int sourceMonIndex = edge.getSourceMonomerNumber();
 
-                        String targetNode = edge.getTargetNode();
-                        int targetSeqIndex = getSequenceIndex(targetNode);
-                        int targetMonIndex = edge.getTargetMonomerNumber();
+						String targetNode = edge.getTargetNode();
+						int targetSeqIndex = getSequenceIndex(targetNode);
+						int targetMonIndex = edge.getTargetMonomerNumber();
 
-                        connection[i] = new int[]{sourceSeqIndex, sourceMonIndex, targetSeqIndex, targetMonIndex};
-                    }
-                } catch (Exception ex) {
-                    dataMode = INVALID_DATA_MODE;
-                }
-            }
-        }
-    }
+						connection[i] = new int[] { sourceSeqIndex,
+								sourceMonIndex, targetSeqIndex, targetMonIndex };
+					}
+				} catch (Exception ex) {
+					dataMode = INVALID_DATA_MODE;
+				}
+			}
+		}
+	}
 
-    private BitSet getModifiedPositions(String simplePeptideNotation) throws Exception {
-        BitSet bits = new BitSet();
-        List<Monomer> monomerList = SimpleNotationParser.getMonomerList(simplePeptideNotation, Monomer.PEPTIDE_POLYMER_TYPE);
+	private BitSet getModifiedPositions(String simplePeptideNotation)
+			throws Exception {
+		BitSet bits = new BitSet();
+		List<Monomer> monomerList = SimpleNotationParser.getMonomerList(
+				simplePeptideNotation, Monomer.PEPTIDE_POLYMER_TYPE);
 
-        int monomerCount = monomerList.size();
-        for (int j = 0; j < monomerCount; j++) {
-            Monomer m = monomerList.get(j);
+		int monomerCount = monomerList.size();
+		for (int j = 0; j < monomerCount; j++) {
+			Monomer m = monomerList.get(j);
 
-            if ((m != null && m.isModified())) {
-                bits.set(j);
-            }
-        }
-        return bits;
-    }
+			if ((m != null && m.isModified())) {
+				bits.set(j);
+			}
+		}
+		return bits;
+	}
 
-    private int getSequenceIndex(String nodeID) {
-        int count = nodes.size();
-        for (int i = 0; i < count; i++) {
-            PolymerNode node = nodes.get(i);
-            if (nodeID.equals(node.getId())) {
-                return i + 1;
-            }
-        }
-        return 0;
-    }
+	private int getSequenceIndex(String nodeID) {
+		int count = nodes.size();
+		for (int i = 0; i < count; i++) {
+			PolymerNode node = nodes.get(i);
+			if (nodeID.equals(node.getId())) {
+				return i + 1;
+			}
+		}
+		return 0;
+	}
 
-    public String getAnnotation(int strandIndex) {
-        return annotations.get(strandIndex);
-    }
+	public String getAnnotation(int strandIndex) {
+		return annotations.get(strandIndex);
+	}
 
-    public int getLength(int strandIndex) {
-        String seq = getSingleLetterSeq(strandIndex);
-        if (null == seq) {
-            seq = "";
-        }
-        return seq.length();
-    }
+	public int getLength(int strandIndex) {
+		String seq = getSingleLetterSeq(strandIndex);
+		if (null == seq) {
+			seq = "";
+		}
+		return seq.length();
+	}
 
-    public String getSingleLetterSeq(int strandIndex) {
-        if (singleLetterSeq != null) {
-            if (singleLetterSeq.length <= strandIndex) {
-                return null;
-            }
-            return singleLetterSeq[strandIndex];
-        }
-        return null;
-    }
+	public String getSingleLetterSeq(int strandIndex) {
+		if (singleLetterSeq != null) {
+			if (singleLetterSeq.length <= strandIndex) {
+				return null;
+			}
+			return singleLetterSeq[strandIndex];
+		}
+		return null;
+	}
 
-    public BitSet getModifiedPos(int strandIndex) {
-        if (modifiedPos != null && modifiedPos.length > strandIndex) {
-            return modifiedPos[strandIndex];
-        }
-        return new BitSet();
+	public BitSet getModifiedPos(int strandIndex) {
+		if (modifiedPos != null && modifiedPos.length > strandIndex) {
+			return modifiedPos[strandIndex];
+		}
+		return new BitSet();
 
-    }
+	}
 
-    /*
-     * one (1) based index for seq and monomer
-     * 1. source seq index, 2. source monomer index, 3. target seq index, 4. target monomer index
-     */
-    public int[] getConnection(int connectionIndex) {
-        if (connection != null && connection.length > connectionIndex) {
-            return connection[connectionIndex];
-        }
-        return null;
+	/*
+	 * one (1) based index for seq and monomer 1. source seq index, 2. source
+	 * monomer index, 3. target seq index, 4. target monomer index
+	 */
+	public int[] getConnection(int connectionIndex) {
+		if (connection != null && connection.length > connectionIndex) {
+			return connection[connectionIndex];
+		}
+		return null;
 
-    }
+	}
 
-    public int getNumberOfStrands() {
+	public int getNumberOfStrands() {
 
-        if (nodes == null) {
-            nodes = new ArrayList<PolymerNode>();
-        }
-        return nodes.size();
+		if (nodes == null) {
+			nodes = new ArrayList<PolymerNode>();
+		}
+		return nodes.size();
 
-    }
+	}
 
-    public int getNumberOfConnections() {
+	public int getNumberOfConnections() {
 
-        if (edges == null) {
-            edges = new ArrayList<PolymerEdge>();
-        }
-        return edges.size();
+		if (edges == null) {
+			edges = new ArrayList<PolymerEdge>();
+		}
+		return edges.size();
 
-    }
+	}
 
-    public int getDataMode() {
-        return dataMode;
-    }
+	public int getDataMode() {
+		return dataMode;
+	}
 
 }

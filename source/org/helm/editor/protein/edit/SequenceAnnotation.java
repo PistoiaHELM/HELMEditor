@@ -22,39 +22,40 @@
 package org.helm.editor.protein.edit;
 
 /**
- *
+ * 
  * @author ZHANGTIANHONG
  */
 public class SequenceAnnotation {
 
-    public static final String ANTIBODY_HEAVY_CHAIN_ANNOTATION = "hc";
-    public static final String ANTIBODY_LIGHT_CHAIN_ANNOTATION = "lc";
-    public static final String[] VALID_ANNOTATIONS = {ANTIBODY_HEAVY_CHAIN_ANNOTATION, ANTIBODY_LIGHT_CHAIN_ANNOTATION};
-    private int id;
-    private String annotation;
+	public static final String ANTIBODY_HEAVY_CHAIN_ANNOTATION = "hc";
+	public static final String ANTIBODY_LIGHT_CHAIN_ANNOTATION = "lc";
+	public static final String[] VALID_ANNOTATIONS = {
+			ANTIBODY_HEAVY_CHAIN_ANNOTATION, ANTIBODY_LIGHT_CHAIN_ANNOTATION };
+	private int id;
+	private String annotation;
 
-    public String getAnnotation() {
-        return annotation;
-    }
+	public String getAnnotation() {
+		return annotation;
+	}
 
-    public void setAnnotation(String annotation) {
-        this.annotation = annotation;
-    }
+	public void setAnnotation(String annotation) {
+		this.annotation = annotation;
+	}
 
-    public int getId() {
-        return id;
-    }
+	public int getId() {
+		return id;
+	}
 
-    public void setId(int id) {
-        this.id = id;
-    }
+	public void setId(int id) {
+		this.id = id;
+	}
 
-    public boolean isValidAnnotation() {
-        for (String type : VALID_ANNOTATIONS) {
-            if (type.equalsIgnoreCase(annotation)) {
-                return true;
-            }
-        }
-        return false;
-    }
+	public boolean isValidAnnotation() {
+		for (String type : VALID_ANNOTATIONS) {
+			if (type.equalsIgnoreCase(annotation)) {
+				return true;
+			}
+		}
+		return false;
+	}
 }

@@ -13,20 +13,17 @@ import org.helm.editor.worker.MonomerManagerLauncher;
 
 public class MonomerMergeAction extends AbstractAction {
 
-	
-	 private MacromoleculeEditor editor;
+	private MacromoleculeEditor editor;
 
-	    public MonomerMergeAction(MacromoleculeEditor editor) {
-	        super("Launch Temporary Monomer Registration ...");
-	        this.editor = editor;
-	    }
+	public MonomerMergeAction(MacromoleculeEditor editor) {
+		super("Launch Temporary Monomer Registration ...");
+		this.editor = editor;
+	}
 
-	    public void actionPerformed(ActionEvent e) {
-	        MonomerMergeManager mm = new MonomerMergeManager(editor, false);
-	        mm.setLocationRelativeTo(editor.getFrame());
-	        mm.setVisible(true);
-	    }
-	    
-	
+	public void actionPerformed(ActionEvent e) {
+		MonomerMergeManager mm = new MonomerMergeManager(editor, false);
+		mm.setLocationRelativeTo(editor.getFrame());
+		mm.setVisible(true);
+	}
 
 }

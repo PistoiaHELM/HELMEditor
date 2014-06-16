@@ -26,18 +26,20 @@ import java.io.IOException;
 import org.helm.editor.utility.xmlparser.data.Template;
 
 /**
- * This interface must inherit all classes that parsing .xml doucment with
- * inner ui representation.
+ * This interface must inherit all classes that parsing .xml doucment with inner
+ * ui representation.
+ * 
  * @author Alexander Makarov
  */
 public interface TemplateParser {
 
 	/**
-	 * @param filePath Path to parsing file
+	 * @param filePath
+	 *            Path to parsing file
 	 * @return Result of xml parsing serialized on Template object
 	 * @throws IOException
 	 * @throws TemplateParsingException
 	 */
 	Template parse(String filePath) throws TemplateParsingException;
-	
+
 }

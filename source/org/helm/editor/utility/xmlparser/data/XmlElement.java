@@ -25,6 +25,7 @@ import java.awt.Color;
 
 /**
  * Common interface for simple xml elements
+ * 
  * @author Alexander Makarov
  */
 public interface XmlElement {
@@ -38,15 +39,15 @@ public interface XmlElement {
 	 * @return node notation (for monomer node is null)
 	 */
 	String getNotation();
-	
+
 	/**
 	 * @return node font color
 	 */
 	Color getFontColor();
-	
+
 	/**
 	 * @return node background color
 	 */
 	Color getBackgroundColor();
-	
+
 }

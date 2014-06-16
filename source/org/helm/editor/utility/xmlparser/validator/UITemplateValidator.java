@@ -33,21 +33,22 @@ import javax.xml.validation.Validator;
 import org.xml.sax.SAXException;
 
 /**
- * Realization of .xml validator
- * Using http://www.w3.org/2001/XMLSchema standard
+ * Realization of .xml validator Using http://www.w3.org/2001/XMLSchema standard
+ * 
  * @author Alexander Makarov
  * @see Validator
  */
-public class UITemplateValidator implements TemplateValidator{
+public class UITemplateValidator implements TemplateValidator {
 
-	private String schemaPath; 
-	
-	private SchemaFactory schemaFactory = SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
+	private String schemaPath;
+
+	private SchemaFactory schemaFactory = SchemaFactory
+			.newInstance("http://www.w3.org/2001/XMLSchema");
 	private Validator validator;
-		
+
 	public void setSchema(String schemaPath) throws ValidationTemplateExcaption {
 		this.schemaPath = schemaPath;
-		
+
 		File schemaLocation = new File(schemaPath);
 		Schema schema = null;
 		try {
@@ -57,25 +58,25 @@ public class UITemplateValidator implements TemplateValidator{
 		}
 		validator = schema.newValidator();
 	}
-	
+
 	public String getCurrentSchemaLocation() {
 		return schemaPath;
 	}
-	
+
 	public boolean validate(String xmlPath) throws ValidationTemplateExcaption {
 
 		File validationXmlLocation = new File(xmlPath);
 		Source sourceForValidation = new StreamSource(validationXmlLocation);
-		
+
 		try {
 			validator.validate(sourceForValidation);
 		} catch (SAXException e) {
-			throw new ValidationTemplateExcaption(e); 
+			throw new ValidationTemplateExcaption(e);
 		} catch (IOException e) {
 			throw new ValidationTemplateExcaption(e);
 		}
-		
+
 		return true;
 	}
-	
+
 }

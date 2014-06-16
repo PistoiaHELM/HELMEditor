@@ -29,46 +29,48 @@ import y.base.NodeMap;
 
 import org.helm.editor.data.NodeMapKeys;
 
-public class HyperNodeCreator implements NotationCreator{
+public class HyperNodeCreator implements NotationCreator {
 
 	private static final int HYPER_GRAPH_POSITION = 0;
 	private static final int NAME_MAP_POSITION = 1;
-	
+
 	@SuppressWarnings("unchecked")
 	public String createNotationPart(Object[] args) {
 
-		Graph hyperGraph = (Graph)args[HYPER_GRAPH_POSITION];
-		Map<Node, String> nameMap = (Map<Node, String>)args[NAME_MAP_POSITION];
-		
+		Graph hyperGraph = (Graph) args[HYPER_GRAPH_POSITION];
+		Map<Node, String> nameMap = (Map<Node, String>) args[NAME_MAP_POSITION];
+
 		StringBuilder notation = new StringBuilder();
-		
+
 		notation.append(NotationCompositor.NOTATION_PART_ENDING);
-		
-        NodeMap notationMap = (NodeMap) hyperGraph.getDataProvider(NodeMapKeys.HYPERNODE_ANOTATION);
-        String anotation;
-        int i = 0;
-        for (Node hyperNode : nameMap.keySet()) {
-            anotation = null;
-            anotation = (String) notationMap.get(hyperNode);
-            if (anotation != null && !anotation.equalsIgnoreCase("")) {
-                
-                notation.append(nameMap.get(hyperNode));
-                notation.append(NotationCompositor.NOTATION_BEGINING);
-                notation.append(anotation);
-                notation.append(NotationCompositor.NOTATION_ENDING);
-                
-                notation.append(NotationCompositor.NOTATION_DELIMETER);
-                                
-            }
-        }
-        
-        String finalNotation = notation.toString();
-        if (finalNotation.endsWith(NotationCompositor.NOTATION_DELIMETER)){
-        	finalNotation = finalNotation.substring(0, finalNotation.length() - 1);
-        }
-        
-        return finalNotation;
-		
+
+		NodeMap notationMap = (NodeMap) hyperGraph
+				.getDataProvider(NodeMapKeys.HYPERNODE_ANOTATION);
+		String anotation;
+		int i = 0;
+		for (Node hyperNode : nameMap.keySet()) {
+			anotation = null;
+			anotation = (String) notationMap.get(hyperNode);
+			if (anotation != null && !anotation.equalsIgnoreCase("")) {
+
+				notation.append(nameMap.get(hyperNode));
+				notation.append(NotationCompositor.NOTATION_BEGINING);
+				notation.append(anotation);
+				notation.append(NotationCompositor.NOTATION_ENDING);
+
+				notation.append(NotationCompositor.NOTATION_DELIMETER);
+
+			}
+		}
+
+		String finalNotation = notation.toString();
+		if (finalNotation.endsWith(NotationCompositor.NOTATION_DELIMETER)) {
+			finalNotation = finalNotation.substring(0,
+					finalNotation.length() - 1);
+		}
+
+		return finalNotation;
+
 	}
 
 }

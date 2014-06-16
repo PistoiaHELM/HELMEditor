@@ -32,13 +32,15 @@ public class ChemSequenceTransformer extends AbstractSequenceTransformer {
 
 	@Override
 	protected void buildViewSequence(Node editorStartingNode) {
-		Node viewNode = createNode(MonomerInfoUtils.getMonomerID(editorStartingNode), 
-				view);
+		Node viewNode = createNode(
+				MonomerInfoUtils.getMonomerID(editorStartingNode), view);
 		viewModel.putViewNode(editorStartingNode, viewNode);
 		viewSequence.add(viewNode);
-		
-		DataProvider editorMonomerRefProvider = editorStartingNode.getGraph().getDataProvider(NodeMapKeys.MONOMER_REF);
-		MonomerInfo monomerInfo = (MonomerInfo)editorMonomerRefProvider.get(editorStartingNode);
+
+		DataProvider editorMonomerRefProvider = editorStartingNode.getGraph()
+				.getDataProvider(NodeMapKeys.MONOMER_REF);
+		MonomerInfo monomerInfo = (MonomerInfo) editorMonomerRefProvider
+				.get(editorStartingNode);
 		monomerRefNodeMap.set(viewNode, monomerInfo);
 	}
 
@@ -48,6 +50,5 @@ public class ChemSequenceTransformer extends AbstractSequenceTransformer {
 			getLabelInfo(viewNode); // JUST FILL with empty object
 		}
 	}
-	
 
 }

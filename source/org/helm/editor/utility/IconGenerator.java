@@ -30,32 +30,34 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
 /**
- *
+ * 
  * @author ZHANGTIANHONG
  */
 public class IconGenerator {
-    public static final String HELM_APP_ICON_RESOURCE_URL = "/org/helm/editor/editor/resource/HELM_Editor_Icon_24.png";
-    public static final String FORWARD_ARROW_ICON_RESOURCE_URL = "/org/helm/editor/editor/resource/Forward16.gif";
+	public static final String HELM_APP_ICON_RESOURCE_URL = "/org/helm/editor/editor/resource/HELM_Editor_Icon_24.png";
+	public static final String FORWARD_ARROW_ICON_RESOURCE_URL = "/org/helm/editor/editor/resource/Forward16.gif";
 
-    public static Image getImage(String resouceURL) {
-        try {
-            URL imageURL = IconGenerator.class.getResource(resouceURL);
-            return ImageIO.read(imageURL);
-        } catch (Exception ex) {
-            Logger.getLogger(IconGenerator.class.getName()).log(Level.WARNING, "Unable to retrieve image at "+resouceURL, ex);
-        }
-        return null;
-    }
+	public static Image getImage(String resouceURL) {
+		try {
+			URL imageURL = IconGenerator.class.getResource(resouceURL);
+			return ImageIO.read(imageURL);
+		} catch (Exception ex) {
+			Logger.getLogger(IconGenerator.class.getName()).log(Level.WARNING,
+					"Unable to retrieve image at " + resouceURL, ex);
+		}
+		return null;
+	}
 
-    public static Icon getIcon(String resouceURL) {
-        try {
-            URL imageURL = IconGenerator.class.getResource(resouceURL);
-            Image image = ImageIO.read(imageURL);
-            return new ImageIcon(image);
-        } catch (Exception ex) {
-            Logger.getLogger(IconGenerator.class.getName()).log(Level.WARNING, "Unable to retrieve icon at "+resouceURL, ex);
-        }
-        return null;
-    }
+	public static Icon getIcon(String resouceURL) {
+		try {
+			URL imageURL = IconGenerator.class.getResource(resouceURL);
+			Image image = ImageIO.read(imageURL);
+			return new ImageIcon(image);
+		} catch (Exception ex) {
+			Logger.getLogger(IconGenerator.class.getName()).log(Level.WARNING,
+					"Unable to retrieve icon at " + resouceURL, ex);
+		}
+		return null;
+	}
 
 }

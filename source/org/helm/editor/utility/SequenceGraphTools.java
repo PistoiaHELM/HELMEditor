@@ -807,20 +807,19 @@ public class SequenceGraphTools {
 
 	public static boolean isChemicalModifier(Node node)
 			throws MonomerException, IOException, JDOMException {
-		
+
 		return isModifierOfType(node, Monomer.CHEMICAL_POLYMER_TYPE);
 	}
-	
-	public static boolean isPeptideModifier(Node node)
-			throws MonomerException, IOException, JDOMException {
-		
+
+	public static boolean isPeptideModifier(Node node) throws MonomerException,
+			IOException, JDOMException {
+
 		return isModifierOfType(node, Monomer.PEPTIDE_POLYMER_TYPE);
 	}
-	
-	
+
 	public static boolean isRNABranchModifier(Node node)
 			throws MonomerException, IOException, JDOMException {
-		
+
 		if (node == null)
 			return false;
 
@@ -829,16 +828,17 @@ public class SequenceGraphTools {
 				.getDataProvider(NodeMapKeys.MONOMER_REF);
 
 		MonomerInfo monomerInfo = (MonomerInfo) monomerInfoMap.get(node);
-		
+
 		Monomer monomer = getMonomerDB().get(monomerInfo.getPolymerType()).get(
 				monomerInfo.getMonomerID());
-		
-		return monomer.getPolymerType().equalsIgnoreCase(Monomer.NUCLIEC_ACID_POLYMER_TYPE) && monomer.getMonomerType().equals(Monomer.BRANCH_MOMONER_TYPE);
+
+		return monomer.getPolymerType().equalsIgnoreCase(
+				Monomer.NUCLIEC_ACID_POLYMER_TYPE)
+				&& monomer.getMonomerType().equals(Monomer.BRANCH_MOMONER_TYPE);
 
 	}
-		
-	
-	private static boolean isModifierOfType(Node node,String polymerType)
+
+	private static boolean isModifierOfType(Node node, String polymerType)
 			throws MonomerException, IOException, JDOMException {
 		if (node == null)
 			return false;

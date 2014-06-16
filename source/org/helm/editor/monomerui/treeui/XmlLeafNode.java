@@ -31,44 +31,44 @@ import y.view.Graph2D;
 
 /**
  * @author Alexander Makarov
- *
+ * 
  */
 public class XmlLeafNode extends DefaultMutableTreeNode {
 
 	private XmlElement dataElement;
-	
+
 	public XmlLeafNode(Object element, XmlElement dataElement) {
 		super(element);
-		
+
 		this.dataElement = dataElement;
 	}
-	
-	public XmlElement getDataElement(){
+
+	public XmlElement getDataElement() {
 		return dataElement;
 	}
-	
+
 	@Override
 	public String toString() {
-		if (userObject instanceof String){
+		if (userObject instanceof String) {
 			return userObject.toString();
 		}
-		
-		if (userObject instanceof Graph2D){
-			Graph2D graphNode = (Graph2D)userObject;
-			
+
+		if (userObject instanceof Graph2D) {
+			Graph2D graphNode = (Graph2D) userObject;
+
 			StringBuffer text = new StringBuffer();
 			NodeCursor cursor = graphNode.nodes();
-			while(cursor.ok()){
+			while (cursor.ok()) {
 				Node currNode = (Node) cursor.current();
-			
+
 				text.append(currNode.toString());
-				
+
 				cursor.next();
 			}
-			
+
 			return text.toString();
 		}
-		
+
 		return null;
 	}
 

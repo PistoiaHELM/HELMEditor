@@ -30,52 +30,49 @@ import java.awt.BorderLayout;
 
 import javax.swing.JPanel;
 
-
-
 import java.util.*;
 
 /**
- *
+ * 
  * @author yuant05
  */
 public class StructurePanel extends JPanel {
-    
-    private MSketchPane sketch = null;
-    private MViewPane view = null;
 
-    public StructurePanel() {
-        sketch = new MSketchPane();
-        view = new MViewPane();
-/*
-        sketch.setParams(
-            "ttmpls0=*Generic*chemaxon/marvin/templates/generic.t\n"+
-            "ttmpls1=*Rings*chemaxon/marvin/templates/rings.t\n"+
-            "xtmpls=chemaxon/marvin/templates/wedgebonds.t\n"+
-            "tmpls11=:Conformers:chemaxon/marvin/templates/conformers.t\n");
-*/
-        // Adding the bean to the container panel
-        setLayout(new BorderLayout());
-        //add(sketch, BorderLayout.CENTER); 
-        add(view, BorderLayout.CENTER); 
-    }
-    
-    public void setMol(String s) {
-        view.setM(0, s);
-        sketch.setMol(s);
-    }
-    
-    public String getSmilesEx() {
-        return sketch.getMol("cxsmiles");
-    }
-    
-    public void setEditMode(boolean f) {
-        if (f) {
-            remove(view);
-            add(sketch, BorderLayout.CENTER); 
-        }
-        else {
-            remove(sketch);
-            add(view, BorderLayout.CENTER);         
-        }
-    }
+	private MSketchPane sketch = null;
+	private MViewPane view = null;
+
+	public StructurePanel() {
+		sketch = new MSketchPane();
+		view = new MViewPane();
+		/*
+		 * sketch.setParams(
+		 * "ttmpls0=*Generic*chemaxon/marvin/templates/generic.t\n"+
+		 * "ttmpls1=*Rings*chemaxon/marvin/templates/rings.t\n"+
+		 * "xtmpls=chemaxon/marvin/templates/wedgebonds.t\n"+
+		 * "tmpls11=:Conformers:chemaxon/marvin/templates/conformers.t\n");
+		 */
+		// Adding the bean to the container panel
+		setLayout(new BorderLayout());
+		// add(sketch, BorderLayout.CENTER);
+		add(view, BorderLayout.CENTER);
+	}
+
+	public void setMol(String s) {
+		view.setM(0, s);
+		sketch.setMol(s);
+	}
+
+	public String getSmilesEx() {
+		return sketch.getMol("cxsmiles");
+	}
+
+	public void setEditMode(boolean f) {
+		if (f) {
+			remove(view);
+			add(sketch, BorderLayout.CENTER);
+		} else {
+			remove(sketch);
+			add(view, BorderLayout.CENTER);
+		}
+	}
 }

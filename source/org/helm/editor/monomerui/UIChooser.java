@@ -48,140 +48,144 @@ import javax.swing.Box;
  */
 public class UIChooser extends JFrame {
 
-    private MacromoleculeEditor editor;
-    private JButton setupUI;
-    private JRadioButton[] radioButtons;
-    private JList filesList;
-    private String[] names = {"Tab", "Tree"};
-    private String[] defaultFilesList = {"File_1.xml", "File_2.xml", "File_3.xml"};
-//    private static final String HELM_ICON_PATH = "/org/helm/editor/editor/resource/Icon-HELM.png";
+	private MacromoleculeEditor editor;
+	private JButton setupUI;
+	private JRadioButton[] radioButtons;
+	private JList filesList;
+	private String[] names = { "Tab", "Tree" };
+	private String[] defaultFilesList = { "File_1.xml", "File_2.xml",
+			"File_3.xml" };
 
-    public UIChooser(MacromoleculeEditor editor) {
-        this.editor = editor;
+	// private static final String HELM_ICON_PATH =
+	// "/org/helm/editor/editor/resource/Icon-HELM.png";
 
-        constructUI();
+	public UIChooser(MacromoleculeEditor editor) {
+		this.editor = editor;
 
-        configComponents();
-    }
+		constructUI();
 
-    private void constructUI() {
+		configComponents();
+	}
 
-        // panel for choose ui type
-        JPanel radioButtonPanel = new JPanel();
-        radioButtonPanel.setLayout(new BoxLayout(radioButtonPanel, BoxLayout.X_AXIS));
-        radioButtonPanel.add(Box.createHorizontalStrut(5));
-        JLabel chooseUILabel = new JLabel("Monomer Layout Type: ");
-        radioButtonPanel.add(chooseUILabel);
-        radioButtons = new JRadioButton[names.length];
-        ButtonGroup buttonGroup = new ButtonGroup();
-        for (int i = 0; i < names.length; i++) {
-            radioButtons[i] = new JRadioButton(names[i]);
-            buttonGroup.add(radioButtons[i]);
-            radioButtonPanel.add(radioButtons[i]);
-        }
-        radioButtonPanel.add(Box.createHorizontalGlue());
+	private void constructUI() {
 
+		// panel for choose ui type
+		JPanel radioButtonPanel = new JPanel();
+		radioButtonPanel.setLayout(new BoxLayout(radioButtonPanel,
+				BoxLayout.X_AXIS));
+		radioButtonPanel.add(Box.createHorizontalStrut(5));
+		JLabel chooseUILabel = new JLabel("Monomer Layout Type: ");
+		radioButtonPanel.add(chooseUILabel);
+		radioButtons = new JRadioButton[names.length];
+		ButtonGroup buttonGroup = new ButtonGroup();
+		for (int i = 0; i < names.length; i++) {
+			radioButtons[i] = new JRadioButton(names[i]);
+			buttonGroup.add(radioButtons[i]);
+			radioButtonPanel.add(radioButtons[i]);
+		}
+		radioButtonPanel.add(Box.createHorizontalGlue());
 
-        // panel for choose ui hierarchy
-        JPanel uiFilesLabelPanel = new JPanel();
-        uiFilesLabelPanel.setLayout(new BoxLayout(uiFilesLabelPanel, BoxLayout.X_AXIS));
-        uiFilesLabelPanel.add(Box.createHorizontalStrut(5));
-        JLabel chooseUIFile = new JLabel("Monomer Categorization Template: ");
-        uiFilesLabelPanel.add(chooseUIFile);
-        uiFilesLabelPanel.add(Box.createHorizontalGlue());
+		// panel for choose ui hierarchy
+		JPanel uiFilesLabelPanel = new JPanel();
+		uiFilesLabelPanel.setLayout(new BoxLayout(uiFilesLabelPanel,
+				BoxLayout.X_AXIS));
+		uiFilesLabelPanel.add(Box.createHorizontalStrut(5));
+		JLabel chooseUIFile = new JLabel("Monomer Categorization Template: ");
+		uiFilesLabelPanel.add(chooseUIFile);
+		uiFilesLabelPanel.add(Box.createHorizontalGlue());
 
+		filesList = new JList(defaultFilesList);
+		filesList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		filesList.setLayoutOrientation(JList.VERTICAL_WRAP);
+		// filesList.setPreferredSize(new Dimension(200, 50));
+		JScrollPane listScrollPane = new JScrollPane(filesList);
+		JPanel uiFilesPanel = new JPanel();
+		uiFilesPanel.setLayout(new BoxLayout(uiFilesPanel, BoxLayout.X_AXIS));
+		uiFilesPanel.add(Box.createHorizontalStrut(5));
+		uiFilesPanel.add(listScrollPane);
+		uiFilesPanel.add(Box.createHorizontalStrut(5));
 
-        filesList = new JList(defaultFilesList);
-        filesList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        filesList.setLayoutOrientation(JList.VERTICAL_WRAP);
-//        filesList.setPreferredSize(new Dimension(200, 50));
-        JScrollPane listScrollPane = new JScrollPane(filesList);
-        JPanel uiFilesPanel = new JPanel();
-        uiFilesPanel.setLayout(new BoxLayout(uiFilesPanel, BoxLayout.X_AXIS));
-        uiFilesPanel.add(Box.createHorizontalStrut(5));
-        uiFilesPanel.add(listScrollPane);
-        uiFilesPanel.add(Box.createHorizontalStrut(5));
+		JPanel buttonPanel = new JPanel();
+		buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
+		setupUI = new JButton("Save");
+		JButton closeButton = new JButton("Close");
+		closeButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				setVisible(false);
+			}
+		});
+		buttonPanel.add(Box.createHorizontalGlue());
+		buttonPanel.add(setupUI);
+		buttonPanel.add(Box.createHorizontalStrut(10));
+		buttonPanel.add(closeButton);
+		buttonPanel.add(Box.createHorizontalGlue());
 
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
-        setupUI = new JButton("Save");
-        JButton closeButton = new JButton("Close");
-        closeButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                setVisible(false);
-            }
-        });
-        buttonPanel.add(Box.createHorizontalGlue());
-        buttonPanel.add(setupUI);
-        buttonPanel.add(Box.createHorizontalStrut(10));
-        buttonPanel.add(closeButton);
-        buttonPanel.add(Box.createHorizontalGlue());
+		setLayout(new BoxLayout(this.getContentPane(), BoxLayout.Y_AXIS));
+		add(Box.createVerticalStrut(5));
+		add(radioButtonPanel);
+		add(Box.createVerticalStrut(5));
+		add(uiFilesLabelPanel);
+		add(uiFilesPanel);
+		add(Box.createVerticalStrut(5));
+		add(buttonPanel);
+		add(Box.createVerticalStrut(5));
 
-        setLayout(new BoxLayout(this.getContentPane(), BoxLayout.Y_AXIS));
-        add(Box.createVerticalStrut(5));
-        add(radioButtonPanel);
-        add(Box.createVerticalStrut(5));
-        add(uiFilesLabelPanel);
-        add(uiFilesPanel);
-        add(Box.createVerticalStrut(5));
-        add(buttonPanel);
-        add(Box.createVerticalStrut(5));
+	}
 
-    }
+	public void setDefaultForUIType(String type) {
+		for (JRadioButton currRButton : radioButtons) {
+			if (currRButton.getText().equalsIgnoreCase(type)) {
+				currRButton.setSelected(true);
+			}
+		}
+	}
 
-    public void setDefaultForUIType(String type) {
-        for (JRadioButton currRButton : radioButtons) {
-            if (currRButton.getText().equalsIgnoreCase(type)) {
-                currRButton.setSelected(true);
-            }
-        }
-    }
+	public String getSelectedUIXml() {
+		return (String) filesList.getSelectedValue();
+	}
 
-    public String getSelectedUIXml() {
-        return (String) filesList.getSelectedValue();
-    }
+	public void setFileList(String[] data) {
+		filesList.setListData(data);
+	}
 
-    public void setFileList(String[] data) {
-        filesList.setListData(data);
-    }
+	public void setDefaultForUIXml(String uiXML) {
+		int size = filesList.getModel().getSize();
+		for (int i = 0; i < size; i++) {
+			String tmp = (String) filesList.getModel().getElementAt(i);
+			if (tmp.equals(uiXML)) {
+				filesList.setSelectedIndex(i);
+				break;
+			}
+		}
+	}
 
-    public void setDefaultForUIXml(String uiXML) {
-        int size = filesList.getModel().getSize();
-        for (int i=0 ; i<size; i++) {
-            String tmp = (String) filesList.getModel().getElementAt(i);
-            if (tmp.equals(uiXML)) {
-                filesList.setSelectedIndex(i);
-                break;
-            }
-        }
-    }
+	public String getSelectedUIType() {
+		for (JRadioButton currRadioButton : radioButtons) {
+			if (currRadioButton.isSelected()) {
+				return currRadioButton.getText();
+			}
+		}
 
-    public String getSelectedUIType() {
-        for (JRadioButton currRadioButton : radioButtons) {
-            if (currRadioButton.isSelected()) {
-                return currRadioButton.getText();
-            }
-        }
+		return null;
+	}
 
-        return null;
-    }
+	public String getSelectedXml() {
+		return null;
+	}
 
-    public String getSelectedXml() {
-        return null;
-    }
+	public JButton getSetupButton() {
+		return setupUI;
+	}
 
-    public JButton getSetupButton() {
-        return setupUI;
-    }
+	private void configComponents() {
+		setTitle("HELM Editor: User Preference");
+		setIconImage(IconGenerator
+				.getImage(IconGenerator.HELM_APP_ICON_RESOURCE_URL));
+		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 
-    private void configComponents() {
-        setTitle("HELM Editor: User Preference");
-        setIconImage(IconGenerator.getImage(IconGenerator.HELM_APP_ICON_RESOURCE_URL));
-        setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+		setSize(300, 200);
 
-        setSize(300, 200);
-
-        setLocationRelativeTo(editor.getFrame());
-        setResizable(false);
-    }
+		setLocationRelativeTo(editor.getFrame());
+		setResizable(false);
+	}
 }

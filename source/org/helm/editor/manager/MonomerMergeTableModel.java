@@ -6,22 +6,18 @@ import javax.swing.table.AbstractTableModel;
 
 import org.helm.notation.model.Monomer;
 
-
 public class MonomerMergeTableModel extends AbstractTableModel {
 
-	
 	private List<Monomer> monomers;
 	private String[] columnNames;
-	
-	
+
 	public MonomerMergeTableModel(List<Monomer> monomers) {
 
-		this.monomers=monomers;
+		this.monomers = monomers;
 		columnNames = new String[] { "Symbol", "Natural Analog", "Name",
 				"Structure" };
 	}
 
-	
 	@Override
 	public int getColumnCount() {
 		return columnNames.length;
@@ -36,7 +32,7 @@ public class MonomerMergeTableModel extends AbstractTableModel {
 
 		}
 	}
-	
+
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
 		Monomer mo = this.monomers.get(rowIndex);
@@ -53,16 +49,14 @@ public class MonomerMergeTableModel extends AbstractTableModel {
 			return "N/A";
 		}
 	}
-	
+
 	@Override
 	public String getColumnName(int columnIndex) {
 		return columnNames[columnIndex];
 	}
-	
+
 	public List<Monomer> getMonomerList() {
 		return this.monomers;
 	}
-	
-	 
-	
+
 }

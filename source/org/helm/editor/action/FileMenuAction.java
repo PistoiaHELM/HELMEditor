@@ -280,9 +280,6 @@ public class FileMenuAction extends TextMenuAction {
 			return;
 		}
 
-		
-		
-
 		String editorNotation = editor.getNotation();
 		if (null != editorNotation && editorNotation.trim().length() > 0) {
 			int result = JOptionPane
@@ -296,8 +293,7 @@ public class FileMenuAction extends TextMenuAction {
 				editorNotation = editor.getNotation();
 			}
 		}
-		
-		
+
 		try {
 			ComplexNotationParser.validateComplexNotation(helmString, store);
 			// add monomers, but cancel when adding failed.
@@ -314,17 +310,15 @@ public class FileMenuAction extends TextMenuAction {
 			return;
 		}
 
-		
-	
-		
 		try {
 			editor.getFrame().setCursor(
 					Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-			MonomerStore monomerStore=MonomerStoreCache.getInstance().getCombinedMonomerStore();
+			MonomerStore monomerStore = MonomerStoreCache.getInstance()
+					.getCombinedMonomerStore();
 			String standardNote = ComplexNotationParser.standardize(helmString,
 					monomerStore);
 			editorNotation = ComplexNotationParser.getCombinedComlexNotation(
-					editorNotation, standardNote,monomerStore);
+					editorNotation, standardNote, monomerStore);
 
 		} catch (Exception ex) {
 			ExceptionHandler.handleException(ex);
@@ -434,8 +428,7 @@ public class FileMenuAction extends TextMenuAction {
 			editor.getFrame().setCursor(
 					Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 		}
-	
-		
+
 		try {
 			// refresh images for adhoc monomers
 			for (Monomer m : MonomerFactory.getInstance().getMonomerStore()

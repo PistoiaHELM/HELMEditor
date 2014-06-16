@@ -38,18 +38,18 @@ import org.helm.editor.editor.MacromoleculeEditor;
 public class ExceptionHandler {
 	public static void handleException(Exception ex) {
 		if (ex instanceof NotationException) {
-            showWarning(ex, "Invalid Notation!");
-        } else if (ex instanceof MonomerException) {
-            showWarning(ex, "Invalid Monomer!");
-        } else if (ex instanceof IOException) {
-            showWarning(ex, "IOException!");
-        } else if (ex instanceof JDOMException) {
-            showWarning(ex, "JDOMException!");
-        } else {
-        	showWarning(ex, "Internal Error");
-        }
+			showWarning(ex, "Invalid Notation!");
+		} else if (ex instanceof MonomerException) {
+			showWarning(ex, "Invalid Monomer!");
+		} else if (ex instanceof IOException) {
+			showWarning(ex, "IOException!");
+		} else if (ex instanceof JDOMException) {
+			showWarning(ex, "JDOMException!");
+		} else {
+			showWarning(ex, "Internal Error");
+		}
 	}
-	
+
 	private static String getUserMessage(Throwable t) {
 		String message = getMessage(t);
 		if (message.length() > 0) {
@@ -57,34 +57,32 @@ public class ExceptionHandler {
 		}
 		return "Sorry, internal error occured. See logs for details";
 	}
-	
+
 	private static String getLogMessage(Throwable t) {
-		String message = getMessage(t)  + t.getClass().getName();
+		String message = getMessage(t) + t.getClass().getName();
 		return message + "\n " + getStackTraceAsString(t);
 	}
-	
-	
+
 	private static String getStackTraceAsString(Throwable t) {
-	    StringWriter stringWriter = new StringWriter();
-	    PrintWriter printWriter = new PrintWriter(stringWriter);
-	    t.printStackTrace(printWriter);
-	    StringBuffer error = stringWriter.getBuffer();
-	    return error.toString();
+		StringWriter stringWriter = new StringWriter();
+		PrintWriter printWriter = new PrintWriter(stringWriter);
+		t.printStackTrace(printWriter);
+		StringBuffer error = stringWriter.getBuffer();
+		return error.toString();
 	}
-	
+
 	private static String getMessage(Throwable t) {
 		if ((t.getMessage() != null) && (t.getMessage().length() > 0)) {
 			return t.getMessage();
 		}
 		return "";
 	}
-	
+
 	private static void showWarning(Throwable t, String title) {
-		JOptionPane.showMessageDialog(null,
-                getUserMessage(t),
-                title,
-                JOptionPane.WARNING_MESSAGE);
-        Logger.getLogger(MacromoleculeEditor.class.getName()).log(Level.SEVERE, getLogMessage(t));
+		JOptionPane.showMessageDialog(null, getUserMessage(t), title,
+				JOptionPane.WARNING_MESSAGE);
+		Logger.getLogger(MacromoleculeEditor.class.getName()).log(Level.SEVERE,
+				getLogMessage(t));
 	}
 
 }

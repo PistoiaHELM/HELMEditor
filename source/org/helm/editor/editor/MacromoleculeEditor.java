@@ -176,7 +176,7 @@ public class MacromoleculeEditor extends GUIBase implements DataListener,
 	private JMenuItem flipHorizontalItem;
 	private JMenuItem flipVerticalItem;
 	private JMenuItem rotateItem;
-	//private JMenuItem editChemicalModifierItem;
+	// private JMenuItem editChemicalModifierItem;
 	/**
 	 * popup menu for user to anotate a nuceitide sequence as sense or anti
 	 * sense
@@ -222,10 +222,8 @@ public class MacromoleculeEditor extends GUIBase implements DataListener,
 	private MonomerInfoDialog monomerInfoDialog;
 	private PropertyManager userProperty;
 	private UIType type;
-	
-	
+
 	private AbstractAction editMonomerStructureAction;
-	
 
 	// private JMenuItem showSelectedStructItem;
 
@@ -351,12 +349,13 @@ public class MacromoleculeEditor extends GUIBase implements DataListener,
 		UIType type = userProperty.getUIType();
 		setupUIType(type);
 
-		editMonomerStructureAction=new AbstractAction("Edit Monomer Structure"){
+		editMonomerStructureAction = new AbstractAction(
+				"Edit Monomer Structure") {
 			public void actionPerformed(ActionEvent e) {
 				editChemicalStructure();
 			}
 		};
-		
+
 		initNodePopUp();
 
 		// ----------------------------------------------------------------
@@ -377,9 +376,6 @@ public class MacromoleculeEditor extends GUIBase implements DataListener,
 		});
 
 		initFirstNodePopup();
-		
-		
-		
 
 		// add the node property editor
 		view.addViewMode(new ViewMode() {
@@ -465,13 +461,14 @@ public class MacromoleculeEditor extends GUIBase implements DataListener,
 							}
 							popup.show(ev.getComponent(), ev.getX(), ev.getY());
 
-//							if (SequenceGraphTools.isChemicalModifier(v) || SequenceGraphTools.isPeptideModifier(v) || SequenceGraphTools.isRNABranchModifier(v)) {
-//								editChemicalModifierItem.setEnabled(true);
-//							} else {
-//								editChemicalModifierItem.setEnabled(false);
-//							}
-							
-							
+							// if (SequenceGraphTools.isChemicalModifier(v) ||
+							// SequenceGraphTools.isPeptideModifier(v) ||
+							// SequenceGraphTools.isRNABranchModifier(v)) {
+							// editChemicalModifierItem.setEnabled(true);
+							// } else {
+							// editChemicalModifierItem.setEnabled(false);
+							// }
+
 							if (v != null) {
 								graph.setSelected(v, true);
 							}
@@ -555,10 +552,10 @@ public class MacromoleculeEditor extends GUIBase implements DataListener,
 		firstNCSubMenu.add(append_P_Action);
 
 		firstNCNodePopup.add(firstNCSubMenu);
-		
+
 		firstNCNodePopup.addSeparator();
 		firstNCNodePopup.add(editMonomerStructureAction);
-		
+
 	}
 
 	private void initNodePopUp() {
@@ -608,12 +605,12 @@ public class MacromoleculeEditor extends GUIBase implements DataListener,
 			}
 		});
 
-//		editChemicalModifierItem = new JMenuItem("Edit Monomer Structure");
-//		editChemicalModifierItem.addActionListener(new ActionListener() {
-//			public void actionPerformed(ActionEvent e) {
-//				editChemicalStructure();
-//			}
-//		});
+		// editChemicalModifierItem = new JMenuItem("Edit Monomer Structure");
+		// editChemicalModifierItem.addActionListener(new ActionListener() {
+		// public void actionPerformed(ActionEvent e) {
+		// editChemicalStructure();
+		// }
+		// });
 
 		final JMenu copyMenu = buildCopyMenu();
 		final JMenu viewMenu = buildViewMenu();
@@ -640,11 +637,9 @@ public class MacromoleculeEditor extends GUIBase implements DataListener,
 		popup.add(molStructureMenu);
 		popup.addSeparator();
 		popup.add(editMonomerStructureAction);
-		
-		
+
 	}
-	
-	
+
 	private void initInsertNucleotideMenu() {
 		insertNCNodePopup = new JPopupMenu("Insert a nucleotide ...");
 		JMenuItem nc_AItem = new JMenuItem("A");
@@ -757,12 +752,12 @@ public class MacromoleculeEditor extends GUIBase implements DataListener,
 		appendEndSubMenu.add(append_dT_Action);
 		appendEndSubMenu.addSeparator();
 		appendEndSubMenu.add(append_P_Action);
-		
+
 		appendEndNCNodPopup.add(appendEndSubMenu);
-		
+
 		appendEndNCNodPopup.addSeparator();
 		appendEndNCNodPopup.add(editMonomerStructureAction);
-		
+
 	}
 
 	private void initNucleotideAnnotationMenu() {
@@ -1662,8 +1657,6 @@ public class MacromoleculeEditor extends GUIBase implements DataListener,
 			ExceptionHandler.handleException(e);
 		}
 	}
-	
-	
 
 	/**
 	 * anotate a nucleotide to be sense or antisense
@@ -1771,19 +1764,20 @@ public class MacromoleculeEditor extends GUIBase implements DataListener,
 		postFlip(graphHider, view);
 	}
 
-	public void replaceAlternateId( String currentId, String newId) {
+	public void replaceAlternateId(String currentId, String newId) {
 		Graph2D graph = view.getGraph2D();
 		Node[] nodes = graph.getNodeArray();
 		NodeMap nodeMap = (NodeMap) graph
 				.getDataProvider(NodeMapKeys.MONOMER_REF);
-		for ( Node node : nodes) {
+		for (Node node : nodes) {
 			MonomerInfo monomerInfo = (MonomerInfo) nodeMap.get(node);
-			if ( monomerInfo.getMonomerID().equals( currentId)) {
+			if (monomerInfo.getMonomerID().equals(currentId)) {
 				monomerInfo.setMonomerID(newId);
 			}
 		}
 
 	}
+
 	/**
 	 * clear all hydrogen bond
 	 */
@@ -2200,7 +2194,7 @@ public class MacromoleculeEditor extends GUIBase implements DataListener,
 		toolsMenu.add(new OligonucleotideFragmentAction(this));
 		toolsMenu.add(new JSeparator(JSeparator.HORIZONTAL));
 		toolsMenu.add(new ShowChooseUIDialog(this));
-				
+
 		menuBar.add(toolsMenu);
 
 		JMenu editMenu = new JMenu("Edit");
@@ -2434,7 +2428,8 @@ public class MacromoleculeEditor extends GUIBase implements DataListener,
 
 			ComplexNotationParser.validateComplexNotation(notation,
 					monomerStore);
-			GraphPair pair = NotationParser.getGraphPair(notation, monomerStore);
+			GraphPair pair = NotationParser
+					.getGraphPair(notation, monomerStore);
 
 			// set the graph and the graph manager
 			view.setGraph2D(pair.getGraph());
@@ -2469,11 +2464,10 @@ public class MacromoleculeEditor extends GUIBase implements DataListener,
 		}
 
 	}
-	
-	
-	public MonomerStore getMonomerStore(){
+
+	public MonomerStore getMonomerStore() {
 		return MonomerStoreCache.getInstance().getCombinedMonomerStore();
-		
+
 	}
 
 	/**
@@ -2569,7 +2563,8 @@ public class MacromoleculeEditor extends GUIBase implements DataListener,
 		try {
 
 			// always update graph in the editor..
-			updateNotation(event.getData(), MonomerStoreCache.getInstance().getCombinedMonomerStore());
+			updateNotation(event.getData(), MonomerStoreCache.getInstance()
+					.getCombinedMonomerStore());
 
 			updateAnnotator();
 			graphManager.getAnnotator().annotateAllBasePosition();
@@ -2619,11 +2614,10 @@ public class MacromoleculeEditor extends GUIBase implements DataListener,
 			ExceptionHandler.handleException(ex);
 		}
 	}
-	
-	
+
 	public void reset() {
 		super.reset();
 		updatePolymerPanels();
-	
+
 	}
 }

@@ -23,21 +23,22 @@ package org.helm.editor.utility.xmlparser.parser;
 
 /**
  * Exception that throw only UITemplate parsers
+ * 
  * @author Alexander Makarov
  * @see TemplateParser
  */
 public class TemplateParsingException extends Exception {
 
-	public TemplateParsingException() {		
+	public TemplateParsingException() {
 	}
 
 	public TemplateParsingException(String message) {
 		super(message);
-	}	
-	
-	public TemplateParsingException(Exception ex){
-		super(ex.getMessage());
-		setStackTrace(ex.getStackTrace());		
 	}
-	
+
+	public TemplateParsingException(Exception ex) {
+		super(ex.getMessage());
+		setStackTrace(ex.getStackTrace());
+	}
+
 }

@@ -28,7 +28,7 @@ import y.layout.CanonicMultiStageLayouter;
 public abstract class AbstratStructureLayout extends CanonicMultiStageLayouter {
 
 	protected AbstractLayoutPrimitives layoutPrimitives = null;
-	
+
 	public AbstratStructureLayout() {
 		super();
 	}

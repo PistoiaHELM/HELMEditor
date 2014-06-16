@@ -24,7 +24,7 @@ package org.helm.editor.layout.utils;
 public class LayoutMetrics {
 	public int distanceH;
 	public int distanceV;
-	
+
 	public LayoutMetrics(int distanceH, int distanceV) {
 		this.distanceH = distanceH;
 		this.distanceV = distanceV;

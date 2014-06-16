@@ -31,80 +31,87 @@ import y.base.NodeMap;
 import org.helm.editor.data.NodeMapKeys;
 import org.helm.notation.model.Monomer;
 
-public class NotationCoreCreator implements NotationCreator{
+public class NotationCoreCreator implements NotationCreator {
 
 	private static final int HYPER_GRAPH_POSITION = 0;
 	private static final int NAME_MAP_POSITION = 1;
-	
+
 	@SuppressWarnings("unchecked")
 	public String createNotationPart(Object[] args) {
 
-		Graph hyperGraph = (Graph)args[HYPER_GRAPH_POSITION];
-		Map<Node, String> nameMap = (Map<Node, String>)args[NAME_MAP_POSITION];
-		
+		Graph hyperGraph = (Graph) args[HYPER_GRAPH_POSITION];
+		Map<Node, String> nameMap = (Map<Node, String>) args[NAME_MAP_POSITION];
+
 		StringBuilder notation = new StringBuilder();
-		
+
 		int rnaCount = 0;
-        int peptideCount = 0;
-        int chemCount = 0;
-		
-        NodeCursor hyperNodes = hyperGraph.nodes();
-        
-		NodeMap hyperNodePolymerNotationMap = (NodeMap) hyperGraph.getDataProvider(NodeMapKeys.HYPERNODE_POLYMER_NOTATION);
-		NodeMap hyperNodePolymerTypeMap = (NodeMap) hyperGraph.getDataProvider(NodeMapKeys.HYPERNODE_POLYMER_TYPE);
-                NodeMap smilesMap = (NodeMap) hyperGraph.getDataProvider(NodeMapKeys.EXSMIELS);
-		
+		int peptideCount = 0;
+		int chemCount = 0;
+
+		NodeCursor hyperNodes = hyperGraph.nodes();
+
+		NodeMap hyperNodePolymerNotationMap = (NodeMap) hyperGraph
+				.getDataProvider(NodeMapKeys.HYPERNODE_POLYMER_NOTATION);
+		NodeMap hyperNodePolymerTypeMap = (NodeMap) hyperGraph
+				.getDataProvider(NodeMapKeys.HYPERNODE_POLYMER_TYPE);
+		NodeMap smilesMap = (NodeMap) hyperGraph
+				.getDataProvider(NodeMapKeys.EXSMIELS);
+
 		String type = null;
-        for (; hyperNodes.ok(); hyperNodes.next()) {
-        	Node currentNode = hyperNodes.node();
-            
-        	if (notation.length() > 0){
-        		notation.append(NotationCompositor.NOTATION_DELIMETER);
-        	}
-        	
-            type = (String) hyperNodePolymerTypeMap.get(currentNode);
-            if (type.equalsIgnoreCase(Monomer.NUCLIEC_ACID_POLYMER_TYPE)) {
-                rnaCount++;
-                
-                notation.append( createNotationString(currentNode, nameMap, hyperNodePolymerNotationMap, smilesMap, type, rnaCount) );
-            } else if (type.equalsIgnoreCase(Monomer.PEPTIDE_POLYMER_TYPE)) {
-                peptideCount++;
-                
-                notation.append( createNotationString(currentNode, nameMap, hyperNodePolymerNotationMap, smilesMap, type, peptideCount) );
-            } else if (type.equalsIgnoreCase(Monomer.CHEMICAL_POLYMER_TYPE)){
-                chemCount++;
-                
-                // TY
-                notation.append( createNotationString(currentNode, nameMap, hyperNodePolymerNotationMap, smilesMap, type, chemCount) );
-            }
-            
-            
-        }
-        notation.append(NotationCompositor.NOTATION_PART_ENDING);
-        
+		for (; hyperNodes.ok(); hyperNodes.next()) {
+			Node currentNode = hyperNodes.node();
+
+			if (notation.length() > 0) {
+				notation.append(NotationCompositor.NOTATION_DELIMETER);
+			}
+
+			type = (String) hyperNodePolymerTypeMap.get(currentNode);
+			if (type.equalsIgnoreCase(Monomer.NUCLIEC_ACID_POLYMER_TYPE)) {
+				rnaCount++;
+
+				notation.append(createNotationString(currentNode, nameMap,
+						hyperNodePolymerNotationMap, smilesMap, type, rnaCount));
+			} else if (type.equalsIgnoreCase(Monomer.PEPTIDE_POLYMER_TYPE)) {
+				peptideCount++;
+
+				notation.append(createNotationString(currentNode, nameMap,
+						hyperNodePolymerNotationMap, smilesMap, type,
+						peptideCount));
+			} else if (type.equalsIgnoreCase(Monomer.CHEMICAL_POLYMER_TYPE)) {
+				chemCount++;
+
+				// TY
+				notation.append(createNotationString(currentNode, nameMap,
+						hyperNodePolymerNotationMap, smilesMap, type, chemCount));
+			}
+
+		}
+		notation.append(NotationCompositor.NOTATION_PART_ENDING);
+
 		return notation.toString();
-		
+
 	}
-	
-	private static String createNotationString(Node hyperNode, Map<Node, String> nameMap, 
-			NodeMap hyperNodePolymerNatationMap, NodeMap smilesMap, String type, int count){
+
+	private static String createNotationString(Node hyperNode,
+			Map<Node, String> nameMap, NodeMap hyperNodePolymerNatationMap,
+			NodeMap smilesMap, String type, int count) {
 		StringBuilder notationString = new StringBuilder();
-		
-        nameMap.put(hyperNode, type + count);
-        notationString.append(type);
-        notationString.append(count);
-        
-        notationString.append(NotationCompositor.NOTATION_BEGINING);
-        
-        
-        // TY
-        String smiles = smilesMap == null ? null : (String)smilesMap.get(hyperNode);
-   
-        notationString.append(smiles != null ? smiles : (String) hyperNodePolymerNatationMap.get(hyperNode) );
-        
-        
-        notationString.append(NotationCompositor.NOTATION_ENDING);
-		
+
+		nameMap.put(hyperNode, type + count);
+		notationString.append(type);
+		notationString.append(count);
+
+		notationString.append(NotationCompositor.NOTATION_BEGINING);
+
+		// TY
+		String smiles = smilesMap == null ? null : (String) smilesMap
+				.get(hyperNode);
+
+		notationString.append(smiles != null ? smiles
+				: (String) hyperNodePolymerNatationMap.get(hyperNode));
+
+		notationString.append(NotationCompositor.NOTATION_ENDING);
+
 		return notationString.toString();
 	}
 

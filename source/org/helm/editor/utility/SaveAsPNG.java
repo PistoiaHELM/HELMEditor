@@ -34,58 +34,59 @@ import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 
-/** 
- * This class takes the image objects and saves as png. 
- * It creates the BufferedImage of the given image and  
- * save it as .png 
- *  
- * @author Rahul Sapkal(rahul@javareference.com) 
+/**
+ * This class takes the image objects and saves as png. It creates the
+ * BufferedImage of the given image and save it as .png
+ * 
+ * @author Rahul Sapkal(rahul@javareference.com)
  */
 public class SaveAsPNG {
 
-    public SaveAsPNG(Image img, String fileName) {
-        try {
+	public SaveAsPNG(Image img, String fileName) {
+		try {
 
-            BufferedImage bufferedImage = getBufferedImageFromImage(img);
-            //Save as PNG using the ImageIO object 
-            File f = new File(fileName);
-                        
-            f.getParentFile().mkdir();
-            ImageIO.write(bufferedImage, "png", f);
+			BufferedImage bufferedImage = getBufferedImageFromImage(img);
+			// Save as PNG using the ImageIO object
+			File f = new File(fileName);
 
-        } catch (IOException ex) {
-            Logger.getLogger(SaveAsPNG.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    //            System.out.println("Image created Successfully"); 
+			f.getParentFile().mkdir();
+			ImageIO.write(bufferedImage, "png", f);
 
-    }
+		} catch (IOException ex) {
+			Logger.getLogger(SaveAsPNG.class.getName()).log(Level.SEVERE, null,
+					ex);
+		}
+		// System.out.println("Image created Successfully");
 
-    /** 
-     * This method takes the Image object and  
-     * creates BufferedImage of it  
-     *  
-     * @param img 
-     * @return a BufferedImage
-     */
-    public static BufferedImage getBufferedImageFromImage(Image img) {
-        //This line is important, this makes sure that the image is 
-        //loaded fully 
-        img = new ImageIcon(img).getImage();
+	}
 
-        //Create the BufferedImage object with the width and height of the Image 
-        BufferedImage bufferedImage = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_RGB);
+	/**
+	 * This method takes the Image object and creates BufferedImage of it
+	 * 
+	 * @param img
+	 * @return a BufferedImage
+	 */
+	public static BufferedImage getBufferedImageFromImage(Image img) {
+		// This line is important, this makes sure that the image is
+		// loaded fully
+		img = new ImageIcon(img).getImage();
 
-        //Create the graphics object from the BufferedImage 
-        Graphics g = bufferedImage.createGraphics();
+		// Create the BufferedImage object with the width and height of the
+		// Image
+		BufferedImage bufferedImage = new BufferedImage(img.getWidth(null),
+				img.getHeight(null), BufferedImage.TYPE_INT_RGB);
 
-        //Draw the image on the graphics of the BufferedImage 
-        g.drawImage(img, 0, 0, null);
+		// Create the graphics object from the BufferedImage
+		Graphics g = bufferedImage.createGraphics();
 
-        //Dispose the Graphics 
-        g.dispose();
+		// Draw the image on the graphics of the BufferedImage
+		g.drawImage(img, 0, 0, null);
 
-        //return the BufferedImage 
-        return bufferedImage;
-    }
+		// Dispose the Graphics
+		g.dispose();
 
-} 
+		// return the BufferedImage
+		return bufferedImage;
+	}
+
+}

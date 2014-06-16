@@ -31,14 +31,6 @@ import org.helm.editor.data.MonomerStoreCache;
 import org.helm.editor.data.MonomerInfo;
 import org.helm.editor.utility.GraphUtils;
 
-
-
-
-
-
-
-
-
 import javax.swing.*;
 
 import java.awt.event.*;
@@ -79,11 +71,11 @@ public class StructureFrame extends JFrame {
 	// Get all R atoms from a given smiles string
 	public static List<String> getRAtoms(String smiles) {
 		java.util.ArrayList<String> list = new java.util.ArrayList<String>();
-		int offset=2;
+		int offset = 2;
 		int p = smiles.indexOf("|$");
 		if (p < 0) {
 			p = smiles.indexOf("|r,$");
-			offset=4;
+			offset = 4;
 		}
 		if (p < 0)
 			return list;
@@ -111,7 +103,8 @@ public class StructureFrame extends JFrame {
 		MonomerStore combinedMonomerStore = MonomerStoreCache.getInstance()
 				.getCombinedMonomerStore();
 
-		Map<String, Monomer> map = combinedMonomerStore.getMonomers(polymerType);
+		Map<String, Monomer> map = combinedMonomerStore
+				.getMonomers(polymerType);
 		Map<String, Monomer> smilesDB = combinedMonomerStore
 				.getSmilesMonomerDB();
 		Monomer monomer = null;
@@ -120,7 +113,7 @@ public class StructureFrame extends JFrame {
 		try {
 			uniqueSmiles = StructureParser.getUniqueExtendedSMILES(smiles);
 		} catch (Exception e) {
-			uniqueSmiles=smiles;
+			uniqueSmiles = smiles;
 		}
 
 		// first check if a predefined monomer exists
@@ -205,19 +198,21 @@ public class StructureFrame extends JFrame {
 
 	private void save() {
 		String smiles = structurePanel.getSmilesEx();
-		//salts should be allowed (XHELM-75)
+		// salts should be allowed (XHELM-75)
 		// simple verification
-		/*if (smiles.indexOf(".") > 0) {
-			String msg = "The structure has to be in one fragment.";
-			JOptionPane.showMessageDialog(editor.getFrame(), msg, "Error",
-					JOptionPane.WARNING_MESSAGE);
-			return;
-		}*/
+		/*
+		 * if (smiles.indexOf(".") > 0) { String msg =
+		 * "The structure has to be in one fragment.";
+		 * JOptionPane.showMessageDialog(editor.getFrame(), msg, "Error",
+		 * JOptionPane.WARNING_MESSAGE); return; }
+		 */
 
-		MonomerStore store = MonomerStoreCache.getInstance().getMonomerStore(this.monomer);
-		
+		MonomerStore store = MonomerStoreCache.getInstance().getMonomerStore(
+				this.monomer);
+
 		// return the monomer corresponding to the smiles
-		Monomer monomer = getMonomerBySmiles(smiles,this.monomer.getPolymerType(), store,this.monomer);
+		Monomer monomer = getMonomerBySmiles(smiles,
+				this.monomer.getPolymerType(), store, this.monomer);
 		if (monomer == null) {
 			String msg = "Connection points R atoms not defined correctly.  Please use R1, R2 and R3 only.";
 			JOptionPane.showMessageDialog(editor.getFrame(), msg, "Error",
@@ -265,11 +260,10 @@ public class StructureFrame extends JFrame {
 			s = monomer.getCanSMILES();
 		}
 
-		
 		this.monomer = monomer;
 		structurePanel.setEditMode(true);
 		structurePanel.setMol(s);
-		
+
 	}
 
 	public static JFrame showDialog(MacromoleculeEditor editor,
@@ -283,10 +277,11 @@ public class StructureFrame extends JFrame {
 		}
 
 		if (monomer == null)
-				 //support peptide and chem
-				//|| !(monomerInfo.getPolymerType().equals("CHEM") || monomerInfo.getPolymerType().equals("PEPTIDE")))
+			// support peptide and chem
+			// || !(monomerInfo.getPolymerType().equals("CHEM") ||
+			// monomerInfo.getPolymerType().equals("PEPTIDE")))
 			return null;
-		
+
 		if (frame == null) {
 			frame = new StructureFrame();
 			frame.setTitle("Structure Editor");

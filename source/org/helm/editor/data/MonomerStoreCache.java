@@ -63,80 +63,86 @@ public class MonomerStoreCache {
 
 	/**
 	 * get the monomer store a monomer belongs to
+	 * 
 	 * @param monomer
 	 * @return
 	 */
-	public MonomerStore getMonomerStore( Monomer monomer) {
+	public MonomerStore getMonomerStore(Monomer monomer) {
 		String polymerType = monomer.getPolymerType();
 		String alternateId = monomer.getAlternateId();
-		
-		if ( this.externalMonomerStore!= null && this.externalMonomerStore.hasMonomer(polymerType, alternateId)) {
+
+		if (this.externalMonomerStore != null
+				&& this.externalMonomerStore.hasMonomer(polymerType,
+						alternateId)) {
 			return this.externalMonomerStore;
-		}
-		else if ( this.internalMonomerStore.hasMonomer(polymerType, alternateId)) {
+		} else if (this.internalMonomerStore.hasMonomer(polymerType,
+				alternateId)) {
 			return this.internalMonomerStore;
-		}
-		else {
+		} else {
 			return null;
 		}
 	}
-	
-	
-	public MonomerStore getExternalStore(){
+
+	public MonomerStore getExternalStore() {
 		return this.externalMonomerStore;
 	}
-	
-	
-	
+
 	public MonomerStore getUnregisteredMonomers() {
-		MonomerStore store=new MonomerStore();
-		if (this.externalMonomerStore != null) {			
-			for (String polymerType :this.externalMonomerStore.getPolymerTypeSet()){
-				for (Monomer m: this.externalMonomerStore.getMonomers(polymerType).values()){
-					if (this.internalMonomerStore.getMonomer(polymerType, m.getAlternateId())==null){
-						
+		MonomerStore store = new MonomerStore();
+		if (this.externalMonomerStore != null) {
+			for (String polymerType : this.externalMonomerStore
+					.getPolymerTypeSet()) {
+				for (Monomer m : this.externalMonomerStore.getMonomers(
+						polymerType).values()) {
+					if (this.internalMonomerStore.getMonomer(polymerType,
+							m.getAlternateId()) == null) {
+
 						try {
 							store.addMonomer(m);
 						} catch (Exception e) {
 							e.printStackTrace();
 							Logger.getLogger(MonomerStoreCache.class.getName())
-							.log(Level.WARNING,
-									"Error ocurred when adding "+m.getAlternateId()+"to monomer store for merging");
+									.log(Level.WARNING,
+											"Error ocurred when adding "
+													+ m.getAlternateId()
+													+ "to monomer store for merging");
 
 						}
-						
-					}
-				}
-				
-			}
-		}
-		if (this.internalMonomerStore !=null){
-			for (String polymerType :this.internalMonomerStore.getPolymerTypeSet()){
-			for (Monomer m: this.internalMonomerStore.getMonomers(polymerType).values()){
-				if (m.isNewMonomer()){						
-					try {
-						store.addMonomer(m);
-					} catch (Exception e) {
-						e.printStackTrace();
-						Logger.getLogger(MonomerStoreCache.class.getName())
-						.log(Level.WARNING,
-								"Error ocurred when adding "+m.getAlternateId()+"to monomer store for merging");
 
 					}
-					
 				}
+
 			}
-			
 		}
-			
-		}	
-		
-			
-			
+		if (this.internalMonomerStore != null) {
+			for (String polymerType : this.internalMonomerStore
+					.getPolymerTypeSet()) {
+				for (Monomer m : this.internalMonomerStore.getMonomers(
+						polymerType).values()) {
+					if (m.isNewMonomer()) {
+						try {
+							store.addMonomer(m);
+						} catch (Exception e) {
+							e.printStackTrace();
+							Logger.getLogger(MonomerStoreCache.class.getName())
+									.log(Level.WARNING,
+											"Error ocurred when adding "
+													+ m.getAlternateId()
+													+ "to monomer store for merging");
+
+						}
+
+					}
+				}
+
+			}
+
+		}
+
 		return store;
 
 	}
-	
+
 	/**
 	 * Store synchronization. All external monomers are included, together with
 	 * every internal monomer with an alternate id that is not yet included in
@@ -162,13 +168,13 @@ public class MonomerStoreCache {
 		if (this.externalMonomerStore != null) {
 			for (String polymerType : this.externalMonomerStore.getMonomerDB()
 					.keySet()) {
-				Map<String, Monomer> externalMonomerMap = this.externalMonomerStore.getMonomers(
-						polymerType);
+				Map<String, Monomer> externalMonomerMap = this.externalMonomerStore
+						.getMonomers(polymerType);
 				for (Monomer mon : externalMonomerMap.values()) {
 					try {
-						//combinedMonomerStore.addNewMonomer(mon);						
+						// combinedMonomerStore.addNewMonomer(mon);
 						combinedMonomerStore.addMonomer(mon);
-						
+
 					} catch (Exception e) {
 						notAdded++;
 					}
@@ -178,13 +184,13 @@ public class MonomerStoreCache {
 		// internals when their alternate id is not contained in externals
 		for (String polymerType : this.internalMonomerStore.getMonomerDB()
 				.keySet()) {
-			Map<String, Monomer> internalMonomerMap = this.internalMonomerStore.getMonomers(
-					polymerType);
+			Map<String, Monomer> internalMonomerMap = this.internalMonomerStore
+					.getMonomers(polymerType);
 			for (Monomer mon : internalMonomerMap.values()) {
 				try {
 					if (!combinedMonomerStore.hasMonomer(polymerType,
-							mon.getAlternateId())) {						
-						//combinedMonomerStore.addNewMonomer(mon);
+							mon.getAlternateId())) {
+						// combinedMonomerStore.addNewMonomer(mon);
 						combinedMonomerStore.addMonomer(mon);
 					}
 				} catch (Exception e) {
@@ -230,9 +236,6 @@ public class MonomerStoreCache {
 		combineMonomerStores();
 	}
 
-	
-	
-	
 	/**
 	 * Adds monomers to the external Monomer Database. Existing monomers won't
 	 * be deleted. A check for conflicting monomers is done before.
@@ -250,14 +253,14 @@ public class MonomerStoreCache {
 	public String addExternalMonomers(JFrame owner, MonomerStore store,
 			String helmString) throws IOException, MonomerException,
 			IllegalArgumentException {
-			
-		if (this.externalMonomerStore == null) {
-			this.externalMonomerStore=new MonomerStore();
-		}
-		
-		LinkedList<Monomer> dupMonomers=findDuplicateAdhocMonomers(store);	
 
-		System.out.println("Duplicate monomer count: "+dupMonomers.size());
+		if (this.externalMonomerStore == null) {
+			this.externalMonomerStore = new MonomerStore();
+		}
+
+		LinkedList<Monomer> dupMonomers = findDuplicateAdhocMonomers(store);
+
+		System.out.println("Duplicate monomer count: " + dupMonomers.size());
 		LinkedList<Monomer> conflicts = findConflictingMonomers(store);
 		LinkedList<String> newNames = new LinkedList<String>();
 
@@ -271,33 +274,29 @@ public class MonomerStoreCache {
 			}
 
 		}
-		
-		
+
 		System.out.println(store);
 		System.out.println(conflicts);
 		LinkedList<String> oldNames = new LinkedList<String>();
 		int monomerIndex = -1;
-		//add monomers to externalStore
+		// add monomers to externalStore
 		for (String polymerType : store.getMonomerDB().keySet()) {
 			for (Monomer newMonomer : store.getMonomers(polymerType).values()) {
-			
-				if (dupMonomers.lastIndexOf(newMonomer)>=0){
+
+				if (dupMonomers.lastIndexOf(newMonomer) >= 0) {
 					continue;
 				}
-				
-				
-				//rename monomer if there is a conflict
+
+				// rename monomer if there is a conflict
 				monomerIndex = conflicts.lastIndexOf(newMonomer);
 				if (monomerIndex >= 0) {
 					oldNames.add(newMonomer.getAlternateId());
 					newMonomer.setAlternateId(newNames.get(monomerIndex));
 				}
-				
-			
+
 				this.externalMonomerStore.addMonomer(newMonomer);
 				org.helm.editor.utility.MonomerNodeHelper.generateImageFile(
-						newMonomer, true);			
-				
+						newMonomer, true);
 
 			}
 		}
@@ -307,22 +306,26 @@ public class MonomerStoreCache {
 
 		String newHelmString = helmString;
 		for (int i = 0; i < conflicts.size(); i++) {
-		 try {
-			newHelmString = ComplexNotationParser.replaceMonomer(newHelmString,
-					 conflicts.get(i).getPolymerType(), oldNames.get(i), newNames.get(i), getCombinedMonomerStore(), false);
-		} catch (JDOMException e) {
-			e.printStackTrace();
-		} catch (NotationException e) {
-			e.printStackTrace();
-		}
+			try {
+				newHelmString = ComplexNotationParser.replaceMonomer(
+						newHelmString, conflicts.get(i).getPolymerType(),
+						oldNames.get(i), newNames.get(i),
+						getCombinedMonomerStore(), false);
+			} catch (JDOMException e) {
+				e.printStackTrace();
+			} catch (NotationException e) {
+				e.printStackTrace();
+			}
 		}
 
 		System.out.println(newHelmString);
 
 		return newHelmString;
 	}
+
 	/**
 	 * for the list of conflicts the user is asked to enter alternate ids
+	 * 
 	 * @param list
 	 * @param newNames
 	 * @param store
@@ -338,7 +341,7 @@ public class MonomerStoreCache {
 			dialog.setVisible(true);
 			dialog.setLocationRelativeTo(owner);
 			if (dialog.getResult() == ModalResult.OK) {
-				newNames.add(dialog.getNewIdentifier());			
+				newNames.add(dialog.getNewIdentifier());
 
 			} else {
 				return false;
@@ -388,27 +391,28 @@ public class MonomerStoreCache {
 
 		return conflictingIDs;
 	}
-	
+
 	/**
-	 * This function checks if adhoc monomers from the given store are already contained in the 
-	 * internal store  
+	 * This function checks if adhoc monomers from the given store are already
+	 * contained in the internal store
+	 * 
 	 * @param store
 	 * @return list of duplicate adhoc monomers in store
 	 */
 	private LinkedList<Monomer> findDuplicateAdhocMonomers(MonomerStore store) {
-		
+
 		LinkedList<Monomer> dupMonomers = new LinkedList<Monomer>();
 
-		
-		for (Monomer m:store.getAllMonomersList()){
-			if (m.isAdHocMonomer()){
-				Monomer dupMon=this.internalMonomerStore.getMonomer(m.getCanSMILES());
-				if (dupMon!=null){
+		for (Monomer m : store.getAllMonomersList()) {
+			if (m.isAdHocMonomer()) {
+				Monomer dupMon = this.internalMonomerStore.getMonomer(m
+						.getCanSMILES());
+				if (dupMon != null) {
 					dupMonomers.add(m);
 				}
 			}
 		}
-		
+
 		return dupMonomers;
 
 	}
@@ -417,13 +421,12 @@ public class MonomerStoreCache {
 	 * Clears all custom monomers in the database.
 	 */
 	public void clearCustomMonomerDB() {
-		if (this.externalMonomerStore != null){
+		if (this.externalMonomerStore != null) {
 			this.externalMonomerStore.clearMonomers();
-			//reload combined Store
+			// reload combined Store
 			MonomerFactory.setDBChanged(true);
 		}
-		
-		
+
 	}
 
 	/**

@@ -34,42 +34,52 @@ import javax.swing.JOptionPane;
 import org.jdesktop.swingworker.SwingWorker;
 
 /**
- *
+ * 
  * @author zhangtianhong
  */
 public class MonomerRegistar extends SwingWorker<Void, Void> {
 
-    private MonomerManager manager;
+	private MonomerManager manager;
 
-    public MonomerRegistar(MonomerManager manager) {
-        this.manager = manager;
-    }
+	public MonomerRegistar(MonomerManager manager) {
+		this.manager = manager;
+	}
 
-    @Override
-    protected Void doInBackground() throws Exception {
-	//MonomerFactory.getInstance().addNewMonomer(manager.getMonomerViewer().getMonomer());
-    //Monomer with new flag are not saved automatically anymore
-    MonomerFactory.getInstance().getMonomerStore().addMonomer(manager.getMonomerViewer().getEditedMonomer(), true);
-	//save monomer db to local file after successful update
-        try {
-            MonomerFactory.getInstance().saveMonomerCache();
-        } catch (Exception ignore) {
-        }
+	@Override
+	protected Void doInBackground() throws Exception {
+		// MonomerFactory.getInstance().addNewMonomer(manager.getMonomerViewer().getMonomer());
+		// Monomer with new flag are not saved automatically anymore
+		MonomerFactory
+				.getInstance()
+				.getMonomerStore()
+				.addMonomer(manager.getMonomerViewer().getEditedMonomer(), true);
+		// save monomer db to local file after successful update
+		try {
+			MonomerFactory.getInstance().saveMonomerCache();
+		} catch (Exception ignore) {
+		}
 
-        return null;
-    }
+		return null;
+	}
 
-    @Override
-    protected void done() {
-        try {
-            manager.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-            get();
-            manager.refreshContent(manager.getPolymerType());
-            manager.getEditor().updatePolymerPanels();
-            JOptionPane.showMessageDialog(manager, "Successfully registered monomer into local file", "Register Success", JOptionPane.INFORMATION_MESSAGE);
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(manager, "Error registering monomer into local file\n" + ex.getMessage(), "Register Failure", JOptionPane.ERROR_MESSAGE);
-            Logger.getLogger(MonomerRegistar.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
+	@Override
+	protected void done() {
+		try {
+			manager.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+			get();
+			manager.refreshContent(manager.getPolymerType());
+			manager.getEditor().updatePolymerPanels();
+			JOptionPane.showMessageDialog(manager,
+					"Successfully registered monomer into local file",
+					"Register Success", JOptionPane.INFORMATION_MESSAGE);
+		} catch (Exception ex) {
+			JOptionPane.showMessageDialog(
+					manager,
+					"Error registering monomer into local file\n"
+							+ ex.getMessage(), "Register Failure",
+					JOptionPane.ERROR_MESSAGE);
+			Logger.getLogger(MonomerRegistar.class.getName()).log(Level.SEVERE,
+					null, ex);
+		}
+	}
 }

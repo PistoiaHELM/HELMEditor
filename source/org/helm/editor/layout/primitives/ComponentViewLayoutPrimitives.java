@@ -36,9 +36,8 @@ import org.helm.editor.layout.metrics.ComponentViewViewMetrics;
  */
 public class ComponentViewLayoutPrimitives extends SequenceViewLayoutPrimitives {
 	private ViewMetrics baseViewMetrics;
-	
-	public ComponentViewLayoutPrimitives (
-			LabelConstructor labelConstructor,
+
+	public ComponentViewLayoutPrimitives(LabelConstructor labelConstructor,
 			ViewMetrics baseViewMetrics) {
 
 		super(labelConstructor, baseViewMetrics);
@@ -46,23 +45,23 @@ public class ComponentViewLayoutPrimitives extends SequenceViewLayoutPrimitives 
 		this.layoutMetrics = new ComponentViewViewMetrics(baseViewMetrics);
 	}
 
-	//////////////////////////////////
+	// ////////////////////////////////
 	// chem modifiers layout metrics//
-	//////////////////////////////////
+	// ////////////////////////////////
 
 	public Point getChemNodesFloatongSequenceLayoutMetrics() {
-		return new Point(
-				baseViewMetrics.getHDistanceInt() + baseViewMetrics.getChemNodeSize(), 
+		return new Point(baseViewMetrics.getHDistanceInt()
+				+ baseViewMetrics.getChemNodeSize(),
 				baseViewMetrics.getVDsitanceExt());
 	}
-	
+
 	public Point getChemNodesDockedSequenceLayoutMetrics() {
-		return new Point(
-				baseViewMetrics.getChemNodeSize() + baseViewMetrics.getHDistanceInt(), 
-				0);
+		return new Point(baseViewMetrics.getChemNodeSize()
+				+ baseViewMetrics.getHDistanceInt(), 0);
 	}
-	
-	public int getChemNodesYLayoutStart(LayoutGraph graph, Set<Node> layoutedNodes) {
+
+	public int getChemNodesYLayoutStart(LayoutGraph graph,
+			Set<Node> layoutedNodes) {
 		return baseViewMetrics.getYBound();
 	}
 }

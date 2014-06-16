@@ -25,50 +25,50 @@ import java.awt.Color;
 
 /**
  * Monomer substance representation (have monomer id)
+ * 
  * @author Alexander Makarov
  */
 public class XmlMonomer implements XmlElement {
 
 	/**
-	 * Monomer name in HELM Editor. 
-	 * Example: all peptides
+	 * Monomer name in HELM Editor. Example: all peptides
 	 */
 	protected String name;
 	private String polymerName;
 	private Color fontColor;
 	private Color backgroundColor;
-	
+
 	public XmlMonomer(String name, String polymerName) {
 		this.name = name;
 		this.polymerName = polymerName;
 	}
-	
-	public String getName(){
+
+	public String getName() {
 		return name;
 	}
 
-	public String getPolymerName(){
+	public String getPolymerName() {
 		return polymerName;
 	}
-	
-	public void setFontColor(Color fontColor){
-		this.fontColor = fontColor;		
+
+	public void setFontColor(Color fontColor) {
+		this.fontColor = fontColor;
 	}
-	
-	public void setBackgroundColor(Color backgroundColor){
+
+	public void setBackgroundColor(Color backgroundColor) {
 		this.backgroundColor = backgroundColor;
 	}
-	
-	public Color getFontColor(){
+
+	public Color getFontColor() {
 		return fontColor;
 	}
-	
-	public Color getBackgroundColor(){
+
+	public Color getBackgroundColor() {
 		return backgroundColor;
 	}
 
 	public String getNotation() {
 		return null;
 	}
-	
+
 }

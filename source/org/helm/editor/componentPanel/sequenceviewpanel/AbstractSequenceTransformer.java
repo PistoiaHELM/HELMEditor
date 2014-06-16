@@ -40,7 +40,8 @@ import org.helm.editor.data.NodeMapKeys;
 import org.helm.editor.layout.LabelInfo;
 import org.helm.editor.utility.MonomerInfoUtils;
 
-public abstract class AbstractSequenceTransformer implements SequenceTransformer {
+public abstract class AbstractSequenceTransformer implements
+		SequenceTransformer {
 
 	protected LinkedList<Node> viewSequence = new LinkedList<Node>();
 	protected NodeMap viewModificationsCount;
@@ -63,19 +64,22 @@ public abstract class AbstractSequenceTransformer implements SequenceTransformer
 				.getDataProvider(SequenceViewModel.LABELS_MAP);
 		viewNodeLabelInfoMap = (NodeMap) view
 				.getDataProvider(NodeMapKeys.LABEL_INFO_MAP);
-		viewEdgeTypes = (EdgeMap) view
-				.getDataProvider(EdgeMapKeys.EDGE_INFO);
-		viewNodeStartingNodeMap = (NodeMap)view
+		viewEdgeTypes = (EdgeMap) view.getDataProvider(EdgeMapKeys.EDGE_INFO);
+		viewNodeStartingNodeMap = (NodeMap) view
 				.getDataProvider(NodeMapKeys.NODE2STARTING_NODE);
-		viewNode2HyperNode = (NodeMap)view.getDataProvider(NodeMapKeys.NODE2PARENT_HYPERNODE);
-		//hyperNode2Starting = (NodeMap)view.getDataProvider(NodeMapKeys.HYPERNODE2STARTING_NODE);
-		
-		monomerRefNodeMap = (NodeMap)view.getDataProvider(NodeMapKeys.MONOMER_REF);
-		
+		viewNode2HyperNode = (NodeMap) view
+				.getDataProvider(NodeMapKeys.NODE2PARENT_HYPERNODE);
+		// hyperNode2Starting =
+		// (NodeMap)view.getDataProvider(NodeMapKeys.HYPERNODE2STARTING_NODE);
+
+		monomerRefNodeMap = (NodeMap) view
+				.getDataProvider(NodeMapKeys.MONOMER_REF);
+
 		this.viewModel = viewModel;
 	}
-	
-	public List<Node> transform(Node editorStartingNode, SequenceViewModel viewModel) {
+
+	public List<Node> transform(Node editorStartingNode,
+			SequenceViewModel viewModel) {
 		init(viewModel);
 		editor = editorStartingNode.getGraph();
 		buildViewSequence(editorStartingNode);
@@ -83,15 +87,16 @@ public abstract class AbstractSequenceTransformer implements SequenceTransformer
 		fillLabelMaps();
 		return viewSequence;
 	}
-	
+
 	/**
 	 * In this method mapped view sequence should be constructed and viemodel
 	 * map view -> editor and edtior -> view should be filled
 	 * 
-	 * @param editorStartingNode sequence starting node in the editor graph
+	 * @param editorStartingNode
+	 *            sequence starting node in the editor graph
 	 */
 	protected abstract void buildViewSequence(Node editorStartingNode);
-	
+
 	/**
 	 * Here all dataproviders with label-sprecific data should be filled
 	 */
@@ -109,12 +114,13 @@ public abstract class AbstractSequenceTransformer implements SequenceTransformer
 
 	private Node getHyperNode(Node editorNode) {
 		Graph g = editorNode.getGraph();
-		NodeMap map = (NodeMap)g.getDataProvider(NodeMapKeys.NODE2PARENT_HYPERNODE);
-		return (Node)map.get(editorNode);
+		NodeMap map = (NodeMap) g
+				.getDataProvider(NodeMapKeys.NODE2PARENT_HYPERNODE);
+		return (Node) map.get(editorNode);
 	}
 
 	protected LabelInfo getLabelInfo(Node viewNode) {
-		LabelInfo info = (LabelInfo)viewNodeLabelInfoMap.get(viewNode);
+		LabelInfo info = (LabelInfo) viewNodeLabelInfoMap.get(viewNode);
 		if (info == null) {
 			info = new LabelInfo();
 			viewNodeLabelInfoMap.set(viewNode, info);
@@ -123,63 +129,63 @@ public abstract class AbstractSequenceTransformer implements SequenceTransformer
 	}
 
 	protected LabelInfo getEditorLabelInfo(Node editorNode) {
-		NodeMap editorInfoMap = (NodeMap)editor.getDataProvider(NodeMapKeys.LABEL_INFO_MAP);
+		NodeMap editorInfoMap = (NodeMap) editor
+				.getDataProvider(NodeMapKeys.LABEL_INFO_MAP);
 		if (editorInfoMap == null) {
 			return null;
 		}
-		return (LabelInfo)editorInfoMap.get(editorNode);
+		return (LabelInfo) editorInfoMap.get(editorNode);
 	}
 
 	protected Node createNode(String label, Graph2D graph) {
 		Node node = graph.createNode();
 		NodeRealizer nodeRealizer = graph.getRealizer(node);
 		nodeRealizer.getLabel().setText(label);
-		
+
 		return node;
 	}
 
 	protected Node getSingleSuccessor(Node n) {
 		EdgeCursor edgeCursor = n.outEdges();
 		Graph g = n.getGraph();
-		EdgeMap type = (EdgeMap)g.getDataProvider(EdgeMapKeys.EDGE_INFO);
-		
+		EdgeMap type = (EdgeMap) g.getDataProvider(EdgeMapKeys.EDGE_INFO);
+
 		for (; edgeCursor.ok(); edgeCursor.next()) {
 			Edge e = edgeCursor.edge();
-			EdgeInfo info = (EdgeInfo)type.get(e);
+			EdgeInfo info = (EdgeInfo) type.get(e);
 			if (info.isRegular() && !MonomerInfoUtils.isInterPolymer(e)) {
 				return e.opposite(n);
 			}
 		}
-		
+
 		return null;
-			
+
 	}
-	
+
 	protected Edge getSingleOutEdge(Node n) {
 		EdgeCursor edgeCursor = n.outEdges();
 		Graph g = n.getGraph();
-		EdgeMap type = (EdgeMap)g.getDataProvider(EdgeMapKeys.EDGE_INFO);
-		
+		EdgeMap type = (EdgeMap) g.getDataProvider(EdgeMapKeys.EDGE_INFO);
+
 		for (; edgeCursor.ok(); edgeCursor.next()) {
 			Edge e = edgeCursor.edge();
-			EdgeInfo info = (EdgeInfo)type.get(e);
+			EdgeInfo info = (EdgeInfo) type.get(e);
 			if (info.isRegular()) {
 				return e;
 			}
 		}
-		
+
 		return null;
-			
+
 	}
 
 	protected Node getSinglePredecessor(Node n) {
-		NodeCursor pred = n.predecessors(); 
+		NodeCursor pred = n.predecessors();
 		if (pred.ok()) {
-			return pred.node(); 
+			return pred.node();
 		} else {
 			return null;
-		}	
+		}
 	}
-	
 
 }

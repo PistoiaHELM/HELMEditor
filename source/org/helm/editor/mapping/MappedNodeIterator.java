@@ -29,23 +29,23 @@ import java.util.Iterator;
  * User: dzhelezov
  */
 public class MappedNodeIterator implements Iterator<Node> {
-    private GraphMapper mapper;
-    private Iterator<Node> sourceIterator;
+	private GraphMapper mapper;
+	private Iterator<Node> sourceIterator;
 
-    public MappedNodeIterator(GraphMapper mapper, Iterator<Node> sourceIterator) {
-        this.mapper = mapper;
-        this.sourceIterator = sourceIterator;
-    }
+	public MappedNodeIterator(GraphMapper mapper, Iterator<Node> sourceIterator) {
+		this.mapper = mapper;
+		this.sourceIterator = sourceIterator;
+	}
 
-    public boolean hasNext() {
-        return sourceIterator.hasNext();
-    }
+	public boolean hasNext() {
+		return sourceIterator.hasNext();
+	}
 
-    public Node next() {
-        return mapper.getTargetNode(sourceIterator.next());  
-    }
+	public Node next() {
+		return mapper.getTargetNode(sourceIterator.next());
+	}
 
-    public void remove() {
-        throw new UnsupportedOperationException();
-    }
+	public void remove() {
+		throw new UnsupportedOperationException();
+	}
 }

@@ -172,10 +172,10 @@ public class ADCEditor extends javax.swing.JPanel implements ActionListener {
 		String connect = "";
 
 		try {
-			//Map<String, Monomer> map = MonomerStoreCache.getInstance()
-			//		.getCombinedMonomerStore().getMonomerDB().get("CHEM");
-			 Map<String, Monomer> map =
-			 org.helm.notation.MonomerFactory.getInstance().getMonomerDB().get("CHEM");
+			// Map<String, Monomer> map = MonomerStoreCache.getInstance()
+			// .getCombinedMonomerStore().getMonomerDB().get("CHEM");
+			Map<String, Monomer> map = org.helm.notation.MonomerFactory
+					.getInstance().getMonomerDB().get("CHEM");
 			ComplexPolymer cp = ComplexNotationParser.parse(notation);
 
 			List<PolymerNode> nodes = cp.getPolymerNodeList();

@@ -27,41 +27,41 @@ public class ConvertionResult {
 	private Exception _exception;
 
 	private static final String ERROR_MESSAGE_BEGIN = "Conversion Error: ";
-	
+
 	public ConvertionResult() {
 	}
-	
-	public ConvertionResult(String message){
-	    _resultNotation = message;
+
+	public ConvertionResult(String message) {
+		_resultNotation = message;
 	}
-	
-	public String getResult(){
-		
-		if (_exception != null){
+
+	public String getResult() {
+
+		if (_exception != null) {
 			return ERROR_MESSAGE_BEGIN + _exception.getMessage();
 		}
-		
+
 		return _resultNotation;
 	}
 
 	public String getNotation() {
-	    return _resultNotation;
+		return _resultNotation;
 	}
 
 	public void setNotation(String message) {
-	    _resultNotation = message;
+		_resultNotation = message;
 	}
 
 	public Exception getException() {
-	    return _exception;
+		return _exception;
 	}
 
 	public void setException(Exception exception) {
-	    _exception = exception;
+		_exception = exception;
 	}
-	
-	public boolean haveNotException(){
-	    return _exception == null;
+
+	public boolean haveNotException() {
+		return _exception == null;
 	}
-	
+
 }

@@ -90,9 +90,9 @@ public class MonomerViewer extends JPanel {
 	private boolean modifiable = true;
 	private static Map<String, MonomerViewer> namedInstances = new HashMap<String, MonomerViewer>();
 	private static MonomerViewer instance;
-	
+
 	private Monomer monomer;
-	
+
 	private MonomerViewer() {
 		this(true);
 	}
@@ -149,23 +149,23 @@ public class MonomerViewer extends JPanel {
 		naturalAnalogTextField.setEditable(modifiable);
 		attachmentTable.setEnabled(modifiable);
 	}
-	
-	public void setIdEditable(boolean modifiable){
+
+	public void setIdEditable(boolean modifiable) {
 		idTextField.setEditable(modifiable);
 	}
 
-	public void setNameEditable(boolean modifiable){
+	public void setNameEditable(boolean modifiable) {
 		nameTextField.setEditable(modifiable);
 	}
-	
-	public void setNaturalAnalogEditable(boolean modifiable){
+
+	public void setNaturalAnalogEditable(boolean modifiable) {
 		naturalAnalogTextField.setEditable(modifiable);
 	}
-	
-	public void setAttachmentTableEditable(boolean modifiable){
+
+	public void setAttachmentTableEditable(boolean modifiable) {
 		attachmentTable.setEnabled(modifiable);
 	}
-	
+
 	private JPanel createViewerPanel() {
 		msketchPane = new MSketchPane();
 		msketchPane.setBorder(BorderFactory.createEtchedBorder());
@@ -364,7 +364,7 @@ public class MonomerViewer extends JPanel {
 					null, ex);
 		}
 	}
-	
+
 	public Monomer getMonomer() {
 		return this.monomer;
 	}
@@ -388,7 +388,7 @@ public class MonomerViewer extends JPanel {
 		tmpM.setCanSMILES(newSmiles);
 		tmpM.setMolfile(molfile);
 		tmpM.setAttachmentList(attachments);
-		
+
 		return tmpM;
 	}
 
@@ -417,7 +417,7 @@ public class MonomerViewer extends JPanel {
 
 	public void setMonomer(Monomer monomer) {
 		this.monomer = monomer;
-		
+
 		if (monomer != null) {
 			if (monomer.getMolfile() != null) {
 				mviewPane.setM(0, monomer.getMolfile());
@@ -473,10 +473,9 @@ public class MonomerViewer extends JPanel {
 			Monomer m = getEditedMonomer();
 			MonomerParser.validateMonomer(m);
 
-			
 			MonomerFactory monomerFactory = MonomerFactory.getInstance();
-			Map<String, Map<String, Monomer>> monomerDB = monomerFactory.getMonomerDB();
-			
+			Map<String, Map<String, Monomer>> monomerDB = monomerFactory
+					.getMonomerDB();
 
 			Map<String, Monomer> idMap = monomerDB.get(m.getPolymerType());
 			Monomer[] monomers = idMap.values().toArray(new Monomer[0]);
@@ -495,12 +494,12 @@ public class MonomerViewer extends JPanel {
 
 			// for structure that contains any atom, it is ok for smiles and
 			// attachment to be the same
-			
-			Map<String, Monomer> smilesMap = monomerFactory.getSmilesMonomerDB();
-			 
 
-			
-			String smiles=StructureParser.getUniqueExtendedSMILES(m.getCanSMILES());
+			Map<String, Monomer> smilesMap = monomerFactory
+					.getSmilesMonomerDB();
+
+			String smiles = StructureParser.getUniqueExtendedSMILES(m
+					.getCanSMILES());
 			if (smilesMap.containsKey(smiles)) {
 				Monomer existM = smilesMap.get(smiles);
 
@@ -535,18 +534,16 @@ public class MonomerViewer extends JPanel {
 					"isValidNewMonomer", ex);
 			return false;
 		}
-		
-		
+
 	}
-	
-	
-	public void clear(){
+
+	public void clear() {
 		mviewPane.setM(0, "");
 		idTextField.setText("");
 		nameTextField.setText("");
 		naturalAnalogTextField.setText("");
 		model.updateAttachments(null);
-				
+
 	}
 
 	class AttachmentTableModel extends AbstractTableModel {
@@ -650,8 +647,7 @@ public class MonomerViewer extends JPanel {
 		public String[] getIDsByRow(int row) {
 			return getData().get(row).getIds();
 		}
-		
-		
+
 	}
 
 	class AttachmentIDTableCellEditor extends DefaultCellEditor {

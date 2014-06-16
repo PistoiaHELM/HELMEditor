@@ -50,8 +50,7 @@ public class MonomerMergeManager extends javax.swing.JDialog {
 		initComponents();
 
 		viewer = MonomerViewer.getNamedInstance("MonomerMergeManager");
-		
-		
+
 		viewer.setModifiableStatus(false);
 		viewer.setIdEditable(true);
 		viewer.setNameEditable(true);
@@ -61,7 +60,6 @@ public class MonomerMergeManager extends javax.swing.JDialog {
 		viewer.clear();
 	}
 
-	
 	/**
 	 * This method is called from within the constructor to initialize the form.
 	 */
@@ -79,13 +77,12 @@ public class MonomerMergeManager extends javax.swing.JDialog {
 		setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 		setTitle("HELM Editor Temporary Monomer Registration");
 
-	
 		MonomerStore store = MonomerStoreCache.getInstance()
 				.getUnregisteredMonomers();
 		if (store != null && store.getPolymerTypeSet().size() > 0) {
 
-
-			MonomerMergeTableModel model = new MonomerMergeTableModel(store.getAllMonomersList());
+			MonomerMergeTableModel model = new MonomerMergeTableModel(
+					store.getAllMonomersList());
 			monomerTable.setModel(model);
 
 		} else {
@@ -93,7 +90,6 @@ public class MonomerMergeManager extends javax.swing.JDialog {
 					new Object[][] {}, new String[] { "Symbol",
 							"Natural Analog", "Name", "Structure" }));
 		}
-
 
 		monomerListPanel.setBorder(javax.swing.BorderFactory
 				.createTitledBorder("Monomer List"));
@@ -228,12 +224,11 @@ public class MonomerMergeManager extends javax.swing.JDialog {
 												monomerListPanel,
 												org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
 												org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
-												Short.MAX_VALUE)
-										).addContainerGap()));
-		layout.setVerticalGroup(layout
-				.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-				.add(layout
-						.createSequentialGroup()
+												Short.MAX_VALUE))
+								.addContainerGap()));
+		layout.setVerticalGroup(layout.createParallelGroup(
+				org.jdesktop.layout.GroupLayout.LEADING).add(
+				layout.createSequentialGroup()
 						.addContainerGap()
 						.addPreferredGap(
 								org.jdesktop.layout.LayoutStyle.RELATED)
@@ -250,16 +245,16 @@ public class MonomerMergeManager extends javax.swing.JDialog {
 
 		pack();
 	}
-	
+
 	public void refreshContent() {
 		MonomerStore store = MonomerStoreCache.getInstance()
 				.getUnregisteredMonomers();
 
-		MonomerMergeTableModel model = new MonomerMergeTableModel(store.getAllMonomersList());
+		MonomerMergeTableModel model = new MonomerMergeTableModel(
+				store.getAllMonomersList());
 		monomerTable.setModel(model);
 	}
 
-	
 	public MacromoleculeEditor getEditor() {
 		return editor;
 	}
@@ -268,12 +263,10 @@ public class MonomerMergeManager extends javax.swing.JDialog {
 		return viewer;
 	}
 
-	
-
-
 	private void closeButtonActionPerformed(java.awt.event.ActionEvent evt) {
 		setVisible(false);
 	}
+
 	private void registerButtonActionPerformed(java.awt.event.ActionEvent evt) {
 		int rowIndex = monomerTable.getSelectedRow();
 		int row = monomerTable.convertRowIndexToModel(rowIndex);
@@ -283,77 +276,75 @@ public class MonomerMergeManager extends javax.swing.JDialog {
 			try {
 				setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
-				
-
 				Monomer tmp = viewer.getEditedMonomer();
-				
-								
+
 				String alternateId = monomer.getAlternateId();
 				String polymerType = monomer.getPolymerType();
-				
-				
+
 				MonomerStore localStore = MonomerFactory.getInstance()
 						.getMonomerStore();
-				MonomerStore externalStore=MonomerStoreCache.getInstance().getExternalStore();
-				
+				MonomerStore externalStore = MonomerStoreCache.getInstance()
+						.getExternalStore();
+
 				// monomer comes from external store
-				if (externalStore!=null && externalStore.hasMonomer(polymerType,
-						alternateId)) {
-					Monomer extMon=externalStore.getMonomer(polymerType, alternateId);
-					
-					
-					
-					//check if monomer structure already exists in local db
-					if (!viewer.isValidNewMonomer()){
-						setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+				if (externalStore != null
+						&& externalStore.hasMonomer(polymerType, alternateId)) {
+					Monomer extMon = externalStore.getMonomer(polymerType,
+							alternateId);
+
+					// check if monomer structure already exists in local db
+					if (!viewer.isValidNewMonomer()) {
+						setCursor(Cursor
+								.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 						return;
 					}
 
 					extMon.setNewMonomer(false);
-					extMon.setAdHocMonomer(false);					
-					
-				
+					extMon.setAdHocMonomer(false);
+
 					extMon.setAlternateId(tmp.getAlternateId());
 					extMon.setName(tmp.getName());
 					extMon.setNaturalAnalog(tmp.getNaturalAnalog());
 					extMon.setAttachmentList(tmp.getAttachmentList());
 					extMon.setMolfile(tmp.getMolfile());
-					
+
 					localStore.addMonomer(extMon, true);
 				}
 				// monomer comes from local store
 				else {
 					Monomer locMon = localStore.getMonomer(polymerType,
 							alternateId);
-					String oldId=locMon.getAlternateId();
-					
+					String oldId = locMon.getAlternateId();
+
 					locMon.setNewMonomer(false);
 					locMon.setAdHocMonomer(false);
-					
+
 					locMon.setAlternateId(tmp.getAlternateId());
 					locMon.setName(tmp.getName());
 					locMon.setNaturalAnalog(tmp.getNaturalAnalog());
 					locMon.setAttachmentList(tmp.getAttachmentList());
 					locMon.setMolfile(tmp.getMolfile());
-					
-					Map<String,Monomer> monomers=localStore.getMonomerDB().get(polymerType);
-					Monomer m=monomers.remove(oldId);
+
+					Map<String, Monomer> monomers = localStore.getMonomerDB()
+							.get(polymerType);
+					Monomer m = monomers.remove(oldId);
 					monomers.put(locMon.getAlternateId(), m);
-										
+
 					MonomerFactory.setDBChanged(true);
-					
+
 				}
 
 				MonomerFactory.getInstance().saveMonomerCache();
 
 				refreshContent();
 				getEditor().updatePolymerPanels();
-				getEditor().replaceAlternateId(alternateId, tmp.getAlternateId());
-				
+				getEditor().replaceAlternateId(alternateId,
+						tmp.getAlternateId());
+
 				getEditor().onDropCompleteEvent(null);
-								
+
 				viewer.clear();
-				
+
 				JOptionPane.showMessageDialog(getParent(),
 						"Successfully registered external monomer",
 						"Register Success", JOptionPane.INFORMATION_MESSAGE);

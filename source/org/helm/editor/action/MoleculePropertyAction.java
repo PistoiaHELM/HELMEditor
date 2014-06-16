@@ -44,88 +44,102 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
 
 /**
- *
+ * 
  * @author zhangtianhong
  */
 public class MoleculePropertyAction extends AbstractAction {
 
-    private MacromoleculeEditor editor;
-    private NumberFormat nf = new DecimalFormat("#0.00");
+	private MacromoleculeEditor editor;
+	private NumberFormat nf = new DecimalFormat("#0.00");
 
-    public MoleculePropertyAction(MacromoleculeEditor editor) {
-        super("Molecule Properties");
-        this.editor = editor;
-    }
+	public MoleculePropertyAction(MacromoleculeEditor editor) {
+		super("Molecule Properties");
+		this.editor = editor;
+	}
 
-    public void actionPerformed(ActionEvent e) {
-        editor.getFrame().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                JComponent message = createDisplay();
-                JOptionPane.showMessageDialog(editor.getFrame(), message, "Molecular Properties", JOptionPane.INFORMATION_MESSAGE);
-            }
-        });
-        editor.getFrame().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-    }
+	public void actionPerformed(ActionEvent e) {
+		editor.getFrame().setCursor(
+				Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+		java.awt.EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				JComponent message = createDisplay();
+				JOptionPane.showMessageDialog(editor.getFrame(), message,
+						"Molecular Properties", JOptionPane.INFORMATION_MESSAGE);
+			}
+		});
+		editor.getFrame().setCursor(
+				Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+	}
 
-    private JComponent createDisplay() {
-        String notation = editor.getNotation();
-        if (null == notation || notation.trim().length() == 0) {
-            return new JLabel("There is no structure to calculate molecular properties");
-        }
+	private JComponent createDisplay() {
+		String notation = editor.getNotation();
+		if (null == notation || notation.trim().length() == 0) {
+			return new JLabel(
+					"There is no structure to calculate molecular properties");
+		}
 
-        String mf = "N/A";
-        String mw = "N/A";
-        String em = "N/A";
-        String ec = "N/A";
-        String ecHeader = "Ext. Coefficient"; 
-        
+		String mf = "N/A";
+		String mw = "N/A";
+		String em = "N/A";
+		String ec = "N/A";
+		String ecHeader = "Ext. Coefficient";
 
-        String smiles = null;
-        try {
-            smiles = ComplexNotationParser.getComplexPolymerSMILES(notation,editor.getMonomerStore());
-        } catch (Exception ex) {
-            Logger.getLogger(MoleculePropertyAction.class.getName()).log(Level.SEVERE, null, ex);
-        }
+		String smiles = null;
+		try {
+			smiles = ComplexNotationParser.getComplexPolymerSMILES(notation,
+					editor.getMonomerStore());
+		} catch (Exception ex) {
+			Logger.getLogger(MoleculePropertyAction.class.getName()).log(
+					Level.SEVERE, null, ex);
+		}
 
-        if (null != smiles) {
-            try {
-                MoleculeInfo mi = StructureParser.getMoleculeInfo(smiles);
-                mf = mi.getMolecularFormula();
-                mw = nf.format(mi.getMolecularWeight()); 
-                em = nf.format(mi.getExactMass());
-            } catch (Exception ex) {
-                Logger.getLogger(MoleculePropertyAction.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
+		if (null != smiles) {
+			try {
+				MoleculeInfo mi = StructureParser.getMoleculeInfo(smiles);
+				mf = mi.getMolecularFormula();
+				mw = nf.format(mi.getMolecularWeight());
+				em = nf.format(mi.getExactMass());
+			} catch (Exception ex) {
+				Logger.getLogger(MoleculePropertyAction.class.getName()).log(
+						Level.SEVERE, null, ex);
+			}
+		}
 
-        try {
-            ecHeader = "Ext. Coefficient ("+ExtinctionCoefficientCalculator.getInstance().getUnit(ExtinctionCoefficientCalculator.RNA_UNIT_TYPE)+")";
-            float extc = ExtinctionCoefficientCalculator.getInstance().calculateFromComplexNotation(notation,ExtinctionCoefficientCalculator.RNA_UNIT_TYPE);
-            ec = nf.format(extc);
-        } catch (Exception ex) {
-            Logger.getLogger(MoleculePropertyAction.class.getName()).log(Level.SEVERE, null, ex);
-        }
+		try {
+			ecHeader = "Ext. Coefficient ("
+					+ ExtinctionCoefficientCalculator.getInstance().getUnit(
+							ExtinctionCoefficientCalculator.RNA_UNIT_TYPE)
+					+ ")";
+			float extc = ExtinctionCoefficientCalculator.getInstance()
+					.calculateFromComplexNotation(notation,
+							ExtinctionCoefficientCalculator.RNA_UNIT_TYPE);
+			ec = nf.format(extc);
+		} catch (Exception ex) {
+			Logger.getLogger(MoleculePropertyAction.class.getName()).log(
+					Level.SEVERE, null, ex);
+		}
 
-        String[] columns = {"Property", "Value"};
-        String[][] data = {{"Molecular Formula", mf},
-            {"Moleular Weight", mw},
-            {"Exact Mass", em},
-            {ecHeader, ec}};
-        TableModel model = new DefaultTableModel(data, columns);
-        JTable table = new JTable(model);
-        
-        //align column header text to the left
-        TableCellRenderer renderer = table.getTableHeader().getDefaultRenderer();
-        JLabel label = (JLabel) renderer;
-        label.setHorizontalAlignment(JLabel.LEFT);
+		String[] columns = { "Property", "Value" };
+		String[][] data = { { "Molecular Formula", mf },
+				{ "Moleular Weight", mw }, { "Exact Mass", em },
+				{ ecHeader, ec } };
+		TableModel model = new DefaultTableModel(data, columns);
+		JTable table = new JTable(model);
 
-        //set viewport size based on content
-        Dimension scrollSize = new Dimension(table.getPreferredScrollableViewportSize().width, data.length * table.getRowHeight());
-        table.setPreferredScrollableViewportSize(scrollSize);
-        JScrollPane scroll = new JScrollPane();
-        scroll.setViewportView(table);
+		// align column header text to the left
+		TableCellRenderer renderer = table.getTableHeader()
+				.getDefaultRenderer();
+		JLabel label = (JLabel) renderer;
+		label.setHorizontalAlignment(JLabel.LEFT);
 
-        return scroll;
-    }
+		// set viewport size based on content
+		Dimension scrollSize = new Dimension(
+				table.getPreferredScrollableViewportSize().width, data.length
+						* table.getRowHeight());
+		table.setPreferredScrollableViewportSize(scrollSize);
+		JScrollPane scroll = new JScrollPane();
+		scroll.setViewportView(table);
+
+		return scroll;
+	}
 }

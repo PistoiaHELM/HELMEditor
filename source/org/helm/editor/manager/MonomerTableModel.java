@@ -49,12 +49,12 @@ public class MonomerTableModel extends AbstractTableModel {
 	private String[] polymerTypes;
 
 	public MonomerTableModel(String polymerType) {
-		this(polymerType, MonomerStoreCache.getInstance().getCombinedMonomerStore());		
+		this(polymerType, MonomerStoreCache.getInstance()
+				.getCombinedMonomerStore());
 	}
-	
-	
-	public MonomerTableModel(String polymerType,MonomerStore monomerStore) {
-		init(polymerType,monomerStore);
+
+	public MonomerTableModel(String polymerType, MonomerStore monomerStore) {
+		init(polymerType, monomerStore);
 	}
 
 	public int getRowCount() {
@@ -100,20 +100,18 @@ public class MonomerTableModel extends AbstractTableModel {
 		return polymerTypes;
 	}
 
-	
-	
 	private void init(String polymerType, MonomerStore monomerStore) {
 
 		this.polymerType = polymerType;
 		columnNames = new String[] { "Symbol", "Natural Analog", "Name",
 				"Structure" };
 
-		if	(monomerStore==null) {
+		if (monomerStore == null) {
 			return;
 		}
 		Map<String, Map<String, Monomer>> map = null;
 		try {
-			
+
 			map = monomerStore.getMonomerDB();
 			// map = MonomerFactory.getInstance().getMonomerDB();
 		} catch (Exception ex) {
@@ -141,5 +139,5 @@ public class MonomerTableModel extends AbstractTableModel {
 			}
 		}
 	}
-	
+
 }

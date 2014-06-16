@@ -26,11 +26,11 @@ import y.base.Node;
 public interface GraphAction {
 
 	boolean nodeCondition(Node node);
-	
+
 	void setParameters();
-	
+
 	void addParameter(String key, String value);
-	
+
 	Object getParageter(String name);
-	
+
 }

@@ -160,10 +160,9 @@ public class LoadPanel extends JPanel {
 			String processedInput = NotationParser
 					.removeChemMonomerBracket(inputText);
 
-
 			String complexNotation = ComplexNotationParser
-					.standardize(processedInput);	
-			
+					.standardize(processedInput);
+
 			String newNotation = null;
 			if (null != existingNotation
 					&& existingNotation.trim().length() > 0) {
@@ -204,16 +203,14 @@ public class LoadPanel extends JPanel {
 					.getRootElement());
 			MonomerStore store = xHelmNotationParser.getMonomerStore(doc
 					.getRootElement());
-			//processes notation and writes inline monomers to store
+			// processes notation and writes inline monomers to store
 			ComplexNotationParser.validateComplexNotation(helm, store);
-			
+
 			// add monomers, but cancel loading when adding failed
-			helm = MonomerStoreCache.getInstance().addExternalMonomers(editor.getFrame(),
-					store,helm);
+			helm = MonomerStoreCache.getInstance().addExternalMonomers(
+					editor.getFrame(), store, helm);
 			if (helm == null)
 				return;
-
-			
 
 			String complexNotation = ComplexNotationParser.standardize(helm,
 					store);
@@ -230,7 +227,8 @@ public class LoadPanel extends JPanel {
 			editor.synchronizeZoom();
 			ModelController.notationUpdated(newNotation, _ownerCode);
 		} catch (Exception ex) {
-			// JF: HELM-24: "Error Loading HELM" durch " Error loading XHELM" ersetzt
+			// JF: HELM-24: "Error Loading HELM" durch " Error loading XHELM"
+			// ersetzt
 			JOptionPane.showMessageDialog(editor.getFrame(), ex.getMessage(),
 					"Error Loading XHELM Notation", JOptionPane.ERROR_MESSAGE);
 			Logger.getLogger(LoadPanel.class.getName()).log(Level.SEVERE, null,

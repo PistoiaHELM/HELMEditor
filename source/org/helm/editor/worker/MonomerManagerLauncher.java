@@ -28,43 +28,50 @@ import java.util.logging.Logger;
 import org.jdesktop.swingworker.SwingWorker;
 
 /**
- *
+ * 
  * @author zhangtianhong
  */
 public class MonomerManagerLauncher extends SwingWorker<Void, Void> {
 
-    private MonomerManager manager;
+	private MonomerManager manager;
 
-    public MonomerManagerLauncher(MonomerManager manager) {
-        this.manager = manager;
-    }
+	public MonomerManagerLauncher(MonomerManager manager) {
+		this.manager = manager;
+	}
 
-    @Override
-    protected Void doInBackground() throws Exception {
-        //UserRoleConfig.config();
-        return null;
-    }
+	@Override
+	protected Void doInBackground() throws Exception {
+		// UserRoleConfig.config();
+		return null;
+	}
 
-    @Override
-    protected void done() {
-        manager.getEditor().getFrame().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-        try {
-            get();  // call this will return execute errors
-            //if (ServiceTokenManager.getInstance().isInitialized()) {
-                manager.customInit();
-                manager.getEditor().updatePolymerPanels();
-                manager.setVisible(true);
-            /*} else {
-                if (!ServiceTokenManager.getInstance().isCancelled()) {
-                    JOptionPane.showMessageDialog(manager.getEditor().getFrame(), "Unable to authenticate your NT credentials", "Warning", JOptionPane.WARNING_MESSAGE);
-                }
-            }*/
+	@Override
+	protected void done() {
+		manager.getEditor().getFrame()
+				.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+		try {
+			get(); // call this will return execute errors
+			// if (ServiceTokenManager.getInstance().isInitialized()) {
+			manager.customInit();
+			manager.getEditor().updatePolymerPanels();
+			manager.setVisible(true);
+			/*
+			 * } else { if (!ServiceTokenManager.getInstance().isCancelled()) {
+			 * JOptionPane.showMessageDialog(manager.getEditor().getFrame(),
+			 * "Unable to authenticate your NT credentials", "Warning",
+			 * JOptionPane.WARNING_MESSAGE); } }
+			 */
 
-        } catch (Exception ex) {
-            Logger.getLogger(MonomerManagerLauncher.class.getName()).log(Level.SEVERE, null, ex);
-            /*if (!ServiceTokenManager.getInstance().isInitialized() && !ServiceTokenManager.getInstance().isCancelled()) {
-                JOptionPane.showMessageDialog(manager.getEditor().getFrame(), "Unable to authenticate your NT credentials", "Warning", JOptionPane.WARNING_MESSAGE);
-            }*/
-        }
-    }
+		} catch (Exception ex) {
+			Logger.getLogger(MonomerManagerLauncher.class.getName()).log(
+					Level.SEVERE, null, ex);
+			/*
+			 * if (!ServiceTokenManager.getInstance().isInitialized() &&
+			 * !ServiceTokenManager.getInstance().isCancelled()) {
+			 * JOptionPane.showMessageDialog(manager.getEditor().getFrame(),
+			 * "Unable to authenticate your NT credentials", "Warning",
+			 * JOptionPane.WARNING_MESSAGE); }
+			 */
+		}
+	}
 }

@@ -29,33 +29,39 @@ import javax.swing.JOptionPane;
 import org.jdesktop.swingworker.SwingWorker;
 
 /**
- *
+ * 
  * @author zhangtianhong
  */
 public class NucleotideManagerLauncher extends SwingWorker<Void, Void> {
 
-    private NucleotideManager manager;
+	private NucleotideManager manager;
 
-    public NucleotideManagerLauncher(NucleotideManager manager) {
-        this.manager = manager;
-    }
+	public NucleotideManagerLauncher(NucleotideManager manager) {
+		this.manager = manager;
+	}
 
-    @Override
-    protected Void doInBackground() throws Exception {
-        return null;
-    }
+	@Override
+	protected Void doInBackground() throws Exception {
+		return null;
+	}
 
-    @Override
-    protected void done() {
-        manager.getEditor().getFrame().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-        try {
-            get();
-                manager.customInit();
-                manager.getEditor().updatePolymerPanels();
-                manager.setVisible(true);            
-        } catch (Exception ex) {
-            Logger.getLogger(NucleotideManagerLauncher.class.getName()).log(Level.SEVERE, null, ex);
-            JOptionPane.showMessageDialog(manager.getEditor().getFrame(), "Unable to authenticate your NT credentials\n"+ex.getMessage(), "Authentication Error", JOptionPane.ERROR_MESSAGE);
-        }
-    }
+	@Override
+	protected void done() {
+		manager.getEditor().getFrame()
+				.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+		try {
+			get();
+			manager.customInit();
+			manager.getEditor().updatePolymerPanels();
+			manager.setVisible(true);
+		} catch (Exception ex) {
+			Logger.getLogger(NucleotideManagerLauncher.class.getName()).log(
+					Level.SEVERE, null, ex);
+			JOptionPane.showMessageDialog(
+					manager.getEditor().getFrame(),
+					"Unable to authenticate your NT credentials\n"
+							+ ex.getMessage(), "Authentication Error",
+					JOptionPane.ERROR_MESSAGE);
+		}
+	}
 }

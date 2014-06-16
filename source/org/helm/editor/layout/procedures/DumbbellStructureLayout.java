@@ -34,8 +34,9 @@ public class DumbbellStructureLayout extends AbstratStructureLayout {
 	@Override
 	protected void doLayoutCore(LayoutGraph graph) {
 		Node startingNode = layoutPrimitives.getStartingNode(graph.firstNode());
-		
-		Node[] loopStartAndLoopEnd = layoutPrimitives.getLoopBounds(startingNode, graph);
+
+		Node[] loopStartAndLoopEnd = layoutPrimitives.getLoopBounds(
+				startingNode, graph);
 		Node loopStart1 = loopStartAndLoopEnd[0];
 		Node loopEnd1 = loopStartAndLoopEnd[1];
 
@@ -44,22 +45,26 @@ public class DumbbellStructureLayout extends AbstratStructureLayout {
 		loopStartAndLoopEnd = layoutPrimitives.getLoopBounds(loopEnd1, graph);
 		Node loopStart2 = loopStartAndLoopEnd[0];
 		Node loopEnd2 = loopStartAndLoopEnd[1];
-		
+
 		loopStart1 = layoutPrimitives.getRNode(loopStart1);
-//		loopEnd1 = layoutPrimitives.getRNode(loopEnd1);
+		// loopEnd1 = layoutPrimitives.getRNode(loopEnd1);
 		loopStart2 = layoutPrimitives.getRNode(loopStart2);
 		loopEnd2 = layoutPrimitives.getRNode(loopEnd2);
-		
+
 		layoutPrimitives.layoutSequence(graph, loopEnd2, loopStart1, true);
-		layoutPrimitives.setFlipState(layoutPrimitives.getSequenceNodes(loopEnd2, loopStart1, graph, true).nodes(), false);
-		
+		layoutPrimitives.setFlipState(
+				layoutPrimitives.getSequenceNodes(loopEnd2, loopStart1, graph,
+						true).nodes(), false);
+
 		layoutPrimitives.layoutSequence(graph, loopEnd1, loopStart2, true);
 		layoutPrimitives.rotate180(loopEnd1, loopStart2, graph);
 		layoutPrimitives.shiftSubgraph(graph, loopEnd1, loopStart2, null, true);
-		layoutPrimitives.setFlipState(layoutPrimitives.getSequenceNodes(loopEnd1, loopStart2, graph, true).nodes(), true);
-		
+		layoutPrimitives.setFlipState(
+				layoutPrimitives.getSequenceNodes(loopEnd1, loopStart2, graph,
+						true).nodes(), true);
+
 		layoutPrimitives.layoutLoop(graph, loopStart1, loopEnd1, false);
 		layoutPrimitives.layoutLoop(graph, loopStart2, loopEnd2, false);
 	}
-	
+
 }

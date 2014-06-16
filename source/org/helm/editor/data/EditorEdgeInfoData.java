@@ -20,47 +20,51 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  ******************************************************************************/
 package org.helm.editor.data;
+
 import org.helm.notation.model.Attachment;
 
 /**
- *
+ * 
  * @author lih25
  */
 public class EditorEdgeInfoData extends AbstractEdgeInfo {
 	protected boolean isPair = false;
-    	
-	
-    public EditorEdgeInfoData(Attachment sourceNodeAtt, Attachment targetNodeAtt){
-        super(sourceNodeAtt, targetNodeAtt);
-        
-        if(sourceNodeAtt != null && sourceNodeAtt.getLabel().equalsIgnoreCase(Attachment.PAIR_ATTACHMENT)
-                && targetNodeAtt != null && targetNodeAtt.getLabel().equalsIgnoreCase(Attachment.PAIR_ATTACHMENT)){
-            isPair = true;
-        }
-    }
 
-    @Override
-    public String toString(){
-        StringBuilder sb = new StringBuilder();
-        if(sourceNodeAttachment == null){
-            sb.append("");
-        }else{
-            sb.append(sourceNodeAttachment.toString());
-        }
-        sb.append(" , ");
-        if(targetNodeAttachment == null){
-            sb.append("");
-        }else{
-            sb.append(targetNodeAttachment.toString());
-        }
-        return sb.toString();
-    }
+	public EditorEdgeInfoData(Attachment sourceNodeAtt, Attachment targetNodeAtt) {
+		super(sourceNodeAtt, targetNodeAtt);
+
+		if (sourceNodeAtt != null
+				&& sourceNodeAtt.getLabel().equalsIgnoreCase(
+						Attachment.PAIR_ATTACHMENT)
+				&& targetNodeAtt != null
+				&& targetNodeAtt.getLabel().equalsIgnoreCase(
+						Attachment.PAIR_ATTACHMENT)) {
+			isPair = true;
+		}
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		if (sourceNodeAttachment == null) {
+			sb.append("");
+		} else {
+			sb.append(sourceNodeAttachment.toString());
+		}
+		sb.append(" , ");
+		if (targetNodeAttachment == null) {
+			sb.append("");
+		} else {
+			sb.append(targetNodeAttachment.toString());
+		}
+		return sb.toString();
+	}
 
 	public boolean isPair() {
-	    return isPair;
+		return isPair;
 	}
 
 	public void setIsPair(boolean isPair) {
-	    this.isPair = isPair;
+		this.isPair = isPair;
 	}
 }

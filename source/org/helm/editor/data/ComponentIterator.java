@@ -28,7 +28,7 @@ import y.base.Node;
  * Iterates over connected component
  * 
  * @author dzhelezov
- *
+ * 
  */
 public class ComponentIterator extends AbstractBfsIterator {
 
@@ -40,5 +40,5 @@ public class ComponentIterator extends AbstractBfsIterator {
 	protected boolean isOk(Node node) {
 		return true;
 	}
-	
+
 }

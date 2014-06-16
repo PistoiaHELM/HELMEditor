@@ -28,28 +28,28 @@ import org.helm.editor.componentPanel.sequenceviewpanel.ViewMetrics;
  */
 public class SequenceViewViewMetrics implements IViewMetrics {
 	protected ViewMetrics baseViewMetrics;
-	
+
 	public SequenceViewViewMetrics(ViewMetrics baseViewMetrics) {
 		this.baseViewMetrics = baseViewMetrics;
 	}
 
-    public int getHDistanceExt() {
-        return baseViewMetrics.getHDistanceExt();
-    }
+	public int getHDistanceExt() {
+		return baseViewMetrics.getHDistanceExt();
+	}
 
-    public int getHDistanceInt() {
-        return baseViewMetrics.getHDistanceInt();
-    }
+	public int getHDistanceInt() {
+		return baseViewMetrics.getHDistanceInt();
+	}
 
-    public int getVDistanceExt() {
-        return baseViewMetrics.getVDsitanceExt();
-    }
+	public int getVDistanceExt() {
+		return baseViewMetrics.getVDsitanceExt();
+	}
 
-    public int getVDistanceInt() {
-        return baseViewMetrics.getVDsitanceInt();    
-    }
+	public int getVDistanceInt() {
+		return baseViewMetrics.getVDsitanceInt();
+	}
 
-    public int getShiftForFlippedNucleotideSequence() {
+	public int getShiftForFlippedNucleotideSequence() {
 		return baseViewMetrics.getVDsitanceInt();
 	}
 
@@ -68,16 +68,16 @@ public class SequenceViewViewMetrics implements IViewMetrics {
 	public int getChemNodeToBackboneNodeDistance() {
 		return baseViewMetrics.getVDsitanceExt();
 	}
-	
-	//////////////////////////////////////////////////
-	//Set of methods needed for sequence view layout//
-	//////////////////////////////////////////////////
+
+	// ////////////////////////////////////////////////
+	// Set of methods needed for sequence view layout//
+	// ////////////////////////////////////////////////
 	public double getNodeSize() {
 		return baseViewMetrics.getNodeSize();
 	}
 
 	public int getXStep() {
-		return (int)baseViewMetrics.getXStep();
+		return (int) baseViewMetrics.getXStep();
 	}
 
 	public double getYStep() {
@@ -93,7 +93,7 @@ public class SequenceViewViewMetrics implements IViewMetrics {
 	}
 
 	public int getNumberLabelYOffset() {
-		return (int)baseViewMetrics.getNumberLabelYOffset();
+		return (int) baseViewMetrics.getNumberLabelYOffset();
 	}
 
 	public double getYStartLabelOffset() {

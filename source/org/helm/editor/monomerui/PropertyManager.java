@@ -44,153 +44,160 @@ import org.helm.editor.utility.xmlparser.data.Template.UIType;
  */
 public class PropertyManager implements PreferensesService {
 
-    public static final String XML_FILE_TYPE = "XML";
-    public static final String MONOMER_LAYOUT_TEMPLATE_TYPE = "Monomer Layout";
-    private static PropertyManager instance;
-    private Properties properties;
-    private String propertyFilePath = "";
-    public static final String USER_PROPERTY = "user.home";
-    public static final String HELM_FOLDER = System.getProperty(USER_PROPERTY) + "/.helm";
-    public static final String PROPERTY_FOLDER = HELM_FOLDER + "/editor/";
-    public static final String PROPERTY_FILE = PROPERTY_FOLDER + "user.property";
-    public static final String SCHEMA_FILE = PROPERTY_FOLDER + "MonomerCategorizationSchema.xsd";
-    public static final String DEFAULT_MONOMER_CATEGORIZATION_TEMPLATE = "DefaultMonomerCategorizationTemplate.xml";
-    public static final String UI_PROPERTY = "ui.type";
-    public static final String UI_XML = "ui.xml";
-    private static final String HIDDEN_PREFIX = ".";
-    private static final String CONFIG_FOLDER = "conf";
-    private static ClassLoader classLoader;
-    private static File propertyFolder;
+	public static final String XML_FILE_TYPE = "XML";
+	public static final String MONOMER_LAYOUT_TEMPLATE_TYPE = "Monomer Layout";
+	private static PropertyManager instance;
+	private Properties properties;
+	private String propertyFilePath = "";
+	public static final String USER_PROPERTY = "user.home";
+	public static final String HELM_FOLDER = System.getProperty(USER_PROPERTY)
+			+ "/.helm";
+	public static final String PROPERTY_FOLDER = HELM_FOLDER + "/editor/";
+	public static final String PROPERTY_FILE = PROPERTY_FOLDER
+			+ "user.property";
+	public static final String SCHEMA_FILE = PROPERTY_FOLDER
+			+ "MonomerCategorizationSchema.xsd";
+	public static final String DEFAULT_MONOMER_CATEGORIZATION_TEMPLATE = "DefaultMonomerCategorizationTemplate.xml";
+	public static final String UI_PROPERTY = "ui.type";
+	public static final String UI_XML = "ui.xml";
+	private static final String HIDDEN_PREFIX = ".";
+	private static final String CONFIG_FOLDER = "conf";
+	private static ClassLoader classLoader;
+	private static File propertyFolder;
 
-    public static PropertyManager getInstance() throws IOException {
+	public static PropertyManager getInstance() throws IOException {
 
-        if (instance == null) {
-            instance = new PropertyManager();
-        }
+		if (instance == null) {
+			instance = new PropertyManager();
+		}
 
-        return instance;
-    }
+		return instance;
+	}
 
-    public UIType getUIType() {
-        String uiType = loadUserPreference(UI_PROPERTY);
-        return UIType.stringValue(uiType);
-    }
+	public UIType getUIType() {
+		String uiType = loadUserPreference(UI_PROPERTY);
+		return UIType.stringValue(uiType);
+	}
 
-    public String getUIFilePath() {
-        String uiXml = PROPERTY_FOLDER + loadUserPreference(UI_XML);
-        File f = new File(uiXml);
-        if (f.exists()) {
-            return uiXml;
-        } else {
-            try {
-                saveUserPreference(UI_XML, DEFAULT_MONOMER_CATEGORIZATION_TEMPLATE);
-            } catch (IOException ex) {
-                Logger.getLogger(PropertyManager.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            return PROPERTY_FOLDER +DEFAULT_MONOMER_CATEGORIZATION_TEMPLATE;
-        }
-    }
+	public String getUIFilePath() {
+		String uiXml = PROPERTY_FOLDER + loadUserPreference(UI_XML);
+		File f = new File(uiXml);
+		if (f.exists()) {
+			return uiXml;
+		} else {
+			try {
+				saveUserPreference(UI_XML,
+						DEFAULT_MONOMER_CATEGORIZATION_TEMPLATE);
+			} catch (IOException ex) {
+				Logger.getLogger(PropertyManager.class.getName()).log(
+						Level.SEVERE, null, ex);
+			}
+			return PROPERTY_FOLDER + DEFAULT_MONOMER_CATEGORIZATION_TEMPLATE;
+		}
+	}
 
-    public String loadUserPreference(String preferenceName) {
-        return properties.getProperty(preferenceName);
-    }
+	public String loadUserPreference(String preferenceName) {
+		return properties.getProperty(preferenceName);
+	}
 
-    public boolean saveUserPreference(String preferenceName, String newValue)
-            throws IOException {
-        properties.setProperty(preferenceName, newValue);
+	public boolean saveUserPreference(String preferenceName, String newValue)
+			throws IOException {
+		properties.setProperty(preferenceName, newValue);
 
-        File file = new File(propertyFilePath);
-        FileOutputStream outputStream = new FileOutputStream(file);
-        properties.store(outputStream, null);
+		File file = new File(propertyFilePath);
+		FileOutputStream outputStream = new FileOutputStream(file);
+		properties.store(outputStream, null);
 
-        outputStream.close();
+		outputStream.close();
 
-        return true;
-    }
+		return true;
+	}
 
-    private static void configFolderProcessing() throws IOException {
-        File helmFolder = new File(HELM_FOLDER);
-        if (!helmFolder.exists()) {
-            helmFolder.mkdir();
-        }
-        
-        propertyFolder = new File(PROPERTY_FOLDER);
-        if (!propertyFolder.exists()) {
-            propertyFolder.mkdir();
-        }
+	private static void configFolderProcessing() throws IOException {
+		File helmFolder = new File(HELM_FOLDER);
+		if (!helmFolder.exists()) {
+			helmFolder.mkdir();
+		}
 
-        classLoader = PropertyManager.class.getClassLoader();
+		propertyFolder = new File(PROPERTY_FOLDER);
+		if (!propertyFolder.exists()) {
+			propertyFolder.mkdir();
+		}
 
-        URLConnection connection = classLoader.getResource(CONFIG_FOLDER).openConnection();
-        if (connection instanceof JarURLConnection) {
-            // load from jar file
-            Enumeration<JarEntry> entries =
-                    ((JarURLConnection) connection).getJarFile().entries();
-            while (entries.hasMoreElements()) {
-                JarEntry entry = entries.nextElement();
-                String entryName = entry.getName();
+		classLoader = PropertyManager.class.getClassLoader();
 
-                if (entryName.startsWith(CONFIG_FOLDER + "/")) {
-                    processConfigFile(entryName.substring(5));
-                }
-            }
-        } else {
-            // load from directory, not from jar
-            InputStream is = classLoader.getResourceAsStream(CONFIG_FOLDER);
-            byte[] buffer = new byte[is.available()];
-            is.read(buffer);
-            is.close();
+		URLConnection connection = classLoader.getResource(CONFIG_FOLDER)
+				.openConnection();
+		if (connection instanceof JarURLConnection) {
+			// load from jar file
+			Enumeration<JarEntry> entries = ((JarURLConnection) connection)
+					.getJarFile().entries();
+			while (entries.hasMoreElements()) {
+				JarEntry entry = entries.nextElement();
+				String entryName = entry.getName();
 
-            String[] fileNames = (new String(buffer)).split("\n");
+				if (entryName.startsWith(CONFIG_FOLDER + "/")) {
+					processConfigFile(entryName.substring(5));
+				}
+			}
+		} else {
+			// load from directory, not from jar
+			InputStream is = classLoader.getResourceAsStream(CONFIG_FOLDER);
+			byte[] buffer = new byte[is.available()];
+			is.read(buffer);
+			is.close();
 
-            for (String fileName : fileNames) {
-                processConfigFile(fileName);
-            }
-        }
-    }
+			String[] fileNames = (new String(buffer)).split("\n");
 
-    private static void processConfigFile(String fileName) throws IOException {
-        if (fileName.startsWith(HIDDEN_PREFIX)) {
-            // skip "hidden files"
-            return;
-        }
+			for (String fileName : fileNames) {
+				processConfigFile(fileName);
+			}
+		}
+	}
 
-        File configFile = new File(propertyFolder, fileName);
-        if (configFile.exists() && PROPERTY_FILE.endsWith(fileName)) {
-            // if user.property file already exists, skip it
-            return;
-        }
+	private static void processConfigFile(String fileName) throws IOException {
+		if (fileName.startsWith(HIDDEN_PREFIX)) {
+			// skip "hidden files"
+			return;
+		}
 
-        InputStream is =
-                classLoader.getResourceAsStream(CONFIG_FOLDER + "/" + fileName);
-        FileOutputStream fout = new FileOutputStream(configFile);
-        byte[] buffer = new byte[16 * 1024];
+		File configFile = new File(propertyFolder, fileName);
+		if (configFile.exists() && PROPERTY_FILE.endsWith(fileName)) {
+			// if user.property file already exists, skip it
+			return;
+		}
 
-        while (is.available() > 0) {
-            int size = is.read(buffer);
-            fout.write(buffer, 0, size);
-        }
-        fout.close();
-        is.close();
-    }
+		InputStream is = classLoader.getResourceAsStream(CONFIG_FOLDER + "/"
+				+ fileName);
+		FileOutputStream fout = new FileOutputStream(configFile);
+		byte[] buffer = new byte[16 * 1024];
 
-    private PropertyManager() throws IOException {
-        configFolderProcessing();
+		while (is.available() > 0) {
+			int size = is.read(buffer);
+			fout.write(buffer, 0, size);
+		}
+		fout.close();
+		is.close();
+	}
 
-        propertyFilePath = PROPERTY_FILE;
+	private PropertyManager() throws IOException {
+		configFolderProcessing();
 
-        FileInputStream propertyInputStream = new FileInputStream(
-                propertyFilePath);
+		propertyFilePath = PROPERTY_FILE;
 
-        properties = new Properties();
-        properties.load(propertyInputStream);
-    }
+		FileInputStream propertyInputStream = new FileInputStream(
+				propertyFilePath);
 
-    public void saveFileContent(String fileName, String xmlContent) throws FileNotFoundException, IOException {
-        String path = PROPERTY_FOLDER + fileName;
-        File file = new File(path);
-        FileWriter writer = new FileWriter(file);
-        writer.write(xmlContent);
-        writer.close();
-    }
+		properties = new Properties();
+		properties.load(propertyInputStream);
+	}
+
+	public void saveFileContent(String fileName, String xmlContent)
+			throws FileNotFoundException, IOException {
+		String path = PROPERTY_FOLDER + fileName;
+		File file = new File(path);
+		FileWriter writer = new FileWriter(file);
+		writer.write(xmlContent);
+		writer.close();
+	}
 }

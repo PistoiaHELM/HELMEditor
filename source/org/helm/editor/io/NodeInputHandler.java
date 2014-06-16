@@ -32,77 +32,82 @@ import y.base.NodeMap;
 import yext.graphml.reader.AbstractDOMInputHandler;
 
 /**
- *
+ * 
  * @author lih25
  */
 public class NodeInputHandler extends AbstractDOMInputHandler {
 
-    // Assume (parsing) responsibility only for those <data> elements that refer 
-    // to GraphML attribute declarations with specific additional XML attribute. 
-    public boolean acceptKey(NamedNodeMap map, int scopeType) {
-        if (scopeType != GraphMLConstants.SCOPE_NODE) {
-            return false;
-        }
-        // 'map' holds the XML attributes of a <key> element. 
-        Node monomerID = map.getNamedItem(IOConstants.MONOMER_ID);
-        Node polymerType = map.getNamedItem(IOConstants.POLYMER_TYPE);
+	// Assume (parsing) responsibility only for those <data> elements that refer
+	// to GraphML attribute declarations with specific additional XML attribute.
+	public boolean acceptKey(NamedNodeMap map, int scopeType) {
+		if (scopeType != GraphMLConstants.SCOPE_NODE) {
+			return false;
+		}
+		// 'map' holds the XML attributes of a <key> element.
+		Node monomerID = map.getNamedItem(IOConstants.MONOMER_ID);
+		Node polymerType = map.getNamedItem(IOConstants.POLYMER_TYPE);
 
-        if (monomerID != null) {
-            return "true".equals(monomerID.getNodeValue());
-        } else if (polymerType != null) {
-            return "true".equals(polymerType.getNodeValue());
-        } else {
-            return false;
-        }
+		if (monomerID != null) {
+			return "true".equals(monomerID.getNodeValue());
+		} else if (polymerType != null) {
+			return "true".equals(polymerType.getNodeValue());
+		} else {
+			return false;
+		}
 
-//        return ((node == null) ? false : "true".equals(node.getNodeValue()));
-    }
-    // Parse the <data> element. 
-    protected void parseData(DOMGraphMLParseContext context, Graph graph,
-            Object node, boolean defaultMode,
-            org.w3c.dom.Node domNode) {
-        // Default mode is not supported. 
-        if (defaultMode) {
-            return;
-        }
+		// return ((node == null) ? false : "true".equals(node.getNodeValue()));
+	}
 
-        String monomerID = "";
-        String polymerType = "";
+	// Parse the <data> element.
+	protected void parseData(DOMGraphMLParseContext context, Graph graph,
+			Object node, boolean defaultMode, org.w3c.dom.Node domNode) {
+		// Default mode is not supported.
+		if (defaultMode) {
+			return;
+		}
 
-        NodeMap nodeMap = (NodeMap) graph.getDataProvider(NodeMapKeys.MONOMER_REF);
+		String monomerID = "";
+		String polymerType = "";
 
-        // 'domNode' holds the <data> element, its XML attributes, and all XML 
-        // elements nested within. 
-        org.w3c.dom.NodeList children = domNode.getChildNodes();
-        if (children != null) {
-            for (int i = 0; i < children.getLength(); i++) {
-                org.w3c.dom.Node n = children.item(i);
-                if (n.getNodeType() == org.w3c.dom.Node.ELEMENT_NODE) {
+		NodeMap nodeMap = (NodeMap) graph
+				.getDataProvider(NodeMapKeys.MONOMER_REF);
 
-                    if (IOConstants.MONOMER_ID.equals(n.getLocalName())) {
-                        monomerID = parseMyDataElement(n);
-                    }
+		// 'domNode' holds the <data> element, its XML attributes, and all XML
+		// elements nested within.
+		org.w3c.dom.NodeList children = domNode.getChildNodes();
+		if (children != null) {
+			for (int i = 0; i < children.getLength(); i++) {
+				org.w3c.dom.Node n = children.item(i);
+				if (n.getNodeType() == org.w3c.dom.Node.ELEMENT_NODE) {
 
-                    if (IOConstants.POLYMER_TYPE.equals(n.getLocalName())) {
-                        polymerType = parseMyDataElement(n);
-                    }
-                }
+					if (IOConstants.MONOMER_ID.equals(n.getLocalName())) {
+						monomerID = parseMyDataElement(n);
+					}
 
-            }
+					if (IOConstants.POLYMER_TYPE.equals(n.getLocalName())) {
+						polymerType = parseMyDataElement(n);
+					}
+				}
 
-           nodeMap.set(node,new MonomerInfo(polymerType, monomerID));
-        }
-    }
-//        ((Graph2D) graph).getRealizer((y.base.Node) nodeedge).setLabelText(label);
-    // Parse the attribute of <myData> element. 
-    String parseMyDataElement(org.w3c.dom.Node domNode) {
-        NamedNodeMap nm = domNode.getAttributes();
-        org.w3c.dom.Node a = nm.getNamedItem("value");
-//        String txt = "Node's area is ";
-//        txt += ((a == null) ? "n/a." : "" + a.getNodeValue() + " square pixels.");
-        return a.getNodeValue();
-    }
-    // Not supported yet. 
-    protected void applyDefault(DOMGraphMLParseContext c, Graph g, Object edge) {
-    }
+			}
+
+			nodeMap.set(node, new MonomerInfo(polymerType, monomerID));
+		}
+	}
+
+	// ((Graph2D) graph).getRealizer((y.base.Node)
+	// nodeedge).setLabelText(label);
+	// Parse the attribute of <myData> element.
+	String parseMyDataElement(org.w3c.dom.Node domNode) {
+		NamedNodeMap nm = domNode.getAttributes();
+		org.w3c.dom.Node a = nm.getNamedItem("value");
+		// String txt = "Node's area is ";
+		// txt += ((a == null) ? "n/a." : "" + a.getNodeValue() +
+		// " square pixels.");
+		return a.getNodeValue();
+	}
+
+	// Not supported yet.
+	protected void applyDefault(DOMGraphMLParseContext c, Graph g, Object edge) {
+	}
 }

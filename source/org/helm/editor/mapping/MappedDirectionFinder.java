@@ -29,22 +29,21 @@ import org.helm.editor.utility.MonomerInfoUtils;
 public class MappedDirectionFinder implements DirectionFinder {
 	private GraphMapper mapper;
 	private DirectionFinder finder;
-	
+
 	public MappedDirectionFinder(GraphMapper mapper, DirectionFinder source) {
 		this.mapper = mapper;
 		this.finder = source;
 	}
-	
+
 	public boolean getDirection(Node node) {
 		boolean result = true;
-		
+
 		for (Node source : mapper.getSourceNodes(node)) {
 			if (MonomerInfoUtils.isEndNode(source)) {
 				result &= finder.getDirection(source);
-			}	
+			}
 		}
 		return result;
 	}
-	
-	
+
 }

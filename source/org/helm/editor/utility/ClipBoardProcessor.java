@@ -31,67 +31,68 @@ import java.awt.datatransfer.*;
 
 public class ClipBoardProcessor implements ClipboardOwner {
 
-    private Clipboard myClipboard;
+	private Clipboard myClipboard;
 
-    public static void copy(BufferedImage bi) {
-        ClipBoardProcessor cbp = new ClipBoardProcessor(bi);
-    }
+	public static void copy(BufferedImage bi) {
+		ClipBoardProcessor cbp = new ClipBoardProcessor(bi);
+	}
 
-    public static void copy(String text){
-         ClipBoardProcessor cbp = new ClipBoardProcessor(text);
-    }
+	public static void copy(String text) {
+		ClipBoardProcessor cbp = new ClipBoardProcessor(text);
+	}
 
-      public ClipBoardProcessor(String bi) {
-        myClipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-        process(bi);
-    }
-    public ClipBoardProcessor(BufferedImage bi) {
-        myClipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-        process(bi);
-    }
+	public ClipBoardProcessor(String bi) {
+		myClipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+		process(bi);
+	}
 
-    public void process(BufferedImage bi) {
-        ClipImage ci = new ClipImage(bi);
-        myClipboard.setContents(ci, this);
-    }
+	public ClipBoardProcessor(BufferedImage bi) {
+		myClipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+		process(bi);
+	}
 
-    /**
-     * Place a String on the clipboard, and make this class the
-     * owner of the Clipboard's contents.
-     */
-    public void process(String aString) {
-        StringSelection stringSelection = new StringSelection(aString);
-        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-        clipboard.setContents(stringSelection, this);
-    }
+	public void process(BufferedImage bi) {
+		ClipImage ci = new ClipImage(bi);
+		myClipboard.setContents(ci, this);
+	}
 
-    public void lostOwnership(Clipboard clipboard, Transferable contents) {
-    }
+	/**
+	 * Place a String on the clipboard, and make this class the owner of the
+	 * Clipboard's contents.
+	 */
+	public void process(String aString) {
+		StringSelection stringSelection = new StringSelection(aString);
+		Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+		clipboard.setContents(stringSelection, this);
+	}
 
-    private class ClipImage implements Transferable {
+	public void lostOwnership(Clipboard clipboard, Transferable contents) {
+	}
 
-        private DataFlavor[] myFlavors;
-        private Object myImage;
+	private class ClipImage implements Transferable {
 
-        public ClipImage(Object theImage) {
-            myFlavors = new DataFlavor[]{DataFlavor.imageFlavor};
-            myImage = theImage;
-        }
+		private DataFlavor[] myFlavors;
+		private Object myImage;
 
-        public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException {
-            if (flavor != DataFlavor.imageFlavor ) {
-                throw new UnsupportedFlavorException(flavor);
-            }
-            return myImage;
-        }
+		public ClipImage(Object theImage) {
+			myFlavors = new DataFlavor[] { DataFlavor.imageFlavor };
+			myImage = theImage;
+		}
 
-        public DataFlavor[] getTransferDataFlavors() {
-            return myFlavors;
-        }
+		public Object getTransferData(DataFlavor flavor)
+				throws UnsupportedFlavorException {
+			if (flavor != DataFlavor.imageFlavor) {
+				throw new UnsupportedFlavorException(flavor);
+			}
+			return myImage;
+		}
 
-        public boolean isDataFlavorSupported(DataFlavor flavor) {
-            return (flavor == DataFlavor.imageFlavor );
-        }
-    }
+		public DataFlavor[] getTransferDataFlavors() {
+			return myFlavors;
+		}
+
+		public boolean isDataFlavorSupported(DataFlavor flavor) {
+			return (flavor == DataFlavor.imageFlavor);
+		}
+	}
 }
-

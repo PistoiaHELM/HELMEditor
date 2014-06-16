@@ -28,110 +28,113 @@ import javax.swing.table.AbstractTableModel;
 
 public class SequenceAnnotationTableModel extends AbstractTableModel {
 
-    public static final int CHAIN_COLUMN_INDEX = 0;
-    public static final int ANNOTATION_COLUMN_INDEX = 1;
-    private String[] columnNames = {"Chain", "Annotation"};
-    private final List<SequenceAnnotation> data = new ArrayList<SequenceAnnotation>();
+	public static final int CHAIN_COLUMN_INDEX = 0;
+	public static final int ANNOTATION_COLUMN_INDEX = 1;
+	private String[] columnNames = { "Chain", "Annotation" };
+	private final List<SequenceAnnotation> data = new ArrayList<SequenceAnnotation>();
 
-    public SequenceAnnotationTableModel() {
-    }
+	public SequenceAnnotationTableModel() {
+	}
 
-    @Override
-    public String getColumnName(int col) {
-        return columnNames[col];
-    }
+	@Override
+	public String getColumnName(int col) {
+		return columnNames[col];
+	}
 
-    public int getRowCount() {
-        return data.size();
-    }
+	public int getRowCount() {
+		return data.size();
+	}
 
-    public int getColumnCount() {
-        return columnNames.length;
-    }
-    
-    public int removeChain(int k) {
-        int n = 0;
-        for (int i = data.size() - 1; i >= 0; --i) {
-            if (data.get(i).getId() == k) {
-                data.remove(i);
-                ++n;
-            }
-        } 
-        return n;
-    }
+	public int getColumnCount() {
+		return columnNames.length;
+	}
 
-    @Override
-    public boolean isCellEditable(int rowIndex, int columnIndex) {
-        return true;
-    }
+	public int removeChain(int k) {
+		int n = 0;
+		for (int i = data.size() - 1; i >= 0; --i) {
+			if (data.get(i).getId() == k) {
+				data.remove(i);
+				++n;
+			}
+		}
+		return n;
+	}
 
-    public Object getValueAt(int rowIndex, int columnIndex) {
-        SequenceAnnotation annotation = data.get(rowIndex);
-        switch (columnIndex) {
+	@Override
+	public boolean isCellEditable(int rowIndex, int columnIndex) {
+		return true;
+	}
 
-            case 0:
-                if (annotation.getId() > 0) {
-                    return ProteinEditor.PREFIX_CHAIN + String.valueOf(annotation.getId());
-                } else {
-                    return "";
-                }
-            case 1:
-                return annotation.getAnnotation();
-            default:
-                return "";
-        }
-    }
+	public Object getValueAt(int rowIndex, int columnIndex) {
+		SequenceAnnotation annotation = data.get(rowIndex);
+		switch (columnIndex) {
 
-    @Override
-    public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-        SequenceAnnotation annotation = data.get(rowIndex);
-        switch (columnIndex) {
-            case 0:
-                try {
-                    String s = (String)aValue;
-                    int pos = s.startsWith(ProteinEditor.PREFIX_CHAIN) ? Integer.parseInt(s.substring(ProteinEditor.PREFIX_CHAIN.length())) : 0;
-                    if (pos < 0) {
-                        pos=0;
-                    } 
-                    annotation.setId(pos);
-                } catch (NumberFormatException nfe) {
-                }
-                break;
-            case 1:
-                annotation.setAnnotation((String) aValue);
-                break;
-        }
-    }
+		case 0:
+			if (annotation.getId() > 0) {
+				return ProteinEditor.PREFIX_CHAIN
+						+ String.valueOf(annotation.getId());
+			} else {
+				return "";
+			}
+		case 1:
+			return annotation.getAnnotation();
+		default:
+			return "";
+		}
+	}
 
-    public synchronized void setData(List<SequenceAnnotation> newData) {
-        data.clear();
-        for (int i = 0; i < newData.size(); i++) {
-            data.add(newData.get(i));
-        }
-        fireTableDataChanged();
-    }
+	@Override
+	public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+		SequenceAnnotation annotation = data.get(rowIndex);
+		switch (columnIndex) {
+		case 0:
+			try {
+				String s = (String) aValue;
+				int pos = s.startsWith(ProteinEditor.PREFIX_CHAIN) ? Integer
+						.parseInt(s.substring(ProteinEditor.PREFIX_CHAIN
+								.length())) : 0;
+				if (pos < 0) {
+					pos = 0;
+				}
+				annotation.setId(pos);
+			} catch (NumberFormatException nfe) {
+			}
+			break;
+		case 1:
+			annotation.setAnnotation((String) aValue);
+			break;
+		}
+	}
 
-    public synchronized void setupEmptyData(int count) {
-        data.clear();
-        for (int i = 0; i < count; i++) {
-            data.add(new SequenceAnnotation());
-        }
-        fireTableDataChanged();
-    }
+	public synchronized void setData(List<SequenceAnnotation> newData) {
+		data.clear();
+		for (int i = 0; i < newData.size(); i++) {
+			data.add(newData.get(i));
+		}
+		fireTableDataChanged();
+	}
 
-    public synchronized List<SequenceAnnotation> getPopulatedSeqeuenceAnnotations() {
-        List<SequenceAnnotation> l = new ArrayList<SequenceAnnotation>();
-        for (SequenceAnnotation ann : data) {
-            if (null != ann.getAnnotation() && ann.getAnnotation().length() > 0
-                    && ann.getId() > 0 ) {
-                l.add(ann);
-            }
-        }
-        return l;
-    }
+	public synchronized void setupEmptyData(int count) {
+		data.clear();
+		for (int i = 0; i < count; i++) {
+			data.add(new SequenceAnnotation());
+		}
+		fireTableDataChanged();
+	}
 
-    public synchronized void clear() {
-        data.clear();
-        fireTableDataChanged();
-    }
+	public synchronized List<SequenceAnnotation> getPopulatedSeqeuenceAnnotations() {
+		List<SequenceAnnotation> l = new ArrayList<SequenceAnnotation>();
+		for (SequenceAnnotation ann : data) {
+			if (null != ann.getAnnotation() && ann.getAnnotation().length() > 0
+					&& ann.getId() > 0) {
+				l.add(ann);
+			}
+		}
+		return l;
+	}
+
+	public synchronized void clear() {
+		data.clear();
+		fireTableDataChanged();
+	}
 }
