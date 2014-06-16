@@ -501,7 +501,7 @@ public abstract class GUIBase {
 
 		// create new clipboard.
 		SequenceGraph2DClipboard clipboard = new SequenceGraph2DClipboard(view);
-		clipboard.setCopyFactory(new GraphDeepCopyFactory());
+		clipboard.setGraphFactory(new GraphDeepCopyFactory());
 
 		// get Cut action from clipboard
 		cutAction = clipboard.getCutAction();
