@@ -75,6 +75,7 @@ public class NotationParserSample {
 //            ComponentTableView.getAllComponentString(notation);
 
             //test getAllSimplePolymerNotation
+            //test commit
             ArrayList<String> polymerStringList = NotationParser.getAllSimplePolymerNotation(notation);
             for (String string : polymerStringList) {
                 System.out.println(string);
