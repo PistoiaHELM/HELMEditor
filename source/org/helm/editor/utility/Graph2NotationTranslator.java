@@ -423,10 +423,16 @@ public class Graph2NotationTranslator {
 					code.deleteCharAt(code.lastIndexOf("."));
 				}
 
-				if (codeWithSmiles.lastIndexOf(".") != -1) {
+				//delete last point (XHELM-75)
+				if (codeWithSmiles.charAt(codeWithSmiles.length()-1)=='.'){
 					codeWithSmiles
-							.deleteCharAt(codeWithSmiles.lastIndexOf("."));
+					.deleteCharAt(codeWithSmiles.length()-1);
 				}
+				// this code deletes valid point in [Na+].[O-]P([*])([*])=O |$;;;_R1;_R2;$|, if only one monomer is selected
+//				if (codeWithSmiles.lastIndexOf(".") != -1) {
+//					codeWithSmiles
+//							.deleteCharAt(codeWithSmiles.lastIndexOf("."));
+//				}
 				hyperNodeNameMap.set(hyperNode,
 						Monomer.NUCLIEC_ACID_POLYMER_TYPE + rnaCount);
 
