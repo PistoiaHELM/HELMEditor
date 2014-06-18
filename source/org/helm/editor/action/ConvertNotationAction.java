@@ -34,13 +34,13 @@ public class ConvertNotationAction extends AbstractAction {
 	private ConvertNotationDialog convertNotationDialog;
 
 	public ConvertNotationAction(MacromoleculeEditor editor) {
-	    super("Convert Notation ...");
-	    _editor = editor;
-	    convertNotationDialog = new ConvertNotationDialog(_editor); 
+		super("Convert Notation ...");
+		_editor = editor;
+		convertNotationDialog = new ConvertNotationDialog(_editor);
 	}
 
 	public void actionPerformed(ActionEvent arg0) {
-	    convertNotationDialog.setVisible(true);
+		convertNotationDialog.setVisible(true);
 	}
-	
+
 }

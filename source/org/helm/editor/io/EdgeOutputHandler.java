@@ -30,35 +30,37 @@ import y.base.Graph;
 import yext.graphml.writer.AbstractOutputHandler;
 
 /**
- *
+ * 
  * @author lih25
  */
 public class EdgeOutputHandler extends AbstractOutputHandler {
 
-   
+	@Override
+	public void printDataOutput(GraphMLWriteContext arg0, Graph graph,
+			Object edge, XmlWriter writer) {
+		final EdgeMap edgeMap = (EdgeMap) graph
+				.getDataProvider(EdgeMapKeys.EDGE_INFO);
 
-    @Override
-    public void printDataOutput(GraphMLWriteContext arg0, Graph graph, Object edge, XmlWriter writer) {
-        final EdgeMap edgeMap = (EdgeMap) graph.getDataProvider(EdgeMapKeys.EDGE_INFO);
+		EditorEdgeInfoData edgeInfoData = (EditorEdgeInfoData) edgeMap
+				.get(edge);
+		writer.writeStartElement(IOConstants.SOURCE_ATTACHMENT, null);
+		writer.writeAttribute("value", edgeInfoData.getSourceNodeAttachment()
+				.toString());
+		writer.writeEndElement();
 
-        EditorEdgeInfoData edgeInfoData = (EditorEdgeInfoData) edgeMap.get(edge);
-        writer.writeStartElement(IOConstants.SOURCE_ATTACHMENT, null);
-        writer.writeAttribute("value", edgeInfoData.getSourceNodeAttachment().toString());
-        writer.writeEndElement();
+		writer.writeStartElement(IOConstants.TARGET_ATTACHMENT, null);
+		writer.writeAttribute("value", edgeInfoData.getTargetNodeAttachment()
+				.toString());
+		writer.writeEndElement();
 
-        writer.writeStartElement(IOConstants.TARGET_ATTACHMENT, null);
-        writer.writeAttribute("value", edgeInfoData.getTargetNodeAttachment().toString());
-        writer.writeEndElement();
+	}
 
+	public void printKeyAttributes(GraphMLWriteContext arg0, XmlWriter writer) {
+		writer.writeAttribute(IOConstants.TARGET_ATTACHMENT, true);
+		writer.writeAttribute(IOConstants.SOURCE_ATTACHMENT, true);
+	}
 
-    }
-
-    public void printKeyAttributes(GraphMLWriteContext arg0, XmlWriter writer) {
-        writer.writeAttribute(IOConstants.TARGET_ATTACHMENT, true);
-        writer.writeAttribute(IOConstants.SOURCE_ATTACHMENT, true);
-    }
-
-    public void printKeyOutput(GraphMLWriteContext arg0, XmlWriter writer) {
-//        throw new UnsupportedOperationException("Not supported yet.");
-    }
+	public void printKeyOutput(GraphMLWriteContext arg0, XmlWriter writer) {
+		// throw new UnsupportedOperationException("Not supported yet.");
+	}
 }

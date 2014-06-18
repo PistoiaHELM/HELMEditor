@@ -32,49 +32,52 @@ import org.helm.editor.data.NodeSequence;
  * User: dzhelezov
  */
 public class MappedNodeSequence implements NodeSequence {
-    private GraphMapper mapper;
-    private NodeSequence sourceSequence;
+	private GraphMapper mapper;
+	private NodeSequence sourceSequence;
 
-    public MappedNodeSequence(GraphMapper mapper, NodeSequence sourceSequence) {
-        this.mapper = mapper;
-        this.sourceSequence = sourceSequence;
-    }
+	public MappedNodeSequence(GraphMapper mapper, NodeSequence sourceSequence) {
+		this.mapper = mapper;
+		this.sourceSequence = sourceSequence;
+	}
 
-    public Node getStartNode() {
-        return mapper.getTargetNode(sourceSequence.getStartNode());
-    }
+	public Node getStartNode() {
+		return mapper.getTargetNode(sourceSequence.getStartNode());
+	}
 
-    public boolean isFloating() {
-        return sourceSequence.isFloating();
-    }
+	public boolean isFloating() {
+		return sourceSequence.isFloating();
+	}
 
-    public List<Node> getNodes() {
-        List<Node> result = new ArrayList<Node>();
-        for (Node source : sourceSequence) {
-            result.add(mapper.getTargetNode(source));
-        }
-        return result;
-    }
+	public List<Node> getNodes() {
+		List<Node> result = new ArrayList<Node>();
+		for (Node source : sourceSequence) {
+			result.add(mapper.getTargetNode(source));
+		}
+		return result;
+	}
 
-    public Iterator<Node> iterator() {
-        return new MappedNodeIterator(mapper, sourceSequence.iterator());
-    }
+	public Iterator<Node> iterator() {
+		return new MappedNodeIterator(mapper, sourceSequence.iterator());
+	}
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
 
-        MappedNodeSequence that = (MappedNodeSequence) o;
+		MappedNodeSequence that = (MappedNodeSequence) o;
 
-        return mapper.equals(that.mapper) && sourceSequence.equals(that.sourceSequence);
+		return mapper.equals(that.mapper)
+				&& sourceSequence.equals(that.sourceSequence);
 
-    }
+	}
 
-    @Override
-    public int hashCode() {
-        int result = mapper.hashCode();
-        result = 31 * result + sourceSequence.hashCode();
-        return result;
-    }
+	@Override
+	public int hashCode() {
+		int result = mapper.hashCode();
+		result = 31 * result + sourceSequence.hashCode();
+		return result;
+	}
 }

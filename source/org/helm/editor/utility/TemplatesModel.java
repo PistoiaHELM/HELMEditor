@@ -44,80 +44,93 @@ import y.view.hierarchy.HierarchyManager;
  */
 public class TemplatesModel extends AbstractListModel {
 
-    private final Node[] data;
-    private final Graph2D graph;
+	private final Node[] data;
+	private final Graph2D graph;
 
-    public TemplatesModel(final Graph2D graph) {
-        this.graph = graph;
-//        NodeList nodeList = new NodeList(graph.nodes());
-        HierarchyManager nhm = graph.getHierarchyManager();
+	public TemplatesModel(final Graph2D graph) {
+		this.graph = graph;
+		// NodeList nodeList = new NodeList(graph.nodes());
+		HierarchyManager nhm = graph.getHierarchyManager();
 
-        if (nhm != null) {
-            final NodeMap nodeMap = (NodeMap) graph.getDataProvider(NodeMapKeys.FOLDER_NODE_NOTATION);
-            this.graph.sortNodes(new Comparator() {
+		if (nhm != null) {
+			final NodeMap nodeMap = (NodeMap) graph
+					.getDataProvider(NodeMapKeys.FOLDER_NODE_NOTATION);
+			this.graph.sortNodes(new Comparator() {
 
-                public int compare(Object o1, Object o2) {
-                    NodeRealizer nr1 = graph.getRealizer((Node) o1);
-                    NodeRealizer nr2 = graph.getRealizer((Node) o2);
+				public int compare(Object o1, Object o2) {
+					NodeRealizer nr1 = graph.getRealizer((Node) o1);
+					NodeRealizer nr2 = graph.getRealizer((Node) o2);
 
-                    Nucleotide nucleotide1 = new Nucleotide(nr1.getLabelText(), (String) nodeMap.get(o1));
-                    Nucleotide nucleotide2 = new Nucleotide(nr2.getLabelText(), (String) nodeMap.get(o2));
+					Nucleotide nucleotide1 = new Nucleotide(nr1.getLabelText(),
+							(String) nodeMap.get(o1));
+					Nucleotide nucleotide2 = new Nucleotide(nr2.getLabelText(),
+							(String) nodeMap.get(o2));
 
-                    if (nucleotide1.getNaturalAnalog() != null && nucleotide2.getNaturalAnalog() != null) {
-                        return (nucleotide1.getNaturalAnalog().compareToIgnoreCase(nucleotide2.getNaturalAnalog()));
-                    } else {
-                        return (nr1.getLabelText().compareTo(nr2.getLabelText()));
-                    }
-                }
-            });
-        } else {
+					if (nucleotide1.getNaturalAnalog() != null
+							&& nucleotide2.getNaturalAnalog() != null) {
+						return (nucleotide1.getNaturalAnalog()
+								.compareToIgnoreCase(nucleotide2
+										.getNaturalAnalog()));
+					} else {
+						return (nr1.getLabelText().compareTo(nr2.getLabelText()));
+					}
+				}
+			});
+		} else {
 
-            final NodeMap nodeMap = (NodeMap) graph.getDataProvider(NodeMapKeys.MONOMER_REF);
-            this.graph.sortNodes(new Comparator() {
+			final NodeMap nodeMap = (NodeMap) graph
+					.getDataProvider(NodeMapKeys.MONOMER_REF);
+			this.graph.sortNodes(new Comparator() {
 
-                public int compare(Object o1, Object o2) {
-                    try {
-                        MonomerInfo mi1 = (MonomerInfo) nodeMap.get((Node) o1);
-                        MonomerInfo mi2 = (MonomerInfo) nodeMap.get((Node) o2);
-                        return mi1.getMonomerID().compareToIgnoreCase(mi2.getMonomerID());
-//                        Monomer monomer1 = MonomerFactory.getInstance().getMonomerDB().get(mi1.getPolymerType()).get(mi1.getMonomerID());
-//                        Monomer monomer2 = MonomerFactory.getInstance().getMonomerDB().get(mi2.getPolymerType()).get(mi2.getMonomerID());
-//                        String st1 = monomer1.getNaturalAnalog() + "-" + monomer1.getAlternateId();
-//                        String st2 = monomer2.getNaturalAnalog() + "-" + monomer2.getAlternateId();
-//                        return st1.compareToIgnoreCase(st2);
-                    } catch (Exception ex) {
-                        Logger.getLogger(TemplatesModel.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                    return 0;
-                }
-            });
+				public int compare(Object o1, Object o2) {
+					try {
+						MonomerInfo mi1 = (MonomerInfo) nodeMap.get((Node) o1);
+						MonomerInfo mi2 = (MonomerInfo) nodeMap.get((Node) o2);
+						return mi1.getMonomerID().compareToIgnoreCase(
+								mi2.getMonomerID());
+						// Monomer monomer1 =
+						// MonomerFactory.getInstance().getMonomerDB().get(mi1.getPolymerType()).get(mi1.getMonomerID());
+						// Monomer monomer2 =
+						// MonomerFactory.getInstance().getMonomerDB().get(mi2.getPolymerType()).get(mi2.getMonomerID());
+						// String st1 = monomer1.getNaturalAnalog() + "-" +
+						// monomer1.getAlternateId();
+						// String st2 = monomer2.getNaturalAnalog() + "-" +
+						// monomer2.getAlternateId();
+						// return st1.compareToIgnoreCase(st2);
+					} catch (Exception ex) {
+						Logger.getLogger(TemplatesModel.class.getName()).log(
+								Level.SEVERE, null, ex);
+					}
+					return 0;
+				}
+			});
 
-        }
+		}
 
-        data = this.graph.getNodeArray();
-    }
+		data = this.graph.getNodeArray();
+	}
 
+	public int getSize() {
+		return data.length;
+	}
 
-    public int getSize() {
-        return data.length;
-    }
+	public Object getElementAt(final int index) {
+		return ((Graph2D) data[index].getGraph()).getRealizer(data[index]);
+	}
 
-    public Object getElementAt(final int index) {
-        return ((Graph2D) data[index].getGraph()).getRealizer(data[index]);
-    }
-    
-    public Node getNodeByMonomerId(String monomerId) {
-    	
-    	if ((monomerId == null) || (data == null)) {
-    		return null;
-    	}
+	public Node getNodeByMonomerId(String monomerId) {
 
-    	for(int i = 0; i < data.length; i++){
-    		if (monomerId.equals(MonomerInfoUtils.getMonomerLabelText(data[i], graph))) {
-    			return ((NodeRealizer)getElementAt(i)).getNode(); 
-    		}
-    	}
-    	    	
-    	return null;
-    }
+		if ((monomerId == null) || (data == null)) {
+			return null;
+		}
+
+		for (int i = 0; i < data.length; i++) {
+			if (monomerId.equals(MonomerInfoUtils.getMonomerLabelText(data[i],
+					graph))) {
+				return ((NodeRealizer) getElementAt(i)).getNode();
+			}
+		}
+
+		return null;
+	}
 }

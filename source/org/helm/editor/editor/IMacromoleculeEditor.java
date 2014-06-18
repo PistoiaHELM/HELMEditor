@@ -25,9 +25,11 @@ import org.helm.editor.data.GraphManager;
 
 public interface IMacromoleculeEditor {
 	boolean isRegularConnection();
+
 	String getNotation();
+
 	String getOwnerCode();
-	
+
 	// TODO: we should get rid of GM in future
 	// and fully move to Data Providers
 	GraphManager getGraphManager();

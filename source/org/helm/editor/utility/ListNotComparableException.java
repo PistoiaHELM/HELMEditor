@@ -22,13 +22,13 @@
 package org.helm.editor.utility;
 
 /**
- *
+ * 
  * @author lih25
  */
-public class ListNotComparableException  extends Exception{
+public class ListNotComparableException extends Exception {
 
-    public ListNotComparableException(String msg) {
-        super(msg);
-    }
+	public ListNotComparableException(String msg) {
+		super(msg);
+	}
 
 }

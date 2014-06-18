@@ -26,25 +26,25 @@ import java.util.Map;
 
 import y.base.Node;
 
-public abstract class CopyGraphAction implements GraphAction{
+public abstract class CopyGraphAction implements GraphAction {
 
 	private Map<String, Object> _parametersMap;
-	
+
 	public CopyGraphAction() {
 		_parametersMap = new HashMap<String, Object>();
 	}
-	
+
 	public boolean nodeCondition(Node node) {
-		
+
 		return true;
 	}
 
 	public void addParameter(String key, String value) {
 	}
-	
+
 	public void setParameters() {
 	}
-	
+
 	public Object getParageter(String name) {
 		return _parametersMap.get(name);
 	}

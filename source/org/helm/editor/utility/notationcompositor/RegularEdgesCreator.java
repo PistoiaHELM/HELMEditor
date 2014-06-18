@@ -30,56 +30,59 @@ import y.base.Node;
 
 import org.helm.editor.data.EdgeMapKeys;
 
-
-public class RegularEdgesCreator implements NotationCreator{
+public class RegularEdgesCreator implements NotationCreator {
 
 	private static Condition EDGE_CONDITION = new NotPairableEdgesCondition();
-	
+
 	private static final int HYPER_GRAPH_POSITION = 0;
 	private static final int NAME_MAP_POSITION = 1;
-	
+
 	@SuppressWarnings("unchecked")
 	public String createNotationPart(Object[] args) {
-		
-		Graph hyperGraph = (Graph)args[HYPER_GRAPH_POSITION];
-		Map<Node, String> nameMap = (Map<Node, String>)args[NAME_MAP_POSITION];
-		
-		return appendEdgesWithCondition(hyperGraph, nameMap, EDGE_CONDITION) + NotationCompositor.NOTATION_PART_ENDING;
-	}
-	
-	public static String appendEdgesWithCondition(Graph hyperGraph, Map<Node, String> nameMap, Condition condition) {
-		
-		StringBuilder notation = new StringBuilder();
-		
-		EdgeMap hyperEdgeMap = (EdgeMap) hyperGraph.getDataProvider(EdgeMapKeys.DESCRIPTION);			
-		EdgeCursor edges = hyperGraph.edges();
-        int edgeCount = 0;
-        
-        for (; edges.ok(); edges.next()) {
-        	String edgeDesc = (String) hyperEdgeMap.get(edges.edge());
-        	
-        	boolean conditionValue = condition.condition(new Object[]{edgeDesc});
-        	if (edgeCount > 0 && conditionValue){
-            	notation.append(NotationCompositor.NOTATION_DELIMETER);
-            }
-        	
-            if ( conditionValue ) {
-                
-                Node sourceNode = edges.edge().source();
-                Node targetNode = edges.edge().target();
 
-                notation.append(nameMap.get(sourceNode));
-                notation.append(NotationCompositor.NOTATION_COMMA);
-                notation.append(nameMap.get(targetNode));
-                notation.append(NotationCompositor.NOTATION_COMMA);
-                notation.append(edgeDesc);
-                
-                edgeCount++;
-            }
-            
-        }               
-        
-        return notation.toString();
+		Graph hyperGraph = (Graph) args[HYPER_GRAPH_POSITION];
+		Map<Node, String> nameMap = (Map<Node, String>) args[NAME_MAP_POSITION];
+
+		return appendEdgesWithCondition(hyperGraph, nameMap, EDGE_CONDITION)
+				+ NotationCompositor.NOTATION_PART_ENDING;
+	}
+
+	public static String appendEdgesWithCondition(Graph hyperGraph,
+			Map<Node, String> nameMap, Condition condition) {
+
+		StringBuilder notation = new StringBuilder();
+
+		EdgeMap hyperEdgeMap = (EdgeMap) hyperGraph
+				.getDataProvider(EdgeMapKeys.DESCRIPTION);
+		EdgeCursor edges = hyperGraph.edges();
+		int edgeCount = 0;
+
+		for (; edges.ok(); edges.next()) {
+			String edgeDesc = (String) hyperEdgeMap.get(edges.edge());
+
+			boolean conditionValue = condition
+					.condition(new Object[] { edgeDesc });
+			if (edgeCount > 0 && conditionValue) {
+				notation.append(NotationCompositor.NOTATION_DELIMETER);
+			}
+
+			if (conditionValue) {
+
+				Node sourceNode = edges.edge().source();
+				Node targetNode = edges.edge().target();
+
+				notation.append(nameMap.get(sourceNode));
+				notation.append(NotationCompositor.NOTATION_COMMA);
+				notation.append(nameMap.get(targetNode));
+				notation.append(NotationCompositor.NOTATION_COMMA);
+				notation.append(edgeDesc);
+
+				edgeCount++;
+			}
+
+		}
+
+		return notation.toString();
 	}
 
 }

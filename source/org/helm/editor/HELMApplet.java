@@ -34,96 +34,104 @@ import javax.swing.JApplet;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
-
 /**
- *
+ * 
  * @author zhangtianhong
  */
 public class HELMApplet extends JApplet {
 
-    private static final long serialVersionUID = 1L;
-    
-    MacromoleculeEditor editor;
+	private static final long serialVersionUID = 1L;
 
-    public void init(){
-        initializeDataFactories();
-    }
-    
-    public void start() {
+	MacromoleculeEditor editor;
 
-        SwingUtilities.invokeLater(new Runnable() {
+	public void init() {
+		initializeDataFactories();
+	}
 
-            public void run() {
-                try {
-                    editor = new MacromoleculeEditor();
-                    initLnF();
-                    initGUI();
-                } catch (Exception ex) {
-                    Logger.getLogger(MacromoleculeEditor.class.getName()).log(Level.SEVERE, "Unable to launch application GUI", ex);
-                }
-            }
-        });
+	public void start() {
 
-    }
-    
-    public void initGUI(){
-       editor.addContentTo(this.getRootPane());
-    }
-    
-    public void stop(){
-        
-    }
-    
-    public void destroy(){
-        
-    }
+		SwingUtilities.invokeLater(new Runnable() {
 
-    /**
-     *  initialize monomer DB and nucleteotide templates
-     */
-    private static void initializeDataFactories() {
-        try {
-            MonomerFactory.getInstance();
-            Logger.getLogger(MacromoleculeEditor.class.getName()).log(Level.INFO, "Initializing monomer DB...Done");
+			public void run() {
+				try {
+					editor = new MacromoleculeEditor();
+					initLnF();
+					initGUI();
+				} catch (Exception ex) {
+					Logger.getLogger(MacromoleculeEditor.class.getName()).log(
+							Level.SEVERE, "Unable to launch application GUI",
+							ex);
+				}
+			}
+		});
 
-            NucleotideFactory.getInstance();
-            Logger.getLogger(MacromoleculeEditor.class.getName()).log(Level.INFO, "Initializing nuleotide templates...Done");
+	}
 
-            PropertyManager.getInstance();
-            Logger.getLogger(MacromoleculeEditor.class.getName()).log(Level.INFO, "Initializing monomer UI templates...Done");
+	public void initGUI() {
+		editor.addContentTo(this.getRootPane());
+	}
 
-        } catch (Exception ex) {
-            Logger.getLogger(MacromoleculeEditor.class.getName()).log(Level.WARNING, "Error initializing data factories", ex);
-        }
-    }
+	public void stop() {
 
-    /**
-     * Initializes to a "nice" look and feel.
-     */
-    public static void initLnF() {
-        ResourceBundle resourceBundle = ResourceBundle.getBundle("org.helm.editor.editor.resource.GUIBase");
-        String lnf = resourceBundle.getString("Application.lookAndFeel");
-        if (lnf != null && lnf.equalsIgnoreCase("System")) {
-            try {
-                if (!UIManager.getSystemLookAndFeelClassName().equals(
-                        "com.sun.java.swing.plaf.motif.MotifLookAndFeel")
-                        && !UIManager.getSystemLookAndFeelClassName().equals(
-                        "com.sun.java.swing.plaf.gtk.GTKLookAndFeel")
-                        && !UIManager.getSystemLookAndFeelClassName().equals(
-                        UIManager.getLookAndFeel().getClass().getName())) {
-                    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
+	}
 
-    public String getNotation() {
-	return editor.getNotation();
-    }
+	public void destroy() {
 
-    public void setNotation(String notation) {
-	editor.setNotation(notation);
-    }
+	}
+
+	/**
+	 * initialize monomer DB and nucleteotide templates
+	 */
+	private static void initializeDataFactories() {
+		try {
+			MonomerFactory.getInstance();
+			Logger.getLogger(MacromoleculeEditor.class.getName()).log(
+					Level.INFO, "Initializing monomer DB...Done");
+
+			NucleotideFactory.getInstance();
+			Logger.getLogger(MacromoleculeEditor.class.getName()).log(
+					Level.INFO, "Initializing nuleotide templates...Done");
+
+			PropertyManager.getInstance();
+			Logger.getLogger(MacromoleculeEditor.class.getName()).log(
+					Level.INFO, "Initializing monomer UI templates...Done");
+
+		} catch (Exception ex) {
+			Logger.getLogger(MacromoleculeEditor.class.getName()).log(
+					Level.WARNING, "Error initializing data factories", ex);
+		}
+	}
+
+	/**
+	 * Initializes to a "nice" look and feel.
+	 */
+	public static void initLnF() {
+		ResourceBundle resourceBundle = ResourceBundle
+				.getBundle("org.helm.editor.editor.resource.GUIBase");
+		String lnf = resourceBundle.getString("Application.lookAndFeel");
+		if (lnf != null && lnf.equalsIgnoreCase("System")) {
+			try {
+				if (!UIManager.getSystemLookAndFeelClassName().equals(
+						"com.sun.java.swing.plaf.motif.MotifLookAndFeel")
+						&& !UIManager.getSystemLookAndFeelClassName().equals(
+								"com.sun.java.swing.plaf.gtk.GTKLookAndFeel")
+						&& !UIManager.getSystemLookAndFeelClassName()
+								.equals(UIManager.getLookAndFeel().getClass()
+										.getName())) {
+					UIManager.setLookAndFeel(UIManager
+							.getSystemLookAndFeelClassName());
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	public String getNotation() {
+		return editor.getNotation();
+	}
+
+	public void setNotation(String notation) {
+		editor.setNotation(notation);
+	}
 }

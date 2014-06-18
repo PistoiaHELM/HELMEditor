@@ -33,94 +33,99 @@ import y.base.Node;
 import org.helm.editor.utility.GraphUtils;
 
 /**
- *  Iterates over maximal connected component of nodes that satisfy 
- *  <code>isOk(Node node)</code> condition. Also there is extension point for   
- *  processing terminal nodes (non-ok nodes adjacent to this component) and boundary node (ok nodes in this 
- *  component with non-ok neighbours) 
- *  
+ * Iterates over maximal connected component of nodes that satisfy
+ * <code>isOk(Node node)</code> condition. Also there is extension point for
+ * processing terminal nodes (non-ok nodes adjacent to this component) and
+ * boundary node (ok nodes in this component with non-ok neighbours)
+ * 
  * @author Dmitry Zhelezov
- *
+ * 
  */
 public abstract class AbstractBfsIterator implements Iterator<Node> {
-	
+
 	private Queue<Node> nodesToProcess = new LinkedList<Node>();
 	private Set<Node> visited = new HashSet<Node>();
 	protected Graph graph;
-	
+
 	public AbstractBfsIterator(Graph graph, Node startNode) {
 		visited.add(startNode);
 		nodesToProcess.add(startNode);
 		this.graph = graph;
 	}
-	
+
 	public boolean hasNext() {
 		return !nodesToProcess.isEmpty();
 	}
 
 	public Node next() {
 		Node next = nodesToProcess.poll();
-        preProcess(next);
+		preProcess(next);
 		visited.add(next);
-        processNode(next);
+		processNode(next);
 		return next;
 	}
 
 	protected void preProcess(Node node) {
-		
+
 	}
-	
+
 	private void processNode(Node node) {
 		Set<Node> neigbours = getAdjacentNodes(node);
-        for (Node neighbour : neigbours) {
-            if (isOk(neighbour)) {
-                if (!visited.contains(neighbour)) {
-                    nodesToProcess.add(neighbour);
-                    processOkNode(neighbour);
-                }
-            } else {
-                processDockNode(neighbour);
-            }
-        }	
+		for (Node neighbour : neigbours) {
+			if (isOk(neighbour)) {
+				if (!visited.contains(neighbour)) {
+					nodesToProcess.add(neighbour);
+					processOkNode(neighbour);
+				}
+			} else {
+				processDockNode(neighbour);
+			}
+		}
 	}
-	
+
 	/**
 	 * 
-	 * @param node node to be processed
+	 * @param node
+	 *            node to be processed
 	 * @return set of node neighbors to be added to the bfs queue
 	 */
 	protected Set<Node> getAdjacentNodes(Node node) {
 		return GraphUtils.getNeighbours(node);
 	}
-	
+
 	/**
 	 * Additional processing of the ok node in this component
-	 * @param node Node to process
+	 * 
+	 * @param node
+	 *            Node to process
 	 */
 	protected void processOkNode(Node node) {
-		
+
 	}
-	
+
 	/**
 	 * Process non-ok node adjacent to ok node
-	 * @param node Non-ok node to process
+	 * 
+	 * @param node
+	 *            Non-ok node to process
 	 */
 	protected void processDockNode(Node node) {
-		
+
 	}
-	
+
 	/**
-	 * Determines whether this node is ok, that is belongs to the specific class of
-	 * nodes. For example if this method always returns true, this iterator will 
-	 * iterate over all maximal connected components of the graph.
+	 * Determines whether this node is ok, that is belongs to the specific class
+	 * of nodes. For example if this method always returns true, this iterator
+	 * will iterate over all maximal connected components of the graph.
 	 * 
-	 * @param node node to check
+	 * @param node
+	 *            node to check
 	 * @return true if this node is ok;
 	 */
 	protected abstract boolean isOk(Node node);
-	
+
 	public void remove() {
 		throw new UnsupportedOperationException();
 	}
-
 
 }

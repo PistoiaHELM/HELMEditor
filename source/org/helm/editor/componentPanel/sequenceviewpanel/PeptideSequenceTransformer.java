@@ -38,50 +38,53 @@ public class PeptideSequenceTransformer extends AbstractSequenceTransformer {
 
 	private Set<Node> visited = new HashSet<Node>();
 	private Set<Edge> edges = new HashSet<Edge>();
-	
+
 	@Override
 	protected void buildViewSequence(Node editorStartingNode) {
 		Node currentEditorNode = editorStartingNode;
 		while (currentEditorNode != null) {
-			/// if simple cycle
+			// / if simple cycle
 			if (visited.contains(currentEditorNode)) {
 				break;
 			}
-			
+
 			createNode(currentEditorNode);
 			visited.add(currentEditorNode);
-			
+
 			EdgeCursor c = currentEditorNode.outEdges();
-			for (;c.ok(); c.next()) {
+			for (; c.ok(); c.next()) {
 				edges.add(c.edge());
 			}
-			
+
 			currentEditorNode = getSingleSuccessor(currentEditorNode);
-			
+
 		}
-		
-		// build edges 
-		EdgeMap mapType = (EdgeMap)editor.getDataProvider(EdgeMapKeys.EDGE_INFO);
+
+		// build edges
+		EdgeMap mapType = (EdgeMap) editor
+				.getDataProvider(EdgeMapKeys.EDGE_INFO);
 		for (Edge e : edges) {
 			if (visited.contains(e.source()) && visited.contains(e.target())) {
-				EditorEdgeInfoData infoData = ((EditorEdgeInfoData)mapType.get(e));
-				createEdge(viewModel.getViewNode(e.source()), 
+				EditorEdgeInfoData infoData = ((EditorEdgeInfoData) mapType
+						.get(e));
+				createEdge(viewModel.getViewNode(e.source()),
 						viewModel.getViewNode(e.target()), infoData);
 			}
 		}
 	}
 
 	private Node createNode(Node editorNode) {
-		Node viewNode = createNode(MonomerInfoUtils.getNaturalAnalog(editorNode), 
-				view);
+		Node viewNode = createNode(
+				MonomerInfoUtils.getNaturalAnalog(editorNode), view);
 		viewModel.putViewNode(editorNode, viewNode);
-		viewModificationsCount.set(viewNode, 
+		viewModificationsCount.set(viewNode,
 				MonomerInfoUtils.getMonomer(editorNode).isModified() ? 1 : 0);
 		viewSequence.add(viewNode);
 		return viewNode;
 	}
-	
-	private Edge createEdge(Node viewSource, Node viewTarget, EditorEdgeInfoData infoData) {
+
+	private Edge createEdge(Node viewSource, Node viewTarget,
+			EditorEdgeInfoData infoData) {
 		Edge e = view.createEdge(viewSource, viewTarget);
 
 		EdgeType type = infoData.getType();
@@ -89,10 +92,12 @@ public class PeptideSequenceTransformer extends AbstractSequenceTransformer {
 			type = EdgeType.REGULAR;
 		}
 
-		viewEdgeTypes.set(e, new SViewEdgeInfo(type, infoData.getSourceNodeAttachment(), infoData.getTargetNodeAttachment()));
+		viewEdgeTypes.set(e,
+				new SViewEdgeInfo(type, infoData.getSourceNodeAttachment(),
+						infoData.getTargetNodeAttachment()));
 		return e;
 	}
-	
+
 	@Override
 	protected void fillLabelMaps() {
 		for (Node viewNode : viewSequence) {

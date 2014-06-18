@@ -50,7 +50,7 @@ public class ConvertNotationDialog extends JFrame {
 	private ConvertNotationController _controller;
 
 	private final Logger _logger;
-	
+
 	private String[] _selections = { "Nucleotide Sequence", "HELM Notation" };
 
 	private JLabel _toNotationLabel;
@@ -75,12 +75,12 @@ public class ConvertNotationDialog extends JFrame {
 	private static final int DEFAULT_SELECTED_INDEX = 0;
 
 	private static final String EMPTY_STRING = "";
-	
+
 	private static final boolean CONTROLS_BLOCKED = false;
 	private static final boolean CONTROLS_ENABLED = true;
-	
+
 	public ConvertNotationDialog(MacromoleculeEditor editor) {
-		
+
 		_editor = editor;
 
 		_logger = Logger.getLogger(ConvertNotationDialog.class.getName());
@@ -117,7 +117,7 @@ public class ConvertNotationDialog extends JFrame {
 		constrain.gridx = 1;
 		constrain.insets = new Insets(10, 0, 10, 10);
 		_mainPanel.add(_selectFromNotation, constrain);
-		
+
 		constrain.fill = GridBagConstraints.NONE;
 		constrain.anchor = GridBagConstraints.WEST;
 		constrain.gridx = 3;
@@ -172,12 +172,14 @@ public class ConvertNotationDialog extends JFrame {
 
 	private void configComponents() {
 		setTitle("HELM Notation Converter");
-                setIconImage(IconGenerator.getImage(IconGenerator.HELM_APP_ICON_RESOURCE_URL));
+		setIconImage(IconGenerator
+				.getImage(IconGenerator.HELM_APP_ICON_RESOURCE_URL));
 		setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
 		setLocationRelativeTo(_editor.getFrame());
-                _convertNotation.setIcon(IconGenerator.getIcon(IconGenerator.FORWARD_ARROW_ICON_RESOURCE_URL));
+		_convertNotation.setIcon(IconGenerator
+				.getIcon(IconGenerator.FORWARD_ARROW_ICON_RESOURCE_URL));
 		_convertNotation.setVerticalTextPosition(SwingConstants.CENTER);
-	    _convertNotation.setHorizontalTextPosition(SwingConstants.LEFT);
+		_convertNotation.setHorizontalTextPosition(SwingConstants.LEFT);
 
 		_toNotationArea.setEditable(false);
 		_toNotationArea.setLineWrap(true);
@@ -187,30 +189,34 @@ public class ConvertNotationDialog extends JFrame {
 
 		_convertNotation.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				 SwingWorker<Void, String> worker= new SwingWorker<Void, String>(){
+				SwingWorker<Void, String> worker = new SwingWorker<Void, String>() {
 
 					private String _convertingResult;
-					 
+
 					@Override
-					protected void done() {						
-						_toNotationArea.setText( _convertingResult );
-						(ConvertNotationDialog.this).setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-						(ConvertNotationDialog.this).setControlsState(CONTROLS_ENABLED);
+					protected void done() {
+						_toNotationArea.setText(_convertingResult);
+						(ConvertNotationDialog.this).setCursor(Cursor
+								.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+						(ConvertNotationDialog.this)
+								.setControlsState(CONTROLS_ENABLED);
 					}
 
 					protected Void doInBackground() throws Exception {
-						
-						(ConvertNotationDialog.this).setControlsState(CONTROLS_BLOCKED);					
-						
-						(ConvertNotationDialog.this).setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-						
+
+						(ConvertNotationDialog.this)
+								.setControlsState(CONTROLS_BLOCKED);
+
+						(ConvertNotationDialog.this).setCursor(Cursor
+								.getPredefinedCursor(Cursor.WAIT_CURSOR));
+
 						_convertingResult = convertinNotationProcess();
-						
+
 						return null;
 					}
-										
+
 				};
-				worker.execute();							
+				worker.execute();
 			}
 		});
 
@@ -224,20 +230,20 @@ public class ConvertNotationDialog extends JFrame {
 
 		_selectToNotation.setSelectedIndex(DEFAULT_SELECTED_INDEX);
 	}
-	
-	private void setControlsState(boolean state){		
+
+	private void setControlsState(boolean state) {
 		_selectFromNotation.setEnabled(state);
 		_fromNotationArea.setEnabled(state);
 		_fromNotationScrollPane.setEnabled(state);
-				
+
 		_convertNotation.setEnabled(state);
-		
+
 		_selectToNotation.setEnabled(state);
 		_toNotationScrollPane.setEnabled(state);
-		
+
 		_closeButton.setEnabled(state);
 	}
-	
+
 	private void createComponents() {
 		_mainPanel = new JPanel();
 
@@ -247,7 +253,7 @@ public class ConvertNotationDialog extends JFrame {
 		_fromNotationScrollPane = new JScrollPane(_fromNotationArea);
 
 		_convertNotation = new JButton("Convert");
-		
+
 		_toNotationLabel = new JLabel("To notation");
 		_selectToNotation = new JComboBox(_selections);
 		_toNotationArea = new JTextArea(AREA_SIZE, AREA_SIZE);
@@ -264,14 +270,13 @@ public class ConvertNotationDialog extends JFrame {
 			JOptionPane.showMessageDialog(ConvertNotationDialog.this,
 					"Please, enter notation string.");
 		}
-		
+
 		_toNotationArea.setText(EMPTY_STRING);
-		String newNotation = _controller.getAnotherNotation(_selectFromNotation
-				.getSelectedIndex(), _selectToNotation
-				.getSelectedIndex(), convertedText);
+		String newNotation = _controller.getAnotherNotation(
+				_selectFromNotation.getSelectedIndex(),
+				_selectToNotation.getSelectedIndex(), convertedText);
 
 		return newNotation;
 	}
-
 
 }

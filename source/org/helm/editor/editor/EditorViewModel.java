@@ -26,18 +26,17 @@ import java.util.List;
 import y.base.Node;
 import y.view.Graph2D;
 
-
 public interface EditorViewModel {
 
 	public boolean isEmpty();
-	
+
 	public Node[] getEditorGraphNodes();
-	
+
 	public Graph2D getEditorGraph();
-	
+
 	public void sortEditorStartingNodes();
-	
+
 	public List<Node> getEditorStartingNodes();
-	
+
 	public EditorView renderView();
 }

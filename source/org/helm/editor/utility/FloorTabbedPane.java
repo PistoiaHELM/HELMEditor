@@ -45,95 +45,92 @@ import org.helm.editor.utility.xmlparser.data.Group;
 import org.helm.editor.utility.xmlparser.data.XmlFragment;
 
 /**
- *
+ * 
  * @author lih25
  */
 public class FloorTabbedPane extends JPanel implements ActionListener {
 
-    private GridBagConstraints gbc = new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0,
-            GridBagConstraints.CENTER,
-            GridBagConstraints.BOTH,
-            new Insets(0, 0, 0, 0), 0, 0);
-    
-    private GridBagLayout gbl = new GridBagLayout();
-    protected CardLayout cl = new CardLayout();
-    protected List<JButton> buttons = new ArrayList<JButton>();
-    protected Map<JButton, String> buttonTitles = new HashMap<JButton, String>();
-    protected Map<JButton, String> boldButtonTitles = new HashMap<JButton, String>();
-    
-    protected JPanel panels = new JPanel(cl);
-    
-    public FloorTabbedPane() {
-        setLayout(gbl);
-        add(panels, gbc);
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.weighty = 0.0;
-    }
+	private GridBagConstraints gbc = new GridBagConstraints(0, 1, 1, 1, 1.0,
+			1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+			new Insets(0, 0, 0, 0), 0, 0);
 
-    public void addTab(String name, JComponent component) {
-        gbc.gridy = getComponentCount();
-        if (gbc.gridy == 1) {
-            gbc.gridy = 0;
-        }
-        
-        if (name != null && !name.equals("")) {
-	        String boldName = "<html><b>" + name + "</b></html>";
-	        
-	        JButton jb;
-        	if (buttons.size() == 0) {
-        		// first button
-    	        jb = new JButton(boldName);        		
-        	} else {
-        		// not first button
-    	        jb = new JButton(name);        		
-        	}
-	        add(jb, gbc);
-	        buttons.add(jb);
-	        buttonTitles.put(jb, name);
-	        boldButtonTitles.put(jb, boldName);
-	        jb.addActionListener(this);
-    	}
-        
-        panels.add(component, name);
-    }
+	private GridBagLayout gbl = new GridBagLayout();
+	protected CardLayout cl = new CardLayout();
+	protected List<JButton> buttons = new ArrayList<JButton>();
+	protected Map<JButton, String> buttonTitles = new HashMap<JButton, String>();
+	protected Map<JButton, String> boldButtonTitles = new HashMap<JButton, String>();
 
-    public void actionPerformed(ActionEvent ae) {
-    	
-        int y = 0;
-        GridBagConstraints tmp;
-        JButton srcButton = (JButton) ae.getSource();
-        for (JButton button : buttons) {
-        	String buttonText = button.getText();
-        	if (button == srcButton) {
-        		button.setText(boldButtonTitles.get(button));
-        	} else {
-        		button.setText(buttonTitles.get(button));
-        	}
-        }
-        for (int i = 0; i < buttons.size(); i++) {
-            JButton jb = (JButton) buttons.get(i);
-            clear();
-            tmp = gbl.getConstraints(jb);
-            tmp.gridy = y++;
-            gbl.setConstraints(jb, tmp);
-            if (srcButton == jb) {
-                tmp = gbl.getConstraints(panels);
-                tmp.gridy = y++;
-                gbl.setConstraints(panels, tmp);
-            }
-        }
-        cl.show(panels, buttonTitles.get(srcButton));
-    }
-    
-    /**
-     * for override
-     */
-    public void clear(){
-                
-    }
+	protected JPanel panels = new JPanel(cl);
 
-    
-    protected void updateOthersTab() {
-    }
+	public FloorTabbedPane() {
+		setLayout(gbl);
+		add(panels, gbc);
+		gbc.fill = GridBagConstraints.HORIZONTAL;
+		gbc.weighty = 0.0;
+	}
+
+	public void addTab(String name, JComponent component) {
+		gbc.gridy = getComponentCount();
+		if (gbc.gridy == 1) {
+			gbc.gridy = 0;
+		}
+
+		if (name != null && !name.equals("")) {
+			String boldName = "<html><b>" + name + "</b></html>";
+
+			JButton jb;
+			if (buttons.size() == 0) {
+				// first button
+				jb = new JButton(boldName);
+			} else {
+				// not first button
+				jb = new JButton(name);
+			}
+			add(jb, gbc);
+			buttons.add(jb);
+			buttonTitles.put(jb, name);
+			boldButtonTitles.put(jb, boldName);
+			jb.addActionListener(this);
+		}
+
+		panels.add(component, name);
+	}
+
+	public void actionPerformed(ActionEvent ae) {
+
+		int y = 0;
+		GridBagConstraints tmp;
+		JButton srcButton = (JButton) ae.getSource();
+		for (JButton button : buttons) {
+			String buttonText = button.getText();
+			if (button == srcButton) {
+				button.setText(boldButtonTitles.get(button));
+			} else {
+				button.setText(buttonTitles.get(button));
+			}
+		}
+		for (int i = 0; i < buttons.size(); i++) {
+			JButton jb = (JButton) buttons.get(i);
+			clear();
+			tmp = gbl.getConstraints(jb);
+			tmp.gridy = y++;
+			gbl.setConstraints(jb, tmp);
+			if (srcButton == jb) {
+				tmp = gbl.getConstraints(panels);
+				tmp.gridy = y++;
+				gbl.setConstraints(panels, tmp);
+			}
+		}
+		cl.show(panels, buttonTitles.get(srcButton));
+	}
+
+	/**
+	 * for override
+	 */
+	public void clear() {
+
+	}
+
+	protected void updateOthersTab() {
+	}
 }
-

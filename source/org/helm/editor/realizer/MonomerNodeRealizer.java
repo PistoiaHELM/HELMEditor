@@ -26,44 +26,42 @@ import java.awt.Graphics2D;
 import y.view.ShapeNodeRealizer;
 
 /**
- *
+ * 
  * @author lih25
  */
 public class MonomerNodeRealizer extends ShapeNodeRealizer {
 
-    private boolean highlight = false;
-    private Color originalColor;
+	private boolean highlight = false;
+	private Color originalColor;
 
-    public MonomerNodeRealizer() {
-        super();
-        highlight = false;
-        originalColor = getFillColor();
+	public MonomerNodeRealizer() {
+		super();
+		highlight = false;
+		originalColor = getFillColor();
 
-    }
+	}
 
-    public MonomerNodeRealizer(byte shape) {
-        super(shape);
-    }
+	public MonomerNodeRealizer(byte shape) {
+		super(shape);
+	}
 
-    public boolean isHighlight() {
-        return highlight;
-    }
+	public boolean isHighlight() {
+		return highlight;
+	}
 
-    public void setHighlight(boolean highlight) {
-        this.highlight = highlight;
-    }
+	public void setHighlight(boolean highlight) {
+		this.highlight = highlight;
+	}
 
-    @Override
-    public void paintNode(Graphics2D gfx) {
-        //first paint the shape node realzier
-        super.paintNode(gfx);
+	@Override
+	public void paintNode(Graphics2D gfx) {
+		// first paint the shape node realzier
+		super.paintNode(gfx);
 
-        if (highlight) {
-            gfx.setColor(Color.RED);
-        } else {
-            gfx.setColor(originalColor);
-        }
-    }
+		if (highlight) {
+			gfx.setColor(Color.RED);
+		} else {
+			gfx.setColor(originalColor);
+		}
+	}
 }
-
-

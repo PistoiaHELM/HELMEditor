@@ -28,45 +28,48 @@ import org.helm.editor.data.NotationUpdateEvent;
 import org.helm.editor.data.DataListener;
 
 /**
- * This class controls the structure rendering in MacromoleculeEditor, MacroMoleculeViewer and SequenceViewerPanes via NotationUpdateEvent,
- * which contains the new notation and owner code who fires the event. It is up to each listener to determine if the event should be handled.
+ * This class controls the structure rendering in MacromoleculeEditor,
+ * MacroMoleculeViewer and SequenceViewerPanes via NotationUpdateEvent, which
+ * contains the new notation and owner code who fires the event. It is up to
+ * each listener to determine if the event should be handled.
+ * 
  * @author zhangtianhong
  */
 public class ModelController {
 
-    private static ModelController instance;
-    private List<DataListener> listeners = new ArrayList<DataListener>();
+	private static ModelController instance;
+	private List<DataListener> listeners = new ArrayList<DataListener>();
 
-    private ModelController() {
-    }
+	private ModelController() {
+	}
 
-    public static ModelController getInstance() {
-        if (instance == null) {
-            instance = new ModelController();
-        }
-        return instance;
-    }
+	public static ModelController getInstance() {
+		if (instance == null) {
+			instance = new ModelController();
+		}
+		return instance;
+	}
 
-    public void onEvent(NotationUpdateEvent e) {
-        for (DataListener listener : listeners) {
-            listener.onUpdate(e);
-        }
-    }
+	public void onEvent(NotationUpdateEvent e) {
+		for (DataListener listener : listeners) {
+			listener.onUpdate(e);
+		}
+	}
 
-    public static void notationUpdated(String notation, String owner) {
-        NotationUpdateEvent e = new NotationUpdateEvent(notation, owner);
-        getInstance().onEvent(e);
-    }
+	public static void notationUpdated(String notation, String owner) {
+		NotationUpdateEvent e = new NotationUpdateEvent(notation, owner);
+		getInstance().onEvent(e);
+	}
 
-    public void registerListener(DataListener listener) {
-        if (!listeners.contains(listener)) {
-            listeners.add(listener);
-        }
-    }
+	public void registerListener(DataListener listener) {
+		if (!listeners.contains(listener)) {
+			listeners.add(listener);
+		}
+	}
 
-    public void removeListener(DataListener listener) {
-        if (listeners.contains(listener)) {
-            listeners.remove(listener);
-        }
-    }
+	public void removeListener(DataListener listener) {
+		if (listeners.contains(listener)) {
+			listeners.remove(listener);
+		}
+	}
 }

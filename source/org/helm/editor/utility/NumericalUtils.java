@@ -30,22 +30,22 @@ public class NumericalUtils {
 
 	private final static int BYTES_PER_LONG = Long.SIZE / Byte.SIZE;
 	private static final String DEFAULT_RANDOM_ALOGRITHM = "SHA1PRNG";
-	
-	public static byte[] longToBytes(long inLong){
-    	byte[] bArray = new byte[BYTES_PER_LONG];
-    	ByteBuffer bBuffer = ByteBuffer.wrap(bArray);
-    	LongBuffer lBuffer = bBuffer.asLongBuffer();
-    	lBuffer.put(inLong);
-    	return bArray;
-    }
-    
-    public static String getUniqueCode() throws NoSuchAlgorithmException{
-    	long currentTime = System.currentTimeMillis();
-    	
-    	SecureRandom rand = SecureRandom.getInstance(DEFAULT_RANDOM_ALOGRITHM); 
-    	rand.setSeed(longToBytes(currentTime));
-    	
-    	return String.valueOf(rand.nextLong());
-    }
-   	
+
+	public static byte[] longToBytes(long inLong) {
+		byte[] bArray = new byte[BYTES_PER_LONG];
+		ByteBuffer bBuffer = ByteBuffer.wrap(bArray);
+		LongBuffer lBuffer = bBuffer.asLongBuffer();
+		lBuffer.put(inLong);
+		return bArray;
+	}
+
+	public static String getUniqueCode() throws NoSuchAlgorithmException {
+		long currentTime = System.currentTimeMillis();
+
+		SecureRandom rand = SecureRandom.getInstance(DEFAULT_RANDOM_ALOGRITHM);
+		rand.setSeed(longToBytes(currentTime));
+
+		return String.valueOf(rand.nextLong());
+	}
+
 }

@@ -57,13 +57,14 @@ import org.helm.editor.utility.MonomerInfoUtils;
 import org.helm.notation.model.Attachment;
 import org.helm.notation.model.Monomer;
 
-
 public abstract class AbstractLayoutPrimitives {
 	public static final double EPS = 0.001;
 
-	public abstract void layoutSequence(LayoutGraph graph, Node sequenceStart, Node sequenceEnd, boolean directOrder);
+	public abstract void layoutSequence(LayoutGraph graph, Node sequenceStart,
+			Node sequenceEnd, boolean directOrder);
 
-	public abstract void layoutLoop(LayoutGraph graph, Node loopStart, Node loopEnd, boolean layoutStartingNode);
+	public abstract void layoutLoop(LayoutGraph graph, Node loopStart,
+			Node loopEnd, boolean layoutStartingNode);
 
 	public abstract void arrangeNodesVisualisationSettings(Graph2D graph);
 
@@ -71,7 +72,8 @@ public abstract class AbstractLayoutPrimitives {
 
 	public abstract Node getRNode(Node baseNode);
 
-	public NodeList getSequenceNodes(Node startingNode, Node lastNode, Graph graph, boolean directOrder) {
+	public NodeList getSequenceNodes(Node startingNode, Node lastNode,
+			Graph graph, boolean directOrder) {
 		NodeList selectedList = new NodeList();
 		Set<Node> visited = new HashSet<Node>();
 
@@ -86,27 +88,31 @@ public abstract class AbstractLayoutPrimitives {
 				break;
 			}
 
-			NodeCursor nodeCursor = directOrder ? currentNode.successors() : currentNode.predecessors(); 
+			NodeCursor nodeCursor = directOrder ? currentNode.successors()
+					: currentNode.predecessors();
 			for (; nodeCursor.ok(); nodeCursor.next()) {
 				Edge edge = currentNode.getEdge(nodeCursor.node());
-				if (!(MonomerInfoUtils.isBranchEdge(edge) && isPeptidePolymer(currentNode)) 
+				if (!(MonomerInfoUtils.isBranchEdge(edge) && isPeptidePolymer(currentNode))
 						&& !MonomerInfoUtils.isPair(edge)
 						&& !visited.contains(nodeCursor.node())) {
-					nodesQueue.offer(nodeCursor.node());					
+					nodesQueue.offer(nodeCursor.node());
 				}
 			}
 		}
 
-		// add branch and p nodes to the selected sequence is it is a nucleic acid polymer
-		if (lastNode != null && MonomerInfoUtils.isNucleicAcidPolymer(startingNode)) {
-			for (NodeCursor successors = currentNode.successors(); successors.ok(); successors.next()) {
+		// add branch and p nodes to the selected sequence is it is a nucleic
+		// acid polymer
+		if (lastNode != null
+				&& MonomerInfoUtils.isNucleicAcidPolymer(startingNode)) {
+			for (NodeCursor successors = currentNode.successors(); successors
+					.ok(); successors.next()) {
 				Edge edge = currentNode.getEdge(successors.node());
-				if (!(MonomerInfoUtils.isBranchEdge(edge) && isPeptidePolymer(currentNode)) 
+				if (!(MonomerInfoUtils.isBranchEdge(edge) && isPeptidePolymer(currentNode))
 						&& !MonomerInfoUtils.isPair(edge)
 						&& !visited.contains(successors.node())) {
 					selectedList.add(successors.node());
 				}
-			}			
+			}
 		}
 
 		return selectedList;
@@ -117,7 +123,8 @@ public abstract class AbstractLayoutPrimitives {
 			return node;
 		}
 
-		NodeList curNodeToStartingNodeList = getSequenceNodes(node, null, node.getGraph(), false);
+		NodeList curNodeToStartingNodeList = getSequenceNodes(node, null,
+				node.getGraph(), false);
 		return curNodeToStartingNodeList.lastNode();
 	}
 
@@ -126,12 +133,14 @@ public abstract class AbstractLayoutPrimitives {
 			return node;
 		}
 
-		NodeList curNodeToEndNodeList = getSequenceNodes(node, null, node.getGraph(), true);
+		NodeList curNodeToEndNodeList = getSequenceNodes(node, null,
+				node.getGraph(), true);
 		return curNodeToEndNodeList.lastNode();
 	}
 
 	/**
-	 * @param startingNode starting node in the sequence of nodes where loop is placed
+	 * @param startingNode
+	 *            starting node in the sequence of nodes where loop is placed
 	 * @param graph
 	 * @return start and end loop nodes
 	 */
@@ -139,18 +148,21 @@ public abstract class AbstractLayoutPrimitives {
 
 	public abstract IViewMetrics getViewMetrics();
 
-
-	//////////////////////////////////
+	// ////////////////////////////////
 	// Chem nodes layout primitives //
-	//////////////////////////////////
+	// ////////////////////////////////
 	/**
 	 * @return x = dX, y = dY
 	 */
 	public abstract Point getChemNodesFloatongSequenceLayoutMetrics();
-	public abstract Point getChemNodesDockedSequenceLayoutMetrics();
-	public abstract int getChemNodesYLayoutStart(LayoutGraph graph, Set<Node> layoutedNodes);
 
-	private void preFlip(GraphHider graphHider, LayoutGraph graph, Node startingNode, Node end) {
+	public abstract Point getChemNodesDockedSequenceLayoutMetrics();
+
+	public abstract int getChemNodesYLayoutStart(LayoutGraph graph,
+			Set<Node> layoutedNodes);
+
+	private void preFlip(GraphHider graphHider, LayoutGraph graph,
+			Node startingNode, Node end) {
 		EdgeCursor edges = null;
 		HashSet<Node> selected = new HashSet<Node>();
 		NodeList nodeList = getSequenceNodes(startingNode, end, graph, true);
@@ -182,6 +194,7 @@ public abstract class AbstractLayoutPrimitives {
 
 	/**
 	 * rotate the sequence starting with the starting startingNode 180 degree
+	 * 
 	 * @param startingNode
 	 * @throws org.helm.notation.MonomerException
 	 * @throws java.io.IOException
@@ -200,14 +213,16 @@ public abstract class AbstractLayoutPrimitives {
 	}
 
 	public void setFlipState(NodeCursor nodeCursor, boolean isFlipped) {
-		DataProvider node2LabelInfo = nodeCursor.node().getGraph().getDataProvider(NodeMapKeys.LABEL_INFO_MAP);
+		DataProvider node2LabelInfo = nodeCursor.node().getGraph()
+				.getDataProvider(NodeMapKeys.LABEL_INFO_MAP);
 
 		// TODO remove it
 		if (node2LabelInfo == null)
 			return;
 
-		for ( ;nodeCursor.ok(); nodeCursor.next()) {
-			LabelInfo labelInfo = (LabelInfo)node2LabelInfo.get(nodeCursor.node());
+		for (; nodeCursor.ok(); nodeCursor.next()) {
+			LabelInfo labelInfo = (LabelInfo) node2LabelInfo.get(nodeCursor
+					.node());
 			if (labelInfo != null) {
 				labelInfo.setFlipped(isFlipped);
 			}
@@ -215,24 +230,28 @@ public abstract class AbstractLayoutPrimitives {
 	}
 
 	public void setFlipState(Node node, boolean isFlipped) {
-		DataProvider node2LabelInfo = node.getGraph().getDataProvider(NodeMapKeys.LABEL_INFO_MAP);
-		LabelInfo labelInfo = (LabelInfo)node2LabelInfo.get(node);
+		DataProvider node2LabelInfo = node.getGraph().getDataProvider(
+				NodeMapKeys.LABEL_INFO_MAP);
+		LabelInfo labelInfo = (LabelInfo) node2LabelInfo.get(node);
 		if (labelInfo != null) {
-			labelInfo.setFlipped(isFlipped);			
+			labelInfo.setFlipped(isFlipped);
 		}
 	}
 
-	public void shiftSubgraph(LayoutGraph graph, Node startingNode, Node end, 
+	public void shiftSubgraph(LayoutGraph graph, Node startingNode, Node end,
 			Node parentHyperNode, boolean isFlipped) {
-		DataProvider node2Hipernode = graph.getDataProvider(NodeMapKeys.NODE2PARENT_HYPERNODE);
+		DataProvider node2Hipernode = graph
+				.getDataProvider(NodeMapKeys.NODE2PARENT_HYPERNODE);
 		DataProvider edgeMap = graph.getDataProvider(EdgeMapKeys.EDGE_INFO);
 		NodeList nodeList = getSequenceNodes(startingNode, end, graph, true);
 
-		for (NodeCursor sequenceNodes = nodeList.nodes(); sequenceNodes.ok(); sequenceNodes.next()) {
-			for (EdgeCursor edges = sequenceNodes.node().edges(); edges.ok(); edges.next()) {
-				EdgeInfo edgeInfo = (EdgeInfo)edgeMap.get(edges.edge());
-				if (edgeInfo.isPair() || 
-						!edgeInfo.isRegular() && isPeptidePolymer(nodeList.firstNode())) {
+		for (NodeCursor sequenceNodes = nodeList.nodes(); sequenceNodes.ok(); sequenceNodes
+				.next()) {
+			for (EdgeCursor edges = sequenceNodes.node().edges(); edges.ok(); edges
+					.next()) {
+				EdgeInfo edgeInfo = (EdgeInfo) edgeMap.get(edges.edge());
+				if (edgeInfo.isPair() || !edgeInfo.isRegular()
+						&& isPeptidePolymer(nodeList.firstNode())) {
 					Node sourceNode = sequenceNodes.node();
 					Node targetNode = null;
 					if (sequenceNodes.node() != edges.edge().target()) {
@@ -241,19 +260,25 @@ public abstract class AbstractLayoutPrimitives {
 						targetNode = edges.edge().source();
 					}
 
-					// we should shift sequence in compliance with appropriate 
-					// sequence which has already been laid out. 
-					// If parentHyperNode is null then shifted node and the sequence 
+					// we should shift sequence in compliance with appropriate
+					// sequence which has already been laid out.
+					// If parentHyperNode is null then shifted node and the
+					// sequence
 					// that is being shifted are the parts of one component
-					Node targetHiperNode = (Node)node2Hipernode.get(targetNode);
-					if (parentHyperNode == null || parentHyperNode.equals(targetHiperNode)) {
-						LayoutTool.moveSubgraph(graph,
-								nodeList.nodes(),
-								graph.getCenterX(targetNode) - graph.getCenterX(sourceNode),
-								isFlipped ? 
-										isPeptideBranchEdge(edgeInfo) ?  
-												getViewMetrics().getShiftForFlippedPeptideSequence()
-												: getViewMetrics().getShiftForFlippedNucleotideSequence()
+					Node targetHiperNode = (Node) node2Hipernode
+							.get(targetNode);
+					if (parentHyperNode == null
+							|| parentHyperNode.equals(targetHiperNode)) {
+						LayoutTool
+								.moveSubgraph(
+										graph,
+										nodeList.nodes(),
+										graph.getCenterX(targetNode)
+												- graph.getCenterX(sourceNode),
+										isFlipped ? isPeptideBranchEdge(edgeInfo) ? getViewMetrics()
+												.getShiftForFlippedPeptideSequence()
+												: getViewMetrics()
+														.getShiftForFlippedNucleotideSequence()
 												: 0);
 						return;
 					}
@@ -262,46 +287,42 @@ public abstract class AbstractLayoutPrimitives {
 		}
 	}
 
-	public void verticalShiftSubgraph(
-			LayoutGraph graph, 
-			Node startingNode, 
-			Node end, 
-			boolean isFlipped) {
+	public void verticalShiftSubgraph(LayoutGraph graph, Node startingNode,
+			Node end, boolean isFlipped) {
 
 		NodeList nodeList = getSequenceNodes(startingNode, end, graph, true);
 		boolean isPeptide = isPeptidePolymer(startingNode);
-		double shiftStep = isPeptide  
-		? getViewMetrics().getShiftForFlippedPeptideSequence()
-				: getViewMetrics().getShiftForFlippedNucleotideSequence();
+		double shiftStep = isPeptide ? getViewMetrics()
+				.getShiftForFlippedPeptideSequence() : getViewMetrics()
+				.getShiftForFlippedNucleotideSequence();
 
-		LayoutTool.moveSubgraph(graph,
-				nodeList.nodes(),
-				0,
-				isFlipped 
-				? shiftStep
-						: -shiftStep);
+		LayoutTool.moveSubgraph(graph, nodeList.nodes(), 0,
+				isFlipped ? shiftStep : -shiftStep);
 	}
 
 	private boolean isPeptideBranchEdge(EdgeInfo edgeInfo) {
-		return (edgeInfo.getType().equals(EdgeType.BRANCH_BACKBONE) || edgeInfo.getType().equals(EdgeType.BRANCH_BRANCH));
+		return (edgeInfo.getType().equals(EdgeType.BRANCH_BACKBONE) || edgeInfo
+				.getType().equals(EdgeType.BRANCH_BRANCH));
 	}
 
 	protected Node[] getLoopBounds(NodeList baseList, LayoutGraph graph) {
 		// determine the type of polymer
-		DataProvider node2Hipernode = graph.getDataProvider(NodeMapKeys.NODE2PARENT_HYPERNODE);
-		Node hyperNode = (Node)node2Hipernode.get(baseList.firstNode());
-		DataProvider hyperNodeMapPolymerType = hyperNode.getGraph().getDataProvider(NodeMapKeys.HYPERNODE_POLYMER_TYPE);
-		String polyType = (String)hyperNodeMapPolymerType.get(hyperNode);
+		DataProvider node2Hipernode = graph
+				.getDataProvider(NodeMapKeys.NODE2PARENT_HYPERNODE);
+		Node hyperNode = (Node) node2Hipernode.get(baseList.firstNode());
+		DataProvider hyperNodeMapPolymerType = hyperNode.getGraph()
+				.getDataProvider(NodeMapKeys.HYPERNODE_POLYMER_TYPE);
+		String polyType = (String) hyperNodeMapPolymerType.get(hyperNode);
 
-		//the last base startingNode before the hairpin loop
+		// the last base startingNode before the hairpin loop
 		Node aBaseNode = null;
-		// the other base startingNode that aBaseNode is pairing with 
+		// the other base startingNode that aBaseNode is pairing with
 		Node pBaseNode = null;
 
 		EdgeInfo edgeInfo = null;
 		Map<Node, Integer> basePositionMap = new HashMap<Node, Integer>();
 
-		//setup the base position map
+		// setup the base position map
 		for (int i = 0; i < baseList.size(); i++) {
 			basePositionMap.put((Node) baseList.get(i), i + 1);
 		}
@@ -311,10 +332,13 @@ public abstract class AbstractLayoutPrimitives {
 		// find the last base startingNode before the hairpin loop
 		for (int i = 0; i < baseList.size(); i++) {
 			Node node = (Node) baseList.get(i);
-			for (EdgeCursor edgeCursor = node.edges(); edgeCursor.ok(); edgeCursor.next()) {
+			for (EdgeCursor edgeCursor = node.edges(); edgeCursor.ok(); edgeCursor
+					.next()) {
 				edgeInfo = (EdgeInfo) edgeMap.get(edgeCursor.edge());
-				if (edgeInfo.isPair() || 
-						!edgeInfo.isRegular() && polyType.equalsIgnoreCase(Monomer.PEPTIDE_POLYMER_TYPE)) {
+				if (edgeInfo.isPair()
+						|| !edgeInfo.isRegular()
+						&& polyType
+								.equalsIgnoreCase(Monomer.PEPTIDE_POLYMER_TYPE)) {
 					Node neighbour = null;
 					if (node == edgeCursor.edge().source()) {
 						neighbour = edgeCursor.edge().target();
@@ -322,7 +346,8 @@ public abstract class AbstractLayoutPrimitives {
 						neighbour = edgeCursor.edge().source();
 					}
 
-					if (basePositionMap.get(node) < basePositionMap.get(neighbour)) {
+					if (basePositionMap.get(node) < basePositionMap
+							.get(neighbour)) {
 						pBaseNode = neighbour;
 						aBaseNode = node;
 					} else {
@@ -341,74 +366,94 @@ public abstract class AbstractLayoutPrimitives {
 
 	public boolean isPeptidePolymer(Node node) {
 		// determine the type of polymer
-		DataProvider node2Hipernode = node.getGraph().getDataProvider(NodeMapKeys.NODE2PARENT_HYPERNODE);
-		Node hyperNode = (Node)node2Hipernode.get(node);
-		DataProvider hyperNodeMapPolymerType = hyperNode.getGraph().getDataProvider(NodeMapKeys.HYPERNODE_POLYMER_TYPE);
-		String polyType = (String)hyperNodeMapPolymerType.get(hyperNode);
+		DataProvider node2Hipernode = node.getGraph().getDataProvider(
+				NodeMapKeys.NODE2PARENT_HYPERNODE);
+		Node hyperNode = (Node) node2Hipernode.get(node);
+		DataProvider hyperNodeMapPolymerType = hyperNode.getGraph()
+				.getDataProvider(NodeMapKeys.HYPERNODE_POLYMER_TYPE);
+		String polyType = (String) hyperNodeMapPolymerType.get(hyperNode);
 
 		return polyType.equalsIgnoreCase(Monomer.PEPTIDE_POLYMER_TYPE);
 	}
 
 	public boolean isNucleotidePolymer(Node node) {
 		// determine the type of polymer
-		DataProvider node2Hipernode = node.getGraph().getDataProvider(NodeMapKeys.NODE2PARENT_HYPERNODE);
-		Node hyperNode = (Node)node2Hipernode.get(node);
-		DataProvider hyperNodeMapPolymerType = hyperNode.getGraph().getDataProvider(NodeMapKeys.HYPERNODE_POLYMER_TYPE);
-		String polyType = (String)hyperNodeMapPolymerType.get(hyperNode);
+		DataProvider node2Hipernode = node.getGraph().getDataProvider(
+				NodeMapKeys.NODE2PARENT_HYPERNODE);
+		Node hyperNode = (Node) node2Hipernode.get(node);
+		DataProvider hyperNodeMapPolymerType = hyperNode.getGraph()
+				.getDataProvider(NodeMapKeys.HYPERNODE_POLYMER_TYPE);
+		String polyType = (String) hyperNodeMapPolymerType.get(hyperNode);
 
 		return polyType.equalsIgnoreCase(Monomer.NUCLIEC_ACID_POLYMER_TYPE);
 	}
 
 	public boolean isChemicalPolymer(Node node) {
 		// determine the type of polymer
-		DataProvider node2Hipernode = node.getGraph().getDataProvider(NodeMapKeys.NODE2PARENT_HYPERNODE);
-		Node hyperNode = (Node)node2Hipernode.get(node);
-		DataProvider hyperNodeMapPolymerType = hyperNode.getGraph().getDataProvider(NodeMapKeys.HYPERNODE_POLYMER_TYPE);
-		String polyType = (String)hyperNodeMapPolymerType.get(hyperNode);
+		DataProvider node2Hipernode = node.getGraph().getDataProvider(
+				NodeMapKeys.NODE2PARENT_HYPERNODE);
+		Node hyperNode = (Node) node2Hipernode.get(node);
+		DataProvider hyperNodeMapPolymerType = hyperNode.getGraph()
+				.getDataProvider(NodeMapKeys.HYPERNODE_POLYMER_TYPE);
+		String polyType = (String) hyperNodeMapPolymerType.get(hyperNode);
 
 		return polyType.equalsIgnoreCase(Monomer.CHEMICAL_POLYMER_TYPE);
 	}
 
 	/**
-	 * The method builds path for edges between chem nodes and backbone nodes 
-	 * if they are not neighbors in layout 
+	 * The method builds path for edges between chem nodes and backbone nodes if
+	 * they are not neighbors in layout
+	 * 
 	 * @param graph
 	 * @param e
 	 */
-	public void arrangeChemEdgePath (Graph2D graph, Edge e) {
+	public void arrangeChemEdgePath(Graph2D graph, Edge e) {
 		NodeRealizer sr = graph.getRealizer(e.source());
 		NodeRealizer tr = graph.getRealizer(e.target());
 		EdgeRealizer er = graph.getRealizer(e);
 
 		// if s and t nodes are neighbours on the same horisontal line
-		if (Math.abs(sr.getCenterY() - tr.getCenterY()) < EPS && Math.abs(sr.getCenterX() - tr.getCenterX()) <= getViewMetrics().getChemNodeToBackboneNodeDistance()) {
+		if (Math.abs(sr.getCenterY() - tr.getCenterY()) < EPS
+				&& Math.abs(sr.getCenterX() - tr.getCenterX()) <= getViewMetrics()
+						.getChemNodeToBackboneNodeDistance()) {
 			return;
 		}
 
 		// if s and t nodes are neighbours on the same vertical line
 		DataProvider edgeInfoDP = graph.getDataProvider(EdgeMapKeys.EDGE_INFO);
-		AbstractEdgeInfo edgeInfo = (AbstractEdgeInfo)edgeInfoDP.get(e);
+		AbstractEdgeInfo edgeInfo = (AbstractEdgeInfo) edgeInfoDP.get(e);
 		boolean isBranchConnection = false;
 		if (isChemicalPolymer(e.source())) {
-			isBranchConnection = edgeInfo.getTargetNodeAttachment().getLabel().equalsIgnoreCase(Attachment.BACKBONE_MONOMER_BRANCH_ATTACHEMENT);	
+			isBranchConnection = edgeInfo
+					.getTargetNodeAttachment()
+					.getLabel()
+					.equalsIgnoreCase(
+							Attachment.BACKBONE_MONOMER_BRANCH_ATTACHEMENT);
 		} else {
-			isBranchConnection = edgeInfo.getSourceNodeAttachment().getLabel().equalsIgnoreCase(Attachment.BACKBONE_MONOMER_BRANCH_ATTACHEMENT);
+			isBranchConnection = edgeInfo
+					.getSourceNodeAttachment()
+					.getLabel()
+					.equalsIgnoreCase(
+							Attachment.BACKBONE_MONOMER_BRANCH_ATTACHEMENT);
 		}
-		if (isBranchConnection && 
-				Math.abs(sr.getCenterX() - tr.getCenterX()) < EPS && Math.abs(sr.getCenterY() - tr.getCenterY()) <= getViewMetrics().getShiftForFlippedPeptideSequence()) {
+		if (isBranchConnection
+				&& Math.abs(sr.getCenterX() - tr.getCenterX()) < EPS
+				&& Math.abs(sr.getCenterY() - tr.getCenterY()) <= getViewMetrics()
+						.getShiftForFlippedPeptideSequence()) {
 			return;
 		}
 
-		////////////////////////////////////////
+		// //////////////////////////////////////
 		// The case of complex edge path
-		///////////////////////////////////////
+		// /////////////////////////////////////
 
-		// determines the side where edge path should be built 
+		// determines the side where edge path should be built
 		boolean isSourceTheMostLeftNode = true;
 		boolean isSourceStandAloneNode = true;
 		double sx = graph.getRealizer(e.source()).getCenterX();
 		double sy = graph.getRealizer(e.source()).getCenterY();
-		for (NodeCursor cursor = e.source().neighbors(); cursor.ok(); cursor.next()) {
+		for (NodeCursor cursor = e.source().neighbors(); cursor.ok(); cursor
+				.next()) {
 			double cnY = graph.getRealizer(cursor.node()).getCenterY();
 			if (Math.abs(cnY - sy) < EPS)
 				isSourceStandAloneNode = false;
@@ -420,11 +465,12 @@ public abstract class AbstractLayoutPrimitives {
 			}
 		}
 
-		boolean isTargetTheMostLeftNode = true;    	
+		boolean isTargetTheMostLeftNode = true;
 		boolean isTargetStandAloneNode = true;
 		double tx = graph.getRealizer(e.target()).getCenterX();
 		double ty = graph.getRealizer(e.target()).getCenterY();
-		for (NodeCursor cursor = e.target().neighbors(); cursor.ok(); cursor.next()) {
+		for (NodeCursor cursor = e.target().neighbors(); cursor.ok(); cursor
+				.next()) {
 			double cnY = graph.getRealizer(cursor.node()).getCenterY();
 			if (Math.abs(cnY - ty) < EPS)
 				isTargetStandAloneNode = false;
@@ -439,95 +485,128 @@ public abstract class AbstractLayoutPrimitives {
 		// the case of stand alone chem mod connected via branch edge
 		if (isTargetStandAloneNode) {
 			isTargetTheMostLeftNode = isSourceTheMostLeftNode;
-		} 
+		}
 		if (isSourceStandAloneNode) {
-			isSourceTheMostLeftNode = isTargetTheMostLeftNode; 
+			isSourceTheMostLeftNode = isTargetTheMostLeftNode;
 		}
 
-		double upper = (sr.getCenterY() < tr.getCenterY()) ? sr.getCenterY() : tr.getCenterY();   
-		double mostLeft = (sr.getCenterX() < tr.getCenterX()) ? sr.getCenterX() : tr.getCenterX();   
-		double mostRight = (sr.getCenterX() > tr.getCenterX()) ? sr.getCenterX() : tr.getCenterX();
+		double upper = (sr.getCenterY() < tr.getCenterY()) ? sr.getCenterY()
+				: tr.getCenterY();
+		double mostLeft = (sr.getCenterX() < tr.getCenterX()) ? sr.getCenterX()
+				: tr.getCenterX();
+		double mostRight = (sr.getCenterX() > tr.getCenterX()) ? sr
+				.getCenterX() : tr.getCenterX();
 		if (isSourceTheMostLeftNode && isTargetTheMostLeftNode) {
 			if (isBranchConnection) {
 				er.addPoint(sr.getCenterX(), tr.getCenterY());
 			} else {
-				er.addPoint(mostLeft - getViewMetrics().getChemEdgePathHorisontalStep(), sr.getCenterY());
-				er.addPoint(mostLeft - getViewMetrics().getChemEdgePathHorisontalStep(), tr.getCenterY());
+				er.addPoint(mostLeft
+						- getViewMetrics().getChemEdgePathHorisontalStep(),
+						sr.getCenterY());
+				er.addPoint(mostLeft
+						- getViewMetrics().getChemEdgePathHorisontalStep(),
+						tr.getCenterY());
 			}
 		} else if (!isSourceTheMostLeftNode && !isTargetTheMostLeftNode) {
 			if (isBranchConnection) {
 				er.addPoint(sr.getCenterX(), tr.getCenterY());
 			} else {
-				er.addPoint(mostRight + getViewMetrics().getChemEdgePathHorisontalStep(), sr.getCenterY());
-				er.addPoint(mostRight + getViewMetrics().getChemEdgePathHorisontalStep(), tr.getCenterY());
+				er.addPoint(mostRight
+						+ getViewMetrics().getChemEdgePathHorisontalStep(),
+						sr.getCenterY());
+				er.addPoint(mostRight
+						+ getViewMetrics().getChemEdgePathHorisontalStep(),
+						tr.getCenterY());
 			}
 		} else if (isTargetTheMostLeftNode) {
 			if (isBranchConnection) {
-				er.addPoint(sr.getCenterX(), upper - getViewMetrics().getChemEdgePathVerticalStep());
+				er.addPoint(sr.getCenterX(), upper
+						- getViewMetrics().getChemEdgePathVerticalStep());
 			} else {
-				er.addPoint(mostRight + getViewMetrics().getChemEdgePathHorisontalStep(), sr.getCenterY());
-				er.addPoint(mostRight + getViewMetrics().getChemEdgePathHorisontalStep(), upper - getViewMetrics().getChemEdgePathVerticalStep());
+				er.addPoint(mostRight
+						+ getViewMetrics().getChemEdgePathHorisontalStep(),
+						sr.getCenterY());
+				er.addPoint(mostRight
+						+ getViewMetrics().getChemEdgePathHorisontalStep(),
+						upper - getViewMetrics().getChemEdgePathVerticalStep());
 			}
-			
-			er.addPoint(mostLeft - getViewMetrics().getChemEdgePathHorisontalStep(), upper - getViewMetrics().getChemEdgePathVerticalStep());
-			er.addPoint(mostLeft - getViewMetrics().getChemEdgePathHorisontalStep(), tr.getCenterY());
+
+			er.addPoint(mostLeft
+					- getViewMetrics().getChemEdgePathHorisontalStep(), upper
+					- getViewMetrics().getChemEdgePathVerticalStep());
+			er.addPoint(mostLeft
+					- getViewMetrics().getChemEdgePathHorisontalStep(),
+					tr.getCenterY());
 		} else if (isSourceTheMostLeftNode) {
 			if (isBranchConnection) {
-				er.addPoint(sr.getCenterX(), upper - getViewMetrics().getChemEdgePathVerticalStep());
+				er.addPoint(sr.getCenterX(), upper
+						- getViewMetrics().getChemEdgePathVerticalStep());
 			} else {
-				er.addPoint(mostLeft - getViewMetrics().getChemEdgePathHorisontalStep(), sr.getCenterY());
-				er.addPoint(mostLeft - getViewMetrics().getChemEdgePathHorisontalStep(), upper - getViewMetrics().getChemEdgePathVerticalStep());
+				er.addPoint(mostLeft
+						- getViewMetrics().getChemEdgePathHorisontalStep(),
+						sr.getCenterY());
+				er.addPoint(mostLeft
+						- getViewMetrics().getChemEdgePathHorisontalStep(),
+						upper - getViewMetrics().getChemEdgePathVerticalStep());
 			}
 
-			er.addPoint(mostRight + getViewMetrics().getChemEdgePathHorisontalStep(), upper - getViewMetrics().getChemEdgePathVerticalStep());
-			er.addPoint(mostRight + getViewMetrics().getChemEdgePathHorisontalStep(), tr.getCenterY());
-		} 
+			er.addPoint(mostRight
+					+ getViewMetrics().getChemEdgePathHorisontalStep(), upper
+					- getViewMetrics().getChemEdgePathVerticalStep());
+			er.addPoint(mostRight
+					+ getViewMetrics().getChemEdgePathHorisontalStep(),
+					tr.getCenterY());
+		}
 	}
 
-	//	public abstract void add5label(Graph2D graph, Node startingNode, String terminalLabel, boolean isComplimentary);
-	//	public void add5label(Graph2D graph) {
-	//		DataProvider labelInfoMap = graph.getDataProvider(NodeMapKeys.LABEL_INFO_MAP);
-	//		
-	//		// 5 and n labels		
-	//		for (Node node : graph.getNodeArray()) {
-	//			LabelInfo labelInfo = (LabelInfo)labelInfoMap.get(node);
-	//			String terminalLabel = labelInfo.getTerminalLabel();
-	//			if (terminalLabel != null && MonomerInfoUtils.isAnnotation(terminalLabel)) {
-	//				boolean isFlipped = labelInfo.isFlipped(); 
-	//				add5label(graph, node, terminalLabel, isFlipped);
-	//			}
-	//		}
+	// public abstract void add5label(Graph2D graph, Node startingNode, String
+	// terminalLabel, boolean isComplimentary);
+	// public void add5label(Graph2D graph) {
+	// DataProvider labelInfoMap =
+	// graph.getDataProvider(NodeMapKeys.LABEL_INFO_MAP);
 	//
-	//		
-	//		NodeRealizer nr = graph.getRealizer(startingNode);
-	//		NodeLabel label = nr.createNodeLabel();
+	// // 5 and n labels
+	// for (Node node : graph.getNodeArray()) {
+	// LabelInfo labelInfo = (LabelInfo)labelInfoMap.get(node);
+	// String terminalLabel = labelInfo.getTerminalLabel();
+	// if (terminalLabel != null &&
+	// MonomerInfoUtils.isAnnotation(terminalLabel)) {
+	// boolean isFlipped = labelInfo.isFlipped();
+	// add5label(graph, node, terminalLabel, isFlipped);
+	// }
+	// }
 	//
-	//		label.setModel(NodeLabel.FREE);
-	////		label.setModel(NodeLabel.EIGHT_POS);
-	//		double complMulX = 1;
-	//		double complMulY = 1;
-	//		if (isComplimentary) {
-	//			complMulX = -1.5;
-	//			complMulY = -1;
-	//			
-	////			label.setPosition(NodeLabel.SE);
-	//		} else {
-	////			label.setPosition(NodeLabel.NW);
-	//		}
-	//		label.setText(terminalLabel);
-	//		
-	//		int modStartLabelStep = 0;
-	////		if (isSenceOrAntiSence(labelText) && isComplimentary==false){
-	////			modStartLabelStep = layoutMetrics.getModifiedStartLabelStep();			
-	////		}
-	//		
-	//        label.setOffset(complMulX * ( layoutMetrics.getXStartLabelOffset() + modStartLabelStep), complMulY* layoutMetrics.getYStartLabelOffset());
 	//
-	//		label.setBackgroundColor(Color.yellow);
-	//		
-	//		label.setFontSize(layoutMetrics.getLabelFontSize());
-	////		label.setBackgroundColor(sourcelabel.getBackgroundColor());
+	// NodeRealizer nr = graph.getRealizer(startingNode);
+	// NodeLabel label = nr.createNodeLabel();
 	//
-	//		nr.addLabel(label);
-	//	}
+	// label.setModel(NodeLabel.FREE);
+	// // label.setModel(NodeLabel.EIGHT_POS);
+	// double complMulX = 1;
+	// double complMulY = 1;
+	// if (isComplimentary) {
+	// complMulX = -1.5;
+	// complMulY = -1;
+	//
+	// // label.setPosition(NodeLabel.SE);
+	// } else {
+	// // label.setPosition(NodeLabel.NW);
+	// }
+	// label.setText(terminalLabel);
+	//
+	// int modStartLabelStep = 0;
+	// // if (isSenceOrAntiSence(labelText) && isComplimentary==false){
+	// // modStartLabelStep = layoutMetrics.getModifiedStartLabelStep();
+	// // }
+	//
+	// label.setOffset(complMulX * ( layoutMetrics.getXStartLabelOffset() +
+	// modStartLabelStep), complMulY* layoutMetrics.getYStartLabelOffset());
+	//
+	// label.setBackgroundColor(Color.yellow);
+	//
+	// label.setFontSize(layoutMetrics.getLabelFontSize());
+	// // label.setBackgroundColor(sourcelabel.getBackgroundColor());
+	//
+	// nr.addLabel(label);
+	// }
 }

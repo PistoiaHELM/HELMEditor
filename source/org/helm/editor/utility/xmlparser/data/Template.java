@@ -27,78 +27,78 @@ import java.util.List;
 
 /**
  * This class included all ui type in HELM Editor instance.
+ * 
  * @author Alexander Makarov
  */
 public class Template {
 
 	/**
-	 * ui tabs in application
-	 * Example: Bases, Sugars
+	 * ui tabs in application Example: Bases, Sugars
 	 */
 	private List<Polymer> polymers;
-	
+
 	/**
-	 * tab caption
-	 * Example: Peptide
+	 * tab caption Example: Peptide
 	 */
 	private String name;
-	
+
 	/**
 	 * @see UIType
 	 */
 	private UIType uiType;
-	
+
 	/**
 	 * Possible ui elements in HELM Editor application
+	 * 
 	 * @author Alexander Makarov
 	 */
 	public static enum UIType {
 		TAB, TREE, SEARCH;
-		
+
 		private static final String TAB_STRING = "tab";
 		private static final String TREE_STRING = "tree";
 		private static final String SEARCH_STRING = "search";
-		
-		public static UIType stringValue(String value){
-			
-			if (value.equalsIgnoreCase(TAB_STRING)){
+
+		public static UIType stringValue(String value) {
+
+			if (value.equalsIgnoreCase(TAB_STRING)) {
 				return TAB;
 			} else if (value.equalsIgnoreCase(TREE_STRING)) {
 				return TREE;
-			} else if (value.equalsIgnoreCase(SEARCH_STRING)){
+			} else if (value.equalsIgnoreCase(SEARCH_STRING)) {
 				return SEARCH;
 			}
-			
+
 			return null;
 		}
 	}
-	
+
 	public Template() {
-		polymers = new ArrayList<Polymer>();		
+		polymers = new ArrayList<Polymer>();
 	}
-	
-	public String getName(){
+
+	public String getName() {
 		return name;
 	}
-	
-	public void setName(String name){
+
+	public void setName(String name) {
 		this.name = name;
 	}
-	
-	public void setUiType(UIType uiType){
+
+	public void setUiType(UIType uiType) {
 		this.uiType = uiType;
 	}
-	
-	public UIType getUiType(){
+
+	public UIType getUiType() {
 		return uiType;
-	}	
-	
-	public void addPolymer(Polymer polymer){
+	}
+
+	public void addPolymer(Polymer polymer) {
 		polymers.add(polymer);
 	}
-	
-	public Iterator<Polymer> getPolymersInterator(){
+
+	public Iterator<Polymer> getPolymersInterator() {
 		return polymers.iterator();
 	}
-	
+
 }

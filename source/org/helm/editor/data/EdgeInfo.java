@@ -26,10 +26,14 @@ import org.helm.editor.componentPanel.sequenceviewpanel.EdgeType;
 public interface EdgeInfo {
 
 	public boolean isPair();
+
 	public boolean isPBranchBackbone();
+
 	public boolean isPBranchBranch();
+
 	public boolean isRegular();
+
 	// may not be full supported yet and return nulls
 	public EdgeType getType();
-	
+
 }

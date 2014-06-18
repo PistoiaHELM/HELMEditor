@@ -24,5 +24,5 @@ package org.helm.editor.utility.notationcompositor;
 public interface Condition {
 
 	boolean condition(Object[] args);
-	
+
 }

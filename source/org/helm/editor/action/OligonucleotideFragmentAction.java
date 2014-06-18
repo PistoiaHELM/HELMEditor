@@ -28,23 +28,26 @@ import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 
 /**
- *
+ * 
  * @author zhangtianhong
  */
 public class OligonucleotideFragmentAction extends AbstractAction {
 
-    private MacromoleculeEditor editor;
+	private MacromoleculeEditor editor;
 
-    public OligonucleotideFragmentAction(MacromoleculeEditor editor) {
-        super("Fragment Oligonucleotide Sequence ...");
-        this.editor = editor;
-    }
+	public OligonucleotideFragmentAction(MacromoleculeEditor editor) {
+		super("Fragment Oligonucleotide Sequence ...");
+		this.editor = editor;
+	}
 
-    public void actionPerformed(ActionEvent e) {
-        editor.getFrame().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-        OligonucleotideFragmentDialog dialog = new OligonucleotideFragmentDialog(editor, false);
-        editor.getFrame().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-        dialog.setLocationRelativeTo(editor.getFrame());
-        dialog.setVisible(true);
-    }
+	public void actionPerformed(ActionEvent e) {
+		editor.getFrame().setCursor(
+				Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+		OligonucleotideFragmentDialog dialog = new OligonucleotideFragmentDialog(
+				editor, false);
+		editor.getFrame().setCursor(
+				Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+		dialog.setLocationRelativeTo(editor.getFrame());
+		dialog.setVisible(true);
+	}
 }

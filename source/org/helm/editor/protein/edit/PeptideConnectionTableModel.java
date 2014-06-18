@@ -28,172 +28,182 @@ import javax.swing.table.AbstractTableModel;
 
 public class PeptideConnectionTableModel extends AbstractTableModel {
 
-    public static final int BOND_TYPE_COLUMN_INDEX = 0;
-     public static final int SOURCE_CHAIN_COLUMN_INDEX = 1;
-      public static final int TARGET_CHAIN_COLUMN_INDEX = 3;
-    private String[] columnNames = {"Bond Type", "Source Chain", "Source AA #", "Target Chain", "Target AA #"};
-    private final List<PeptideConnection> data = new ArrayList<PeptideConnection>();
+	public static final int BOND_TYPE_COLUMN_INDEX = 0;
+	public static final int SOURCE_CHAIN_COLUMN_INDEX = 1;
+	public static final int TARGET_CHAIN_COLUMN_INDEX = 3;
+	private String[] columnNames = { "Bond Type", "Source Chain",
+			"Source AA #", "Target Chain", "Target AA #" };
+	private final List<PeptideConnection> data = new ArrayList<PeptideConnection>();
 
-    public PeptideConnectionTableModel() {
-    }
+	public PeptideConnectionTableModel() {
+	}
 
-    @Override
-    public String getColumnName(int col) {
-        return columnNames[col];
-    }
+	@Override
+	public String getColumnName(int col) {
+		return columnNames[col];
+	}
 
-    public int getRowCount() {
-        return data.size();
-    }
+	public int getRowCount() {
+		return data.size();
+	}
 
-    public int getColumnCount() {
-        return columnNames.length;
-    }
-    
-    public int removeChain(int k) {
-        int n = 0;
-        for (int i = data.size() - 1; i >= 0; --i) {
-            if (data.get(i).getSourceSequenceIndex() == k || data.get(i).getTargetSequenceIndex() == k) {
-                data.remove(i);
-                ++n;
-            }
-        } 
-        return n;
-    }
-    
-    @Override
-    public boolean isCellEditable(int rowIndex, int columnIndex) {
-        return true;
-    }
+	public int getColumnCount() {
+		return columnNames.length;
+	}
 
-    public Object getValueAt(int rowIndex, int columnIndex) {
-        PeptideConnection con = data.get(rowIndex);
-        switch (columnIndex) {
-            case 0:
-                return con.getBondType();
-            case 1:
-                if (con.getSourceSequenceIndex() > 0) {
-                    return ProteinEditor.PREFIX_CHAIN + String.valueOf(con.getSourceSequenceIndex());
-                } else {
-                    return "";
-                }
-            case 2:
-                if (con.getSourceAminoAcidIndex() > 0) {
-                    return String.valueOf(con.getSourceAminoAcidIndex());
-                } else {
-                    return "";
-                }
+	public int removeChain(int k) {
+		int n = 0;
+		for (int i = data.size() - 1; i >= 0; --i) {
+			if (data.get(i).getSourceSequenceIndex() == k
+					|| data.get(i).getTargetSequenceIndex() == k) {
+				data.remove(i);
+				++n;
+			}
+		}
+		return n;
+	}
 
-            case 3:
-                if (con.getTargetSequenceIndex() > 0) {
-                    return ProteinEditor.PREFIX_CHAIN + String.valueOf(con.getTargetSequenceIndex());
-                } else {
-                    return "";
-                }
-            case 4:
-                if (con.getTargetAminoAcidIndex() > 0) {
-                    return String.valueOf(con.getTargetAminoAcidIndex());
-                } else {
-                    return "";
-                }
-            default:
-                return "";
-        }
-    }
+	@Override
+	public boolean isCellEditable(int rowIndex, int columnIndex) {
+		return true;
+	}
 
-    @Override
-    public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-        PeptideConnection con = data.get(rowIndex);
-        switch (columnIndex) {
-            case 0:
-                con.setBondType((String) aValue);
-                break;
-            case 1:
-                try {
-                    String s = (String)aValue;
-                    int pos = s.startsWith(ProteinEditor.PREFIX_CHAIN) ? Integer.parseInt(s.substring(ProteinEditor.PREFIX_CHAIN.length())) : 0;
-                    if (pos > 0) {
-                        con.setSourceSequenceIndex(pos);
-                    } else {
-                        con.setSourceSequenceIndex(0);
-                    }
-                } catch (NumberFormatException nfe) {
-                    con.setSourceSequenceIndex(0);
-                }
-                break;
+	public Object getValueAt(int rowIndex, int columnIndex) {
+		PeptideConnection con = data.get(rowIndex);
+		switch (columnIndex) {
+		case 0:
+			return con.getBondType();
+		case 1:
+			if (con.getSourceSequenceIndex() > 0) {
+				return ProteinEditor.PREFIX_CHAIN
+						+ String.valueOf(con.getSourceSequenceIndex());
+			} else {
+				return "";
+			}
+		case 2:
+			if (con.getSourceAminoAcidIndex() > 0) {
+				return String.valueOf(con.getSourceAminoAcidIndex());
+			} else {
+				return "";
+			}
 
-            case 2:
-                try {
-                    int pos = Integer.parseInt((String) aValue);
-                    if (pos > 0) {
-                        con.setSourceAminoAcidIndex(pos);
-                    } else {
-                        con.setSourceAminoAcidIndex(0);
-                    }
-                } catch (NumberFormatException nfe) {
-                    con.setSourceAminoAcidIndex(0);
-                }
-                break;
+		case 3:
+			if (con.getTargetSequenceIndex() > 0) {
+				return ProteinEditor.PREFIX_CHAIN
+						+ String.valueOf(con.getTargetSequenceIndex());
+			} else {
+				return "";
+			}
+		case 4:
+			if (con.getTargetAminoAcidIndex() > 0) {
+				return String.valueOf(con.getTargetAminoAcidIndex());
+			} else {
+				return "";
+			}
+		default:
+			return "";
+		}
+	}
 
-            case 3:
-                try {
-                    String s = (String)aValue;
-                    int pos = s.startsWith(ProteinEditor.PREFIX_CHAIN) ? Integer.parseInt(s.substring(ProteinEditor.PREFIX_CHAIN.length())) : 0;
-                    if (pos > 0) {
-                        con.setTargetSequenceIndex(pos);
-                    } else {
-                        con.setTargetSequenceIndex(0);
-                    }
-                } catch (NumberFormatException nfe) {
-                    con.setTargetSequenceIndex(0);
-                }
-                break;
+	@Override
+	public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+		PeptideConnection con = data.get(rowIndex);
+		switch (columnIndex) {
+		case 0:
+			con.setBondType((String) aValue);
+			break;
+		case 1:
+			try {
+				String s = (String) aValue;
+				int pos = s.startsWith(ProteinEditor.PREFIX_CHAIN) ? Integer
+						.parseInt(s.substring(ProteinEditor.PREFIX_CHAIN
+								.length())) : 0;
+				if (pos > 0) {
+					con.setSourceSequenceIndex(pos);
+				} else {
+					con.setSourceSequenceIndex(0);
+				}
+			} catch (NumberFormatException nfe) {
+				con.setSourceSequenceIndex(0);
+			}
+			break;
 
-            case 4:
-                try {
-                    int pos = Integer.parseInt((String) aValue);
-                    if (pos > 0) {
-                        con.setTargetAminoAcidIndex(pos);
-                    } else {
-                        con.setTargetAminoAcidIndex(0);
-                    }
-                } catch (NumberFormatException nfe) {
-                    con.setTargetAminoAcidIndex(0);
-                }
-                break;
-        }
-    }
+		case 2:
+			try {
+				int pos = Integer.parseInt((String) aValue);
+				if (pos > 0) {
+					con.setSourceAminoAcidIndex(pos);
+				} else {
+					con.setSourceAminoAcidIndex(0);
+				}
+			} catch (NumberFormatException nfe) {
+				con.setSourceAminoAcidIndex(0);
+			}
+			break;
 
-    public synchronized void setData(List<PeptideConnection> newData) {
-        data.clear();
-        for (int i = 0; i < newData.size(); i++) {
-            data.add(newData.get(i));
-        }
-        fireTableDataChanged();
-    }
+		case 3:
+			try {
+				String s = (String) aValue;
+				int pos = s.startsWith(ProteinEditor.PREFIX_CHAIN) ? Integer
+						.parseInt(s.substring(ProteinEditor.PREFIX_CHAIN
+								.length())) : 0;
+				if (pos > 0) {
+					con.setTargetSequenceIndex(pos);
+				} else {
+					con.setTargetSequenceIndex(0);
+				}
+			} catch (NumberFormatException nfe) {
+				con.setTargetSequenceIndex(0);
+			}
+			break;
 
-    public synchronized void setupEmptyData(int count) {
-        data.clear();
-        for (int i = 0; i < count; i++) {
-            data.add(new PeptideConnection());
-        }
-        fireTableDataChanged();
-    }
+		case 4:
+			try {
+				int pos = Integer.parseInt((String) aValue);
+				if (pos > 0) {
+					con.setTargetAminoAcidIndex(pos);
+				} else {
+					con.setTargetAminoAcidIndex(0);
+				}
+			} catch (NumberFormatException nfe) {
+				con.setTargetAminoAcidIndex(0);
+			}
+			break;
+		}
+	}
 
-    public synchronized List<PeptideConnection> getPopulatedConnections() {
-        List<PeptideConnection> l = new ArrayList<PeptideConnection>();
-        for (PeptideConnection con : data) {
-            if (null != con.getBondType() && con.getBondType().length() > 0
-                    && con.getSourceSequenceIndex() > 0 && con.getSourceAminoAcidIndex() > 0
-                    && con.getTargetSequenceIndex() > 0 && con.getTargetAminoAcidIndex() > 0) {
-                l.add(con);
-            }
-        }
-        return l;
-    }
+	public synchronized void setData(List<PeptideConnection> newData) {
+		data.clear();
+		for (int i = 0; i < newData.size(); i++) {
+			data.add(newData.get(i));
+		}
+		fireTableDataChanged();
+	}
 
-    public synchronized void clear() {
-        data.clear();
-        fireTableDataChanged();
-    }
+	public synchronized void setupEmptyData(int count) {
+		data.clear();
+		for (int i = 0; i < count; i++) {
+			data.add(new PeptideConnection());
+		}
+		fireTableDataChanged();
+	}
+
+	public synchronized List<PeptideConnection> getPopulatedConnections() {
+		List<PeptideConnection> l = new ArrayList<PeptideConnection>();
+		for (PeptideConnection con : data) {
+			if (null != con.getBondType() && con.getBondType().length() > 0
+					&& con.getSourceSequenceIndex() > 0
+					&& con.getSourceAminoAcidIndex() > 0
+					&& con.getTargetSequenceIndex() > 0
+					&& con.getTargetAminoAcidIndex() > 0) {
+				l.add(con);
+			}
+		}
+		return l;
+	}
+
+	public synchronized void clear() {
+		data.clear();
+		fireTableDataChanged();
+	}
 }

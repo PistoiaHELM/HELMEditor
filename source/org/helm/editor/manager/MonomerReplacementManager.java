@@ -50,6 +50,7 @@ import org.helm.notation.MonomerFactory;
 import org.helm.notation.NotationException;
 import org.helm.editor.controller.ModelController;
 import org.helm.editor.controller.TemplateLocator;
+import org.helm.editor.data.MonomerStoreCache;
 import org.helm.editor.data.GraphManager;
 import org.helm.editor.data.NodeMapKeys;
 import org.helm.editor.editor.MacromoleculeEditor;
@@ -67,23 +68,26 @@ import org.helm.notation.tools.SimpleNotationParser;
 public class MonomerReplacementManager extends javax.swing.JDialog {
 
 	private static final int COMMON_NOTATION_PREFIX_SUFFIX_LENGHT = 5;
-	
-	private String _ownerCode; 
-	
+
+	private String _ownerCode;
+
 	/** Creates new form MonomerReplacementManager */
-	public MonomerReplacementManager(MacromoleculeEditor editor, boolean modal, String ownerCode) {
+	public MonomerReplacementManager(MacromoleculeEditor editor, boolean modal,
+			String ownerCode) {
 		super(editor.getFrame(), modal);
 		this.editor = editor;
 		_ownerCode = ownerCode;
 		initComponents();
-		customInit();		 
+		customInit();
 	}
 
 	private void customInit() {
 		Vector types = new Vector();
 
 		try {
-			Set keys = MonomerFactory.getInstance().getMonomerDB().keySet();
+			Set keys = MonomerStoreCache.getInstance()
+					.getCombinedMonomerStore().getMonomerDB().keySet();
+			// Set keys = MonomerFactory.getInstance().getMonomerDB().keySet();
 			for (Iterator i = keys.iterator(); i.hasNext();) {
 				types.add((String) i.next());
 			}
@@ -107,50 +111,61 @@ public class MonomerReplacementManager extends javax.swing.JDialog {
 	}
 
 	public void replace() {
-		
+
 		final String polymerType = (String) polymerTypeCombo.getSelectedItem();
 		final String existingMonomerID = existingMonomerText.getText().trim();
 		final String newMonomerID = newMonomerText.getText().trim();
-		
-//		Graph2D current = DataRegistry.getInstance().getGraph2D();
-//		GraphManager graphManager = DataRegistry.getInstance().getGraphManager();
-//		Graph2D viewGraph = editor.getView().getGraph2D();
-		
+
+		// Graph2D current = DataRegistry.getInstance().getGraph2D();
+		// GraphManager graphManager =
+		// DataRegistry.getInstance().getGraphManager();
+		// Graph2D viewGraph = editor.getView().getGraph2D();
+
 		Graph2D current = editor.getView().getGraph2D();
 		GraphManager graphManager = editor.getGraphManager();
-		
+
 		try {
-			// TODO: viewGraph != current!			
-//			current = viewGraph;
-//			NodeCursor selectedNodes = viewGraph.selectedNodes();
-			
-			NodeCursor selectedNodes = current.selectedNodes();			
-			if (selectedNodes.size() == 0){
+			// TODO: viewGraph != current!
+			// current = viewGraph;
+			// NodeCursor selectedNodes = viewGraph.selectedNodes();
+
+			NodeCursor selectedNodes = current.selectedNodes();
+			if (selectedNodes.size() == 0) {
 				replaceWholeGraph(polymerType, existingMonomerID, newMonomerID);
 				return;
 			}
-			
-			new SimpleNotationParser(){{
-				validateMonomerReplacement(polymerType, existingMonomerID, newMonomerID);
-			}};
-			
+
+			new SimpleNotationParser() {
+				{
+					validateMonomerReplacement(polymerType, existingMonomerID,
+							newMonomerID);
+				}
+			};
+
 			for (; selectedNodes.ok(); selectedNodes.next()) {
-				//Node newNode = TemplateLocator.getInstance().getTemplate(polymerType, newMonomerID);
-				
-				if (MonomerInfoUtils.matches(selectedNodes.node(), existingMonomerID, polymerType)) {
-					//newNode = DragAndDropSupport.copySingleNode(editor, current, newNode);
-					//DragAndDropSupport.replaceMonomer(current, graphManager, newNode, selectedNodes.node());					
-					replaceSingleNode(existingMonomerID, newMonomerID, selectedNodes.node());
+				// Node newNode =
+				// TemplateLocator.getInstance().getTemplate(polymerType,
+				// newMonomerID);
+
+				if (MonomerInfoUtils.matches(selectedNodes.node(),
+						existingMonomerID, polymerType)) {
+					// newNode = DragAndDropSupport.copySingleNode(editor,
+					// current, newNode);
+					// DragAndDropSupport.replaceMonomer(current, graphManager,
+					// newNode, selectedNodes.node());
+					replaceSingleNode(existingMonomerID, newMonomerID,
+							selectedNodes.node());
 				}
 			}
-			String newNotation = Graph2NotationTranslator.getNewNotation(graphManager);
-			
+			String newNotation = Graph2NotationTranslator
+					.getNewNotation(graphManager);
+
 			ModelController.notationUpdated(newNotation, _ownerCode);
 			current.unselectAll();
 			dispose();
-		
+
 			return;
-			
+
 		} catch (Exception ex) {
 			Logger.getLogger(MonomerReplacementManager.class.getName()).log(
 					Level.SEVERE, null, ex);
@@ -163,12 +178,13 @@ public class MonomerReplacementManager extends javax.swing.JDialog {
 			current.unselectAll();
 			dispose();
 		}
-		
+
 		try {
 			Graph2NotationTranslator.updateHyperGraph(current, graphManager);
-			String notation = Graph2NotationTranslator.getNewNotation(graphManager);
+			String notation = Graph2NotationTranslator
+					.getNewNotation(graphManager);
 			ModelController.notationUpdated(notation, _ownerCode);
-		} catch (Exception ex){
+		} catch (Exception ex) {
 			Logger.getLogger(MonomerReplacementManager.class.getName()).log(
 					Level.SEVERE, null, ex);
 			JOptionPane.showMessageDialog(this, "Error replacing monomers:\n"
@@ -180,53 +196,65 @@ public class MonomerReplacementManager extends javax.swing.JDialog {
 
 		dispose();
 	}
-	
-	private void replaceSingleNode(String oldMonomerId, String newMonomerId, Node oldNode) {
+
+	private void replaceSingleNode(String oldMonomerId, String newMonomerId,
+			Node oldNode) {
 		Graph g = oldNode.getGraph();
-		Node hyperNode = (Node)((NodeMap)g.getDataProvider(NodeMapKeys.NODE2PARENT_HYPERNODE)).get(oldNode);
+		Node hyperNode = (Node) ((NodeMap) g
+				.getDataProvider(NodeMapKeys.NODE2PARENT_HYPERNODE))
+				.get(oldNode);
 		Graph gh = hyperNode.getGraph();
-		String polymerNotation = (String)((NodeMap)gh.getDataProvider(NodeMapKeys.HYPERNODE_POLYMER_NOTATION)).get(hyperNode);
-		int nodePosition = (Integer)((NodeMap)g.getDataProvider(NodeMapKeys.MONOMER_POSITION)).get(oldNode);
+		String polymerNotation = (String) ((NodeMap) gh
+				.getDataProvider(NodeMapKeys.HYPERNODE_POLYMER_NOTATION))
+				.get(hyperNode);
+		int nodePosition = (Integer) ((NodeMap) g
+				.getDataProvider(NodeMapKeys.MONOMER_POSITION)).get(oldNode);
 		String[] parts = polymerNotation.split("[.()]");
 		String toReplace = parts[nodePosition - 1];
 		if ((oldMonomerId.length() > 1)) {
-			if (newMonomerId.length() > 1) 
+			if (newMonomerId.length() > 1)
 				toReplace = toReplace.replace(oldMonomerId, newMonomerId);
-			else 
-				toReplace = toReplace.replace("[" + oldMonomerId + "]", newMonomerId);
+			else
+				toReplace = toReplace.replace("[" + oldMonomerId + "]",
+						newMonomerId);
 		} else if (newMonomerId.length() > 1) {
-			toReplace = toReplace.replace(oldMonomerId, "[" + newMonomerId + "]");
+			toReplace = toReplace.replace(oldMonomerId, "[" + newMonomerId
+					+ "]");
 		} else {
 			toReplace = toReplace.replace(oldMonomerId, newMonomerId);
 		}
-		
+
 		String newNotation = "";
 		int partIndex = 0;
 		int stringIndex = 0;
-		
+
 		while (stringIndex < polymerNotation.length()) {
 			String remainingPart = polymerNotation.substring(stringIndex);
-			if ((partIndex < parts.length) && remainingPart.startsWith(parts[partIndex])) {
+			if ((partIndex < parts.length)
+					&& remainingPart.startsWith(parts[partIndex])) {
 				stringIndex += parts[partIndex].length();
 				if (partIndex == nodePosition - 1) {
 					parts[nodePosition - 1] = toReplace;
 				}
 				newNotation += parts[partIndex];
-				partIndex ++;
+				partIndex++;
 			} else {
 				newNotation += polymerNotation.charAt(stringIndex);
-				stringIndex ++;
+				stringIndex++;
 			}
 		}
-		
-		((NodeMap)gh.getDataProvider(NodeMapKeys.HYPERNODE_POLYMER_NOTATION)).set(hyperNode, newNotation);
+
+		((NodeMap) gh.getDataProvider(NodeMapKeys.HYPERNODE_POLYMER_NOTATION))
+				.set(hyperNode, newNotation);
 	}
-	
-	public void replaceWholeGraph(String polymerType, String existingMonomerID, String newMonomerID) 
-		throws MonomerException, IOException, JDOMException, NotationException{
+
+	public void replaceWholeGraph(String polymerType, String existingMonomerID,
+			String newMonomerID) throws MonomerException, IOException,
+			JDOMException, NotationException {
 		String notation = editor.getNotation();
-		String newNotation = ComplexNotationParser.replaceMonomer(notation, polymerType, existingMonomerID, newMonomerID);
-		
+		String newNotation = ComplexNotationParser.replaceMonomer(notation,
+				polymerType, existingMonomerID, newMonomerID);
+
 		ModelController.notationUpdated(newNotation, _ownerCode);
 	}
 
@@ -276,95 +304,76 @@ public class MonomerReplacementManager extends javax.swing.JDialog {
 				.setHorizontalGroup(inputPanelLayout
 						.createParallelGroup(
 								org.jdesktop.layout.GroupLayout.LEADING)
-						.add(
-								inputPanelLayout
-										.createSequentialGroup()
-										.addContainerGap()
-										.add(
-												inputPanelLayout
-														.createParallelGroup(
-																org.jdesktop.layout.GroupLayout.LEADING,
-																false)
-														.add(
-																existingMonomerLabel,
-																org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
-																org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
-																Short.MAX_VALUE)
-														.add(
-																polymerTypeLabel,
-																org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
-																org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
-																Short.MAX_VALUE)
-														.add(
-																newMonomerLabel,
-																org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
-																org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
-																Short.MAX_VALUE))
-										.add(21, 21, 21)
-										.add(
-												inputPanelLayout
-														.createParallelGroup(
-																org.jdesktop.layout.GroupLayout.TRAILING)
-														.add(polymerTypeCombo,
-																0, 100,
-																Short.MAX_VALUE)
-														.add(
-																existingMonomerText,
-																org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
-																100,
-																Short.MAX_VALUE)
-														.add(
-																newMonomerText,
-																org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
-																100,
-																Short.MAX_VALUE))
-										.addContainerGap()));
+						.add(inputPanelLayout
+								.createSequentialGroup()
+								.addContainerGap()
+								.add(inputPanelLayout
+										.createParallelGroup(
+												org.jdesktop.layout.GroupLayout.LEADING,
+												false)
+										.add(existingMonomerLabel,
+												org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
+												org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
+												Short.MAX_VALUE)
+										.add(polymerTypeLabel,
+												org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
+												org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
+												Short.MAX_VALUE)
+										.add(newMonomerLabel,
+												org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
+												org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
+												Short.MAX_VALUE))
+								.add(21, 21, 21)
+								.add(inputPanelLayout
+										.createParallelGroup(
+												org.jdesktop.layout.GroupLayout.TRAILING)
+										.add(polymerTypeCombo, 0, 100,
+												Short.MAX_VALUE)
+										.add(existingMonomerText,
+												org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
+												100, Short.MAX_VALUE)
+										.add(newMonomerText,
+												org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
+												100, Short.MAX_VALUE))
+								.addContainerGap()));
 		inputPanelLayout
 				.setVerticalGroup(inputPanelLayout
 						.createParallelGroup(
 								org.jdesktop.layout.GroupLayout.LEADING)
-						.add(
-								inputPanelLayout
-										.createSequentialGroup()
-										.addContainerGap()
-										.add(
-												inputPanelLayout
-														.createParallelGroup(
-																org.jdesktop.layout.GroupLayout.BASELINE)
-														.add(polymerTypeLabel)
-														.add(
-																polymerTypeCombo,
-																org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
-																org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
-																org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-										.addPreferredGap(
-												org.jdesktop.layout.LayoutStyle.UNRELATED)
-										.add(
-												inputPanelLayout
-														.createParallelGroup(
-																org.jdesktop.layout.GroupLayout.BASELINE)
-														.add(
-																existingMonomerLabel)
-														.add(
-																existingMonomerText,
-																org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
-																org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
-																org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-										.addPreferredGap(
-												org.jdesktop.layout.LayoutStyle.UNRELATED)
-										.add(
-												inputPanelLayout
-														.createParallelGroup(
-																org.jdesktop.layout.GroupLayout.BASELINE)
-														.add(newMonomerLabel)
-														.add(
-																newMonomerText,
-																org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
-																org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
-																org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-										.addContainerGap(
+						.add(inputPanelLayout
+								.createSequentialGroup()
+								.addContainerGap()
+								.add(inputPanelLayout
+										.createParallelGroup(
+												org.jdesktop.layout.GroupLayout.BASELINE)
+										.add(polymerTypeLabel)
+										.add(polymerTypeCombo,
+												org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
 												org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
-												Short.MAX_VALUE)));
+												org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+								.addPreferredGap(
+										org.jdesktop.layout.LayoutStyle.UNRELATED)
+								.add(inputPanelLayout
+										.createParallelGroup(
+												org.jdesktop.layout.GroupLayout.BASELINE)
+										.add(existingMonomerLabel)
+										.add(existingMonomerText,
+												org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
+												org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
+												org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+								.addPreferredGap(
+										org.jdesktop.layout.LayoutStyle.UNRELATED)
+								.add(inputPanelLayout
+										.createParallelGroup(
+												org.jdesktop.layout.GroupLayout.BASELINE)
+										.add(newMonomerLabel)
+										.add(newMonomerText,
+												org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
+												org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
+												org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+								.addContainerGap(
+										org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
+										Short.MAX_VALUE)));
 
 		cancelButton.setText("Cancel");
 		cancelButton.addActionListener(new java.awt.event.ActionListener() {
@@ -383,57 +392,42 @@ public class MonomerReplacementManager extends javax.swing.JDialog {
 		org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(
 				getContentPane());
 		getContentPane().setLayout(layout);
-		layout
-				.setHorizontalGroup(layout
-						.createParallelGroup(
-								org.jdesktop.layout.GroupLayout.LEADING)
-						.add(
-								layout
-										.createSequentialGroup()
-										.addContainerGap()
-										.add(
-												layout
-														.createParallelGroup(
-																org.jdesktop.layout.GroupLayout.LEADING)
-														.add(
-																inputPanel,
-																org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
-																org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
-																Short.MAX_VALUE)
-														.add(
-																org.jdesktop.layout.GroupLayout.TRAILING,
-																layout
-																		.createSequentialGroup()
-																		.add(
-																				replaceButton)
-																		.addPreferredGap(
-																				org.jdesktop.layout.LayoutStyle.UNRELATED)
-																		.add(
-																				cancelButton)))
-										.addContainerGap()));
-		layout
-				.setVerticalGroup(layout
-						.createParallelGroup(
-								org.jdesktop.layout.GroupLayout.LEADING)
-						.add(
-								layout
-										.createSequentialGroup()
-										.addContainerGap()
-										.add(
-												inputPanel,
-												org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
-												org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
-												org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-										.addPreferredGap(
-												org.jdesktop.layout.LayoutStyle.RELATED,
-												8, Short.MAX_VALUE)
-										.add(
-												layout
-														.createParallelGroup(
-																org.jdesktop.layout.GroupLayout.BASELINE)
-														.add(cancelButton).add(
-																replaceButton))
-										.addContainerGap()));
+		layout.setHorizontalGroup(layout
+				.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+				.add(layout
+						.createSequentialGroup()
+						.addContainerGap()
+						.add(layout
+								.createParallelGroup(
+										org.jdesktop.layout.GroupLayout.LEADING)
+								.add(inputPanel,
+										org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
+										org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
+										Short.MAX_VALUE)
+								.add(org.jdesktop.layout.GroupLayout.TRAILING,
+										layout.createSequentialGroup()
+												.add(replaceButton)
+												.addPreferredGap(
+														org.jdesktop.layout.LayoutStyle.UNRELATED)
+												.add(cancelButton)))
+						.addContainerGap()));
+		layout.setVerticalGroup(layout
+				.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+				.add(layout
+						.createSequentialGroup()
+						.addContainerGap()
+						.add(inputPanel,
+								org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
+								org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
+								org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+						.addPreferredGap(
+								org.jdesktop.layout.LayoutStyle.RELATED, 8,
+								Short.MAX_VALUE)
+						.add(layout
+								.createParallelGroup(
+										org.jdesktop.layout.GroupLayout.BASELINE)
+								.add(cancelButton).add(replaceButton))
+						.addContainerGap()));
 
 		pack();
 	}// </editor-fold>//GEN-END:initComponents

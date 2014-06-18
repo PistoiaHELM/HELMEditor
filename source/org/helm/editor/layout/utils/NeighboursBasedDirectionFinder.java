@@ -34,24 +34,24 @@ import org.helm.editor.utility.MonomerInfoUtils;
  * User: dzhelezov
  */
 public class NeighboursBasedDirectionFinder implements DirectionFinder {
-    private Graph2D graph;
+	private Graph2D graph;
 
-    public NeighboursBasedDirectionFinder(Graph2D graph) {
-        this.graph = graph;
-    }
+	public NeighboursBasedDirectionFinder(Graph2D graph) {
+		this.graph = graph;
+	}
 
-    public boolean getDirection(Node node) {
-        Set<Node> neighbours = GraphUtils.getNeighbours(node);
-        double xCord = graph.getRealizer(node).getCenterX();
-        for (Node neighbour : neighbours) {
-            if (MonomerInfoUtils.isChemicalModifierPolymer(neighbour)) {
-                continue;
-            }
-            NodeRealizer realizer = graph.getRealizer(neighbour);
-            if (realizer.getCenterX() > xCord) {
-                return false;
-            }
-        }
-        return true;
-    }
+	public boolean getDirection(Node node) {
+		Set<Node> neighbours = GraphUtils.getNeighbours(node);
+		double xCord = graph.getRealizer(node).getCenterX();
+		for (Node neighbour : neighbours) {
+			if (MonomerInfoUtils.isChemicalModifierPolymer(neighbour)) {
+				continue;
+			}
+			NodeRealizer realizer = graph.getRealizer(neighbour);
+			if (realizer.getCenterX() > xCord) {
+				return false;
+			}
+		}
+		return true;
+	}
 }

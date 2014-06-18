@@ -23,20 +23,21 @@ package org.helm.editor.utility.xmlparser.validator;
 
 /**
  * Exception that can throw only .xml validator
+ * 
  * @author Alexander Makarov
  */
-public class ValidationTemplateExcaption extends Exception{
+public class ValidationTemplateExcaption extends Exception {
 
 	public ValidationTemplateExcaption() {
 	}
-	
+
 	public ValidationTemplateExcaption(String message) {
 		super(message);
 	}
-	
+
 	public ValidationTemplateExcaption(Exception ex) {
 		super(ex.getMessage());
 		setStackTrace(ex.getStackTrace());
 	}
-	
+
 }

@@ -28,28 +28,31 @@ import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 
 /**
- *
+ * 
  * @author zhangtianhong
  */
 public class ReplaceMonomerAction extends AbstractAction {
 
-    private MacromoleculeEditor editor;
+	private MacromoleculeEditor editor;
 
-    private String _ownerCode;
-    
-    public ReplaceMonomerAction(MacromoleculeEditor editor, String ownerCode) {
-        super("Replace Monomer");
-        this.editor = editor;
-        _ownerCode = ownerCode;
-    }
+	private String _ownerCode;
 
-    public void actionPerformed(ActionEvent e) {
-        String notation = editor.getNotation();
-        if (null == notation || notation.length() == 0) {
-            JOptionPane.showMessageDialog(editor.getFrame(), "There is no structure for monomer replacement", "Replace Monomer", JOptionPane.WARNING_MESSAGE);
-        } else {
-            MonomerReplacementManager manager = new MonomerReplacementManager(editor, false, _ownerCode);
-            manager.setVisible(true);
-        }
-    }
+	public ReplaceMonomerAction(MacromoleculeEditor editor, String ownerCode) {
+		super("Replace Monomer");
+		this.editor = editor;
+		_ownerCode = ownerCode;
+	}
+
+	public void actionPerformed(ActionEvent e) {
+		String notation = editor.getNotation();
+		if (null == notation || notation.length() == 0) {
+			JOptionPane.showMessageDialog(editor.getFrame(),
+					"There is no structure for monomer replacement",
+					"Replace Monomer", JOptionPane.WARNING_MESSAGE);
+		} else {
+			MonomerReplacementManager manager = new MonomerReplacementManager(
+					editor, false, _ownerCode);
+			manager.setVisible(true);
+		}
+	}
 }

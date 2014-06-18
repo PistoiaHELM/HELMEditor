@@ -29,19 +29,20 @@ import y.layout.LayoutGraph;
 import org.helm.editor.data.NodeSequence;
 
 /**
- * Layouts linear sequence of node. Abstract method <code>getNextLocation(Point p)</code>
- * determines the place for the next node (assuming that current 
- * node is already placed to the node p) 
+ * Layouts linear sequence of node. Abstract method
+ * <code>getNextLocation(Point p)</code> determines the place for the next node
+ * (assuming that current node is already placed to the node p)
  * 
- * @author dzhelezov 
- *
+ * @author dzhelezov
+ * 
  */
 public abstract class AbstractSequenceLayouter {
 	protected LayoutMetrics metrics;
 
 	protected abstract Point getNextPoint(Point point);
+
 	protected abstract Point getStartingPoint();
-	
+
 	public void layout(LayoutGraph graph, NodeSequence sequence) {
 		Point currentPostion = getStartingPoint();
 		for (Node node : sequence) {
@@ -49,7 +50,7 @@ public abstract class AbstractSequenceLayouter {
 			currentPostion = getNextPoint(currentPostion);
 		}
 	}
-	
+
 	public void setMetrics(LayoutMetrics metrics) {
 		this.metrics = metrics;
 	}

@@ -37,73 +37,77 @@ import org.helm.editor.utility.xmlparser.validator.ValidationTemplateExcaption;
 
 /**
  * @author Alexander Makarov
- *
+ * 
  */
 public class UIChooserController {
 
 	private UIChooser chooserFrame;
 	private PreferensesService userProperty;
-	
+
 	private MacromoleculeEditor editor;
-		
+
 	public UIChooserController(MacromoleculeEditor editor) throws IOException {
 		this.editor = editor;
-		
+
 		chooserFrame = new UIChooser(editor);
 		userProperty = PropertyManager.getInstance();
-	
+
 		configDialog();
 	}
-	
-	public JFrame getFrame(){
+
+	public JFrame getFrame() {
 		return chooserFrame;
 	}
-	
+
 	private void configDialog() {
-		
+
 		String[] uiXmlFiles = getUIXmls();
 		chooserFrame.setFileList(uiXmlFiles);
-                String uiXML = userProperty.loadUserPreference(PropertyManager.UI_XML);
-                chooserFrame.setDefaultForUIXml(uiXML);
-		
-		String uiType = userProperty.loadUserPreference(PropertyManager.UI_PROPERTY);	
+		String uiXML = userProperty.loadUserPreference(PropertyManager.UI_XML);
+		chooserFrame.setDefaultForUIXml(uiXML);
+
+		String uiType = userProperty
+				.loadUserPreference(PropertyManager.UI_PROPERTY);
 		chooserFrame.setDefaultForUIType(uiType);
-				
-		chooserFrame.getSetupButton().addActionListener(new ActionListener(){
+
+		chooserFrame.getSetupButton().addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				String selectedUIType = chooserFrame.getSelectedUIType();
 				String selectedUIXml = chooserFrame.getSelectedUIXml();
-				
+
 				try {
-					userProperty.saveUserPreference(PropertyManager.UI_PROPERTY, selectedUIType);
-					
+					userProperty.saveUserPreference(
+							PropertyManager.UI_PROPERTY, selectedUIType);
+
 					if (selectedUIXml != null) {
-						editor.setupUIType(UIType.stringValue(selectedUIType), selectedUIXml);
-						userProperty.saveUserPreference(PropertyManager.UI_XML, selectedUIXml);
+						editor.setupUIType(UIType.stringValue(selectedUIType),
+								selectedUIXml);
+						userProperty.saveUserPreference(PropertyManager.UI_XML,
+								selectedUIXml);
 					} else {
 						editor.setupUIType(UIType.stringValue(selectedUIType));
 					}
-					
+
 				} catch (Exception e1) {
 					e1.printStackTrace();
 					return;
-				} 
-								
+				}
+
 				chooserFrame.dispose();
-			}			
-		});
-	}
-	
-	// TODO now it for test
-	private String[] getUIXmls(){
-		File propertyDirectory = new File(PropertyManager.PROPERTY_FOLDER); 
-	
-		return propertyDirectory.list(new FilenameFilter(){
-			public boolean accept(File dir, String name) {
-				return !name.contains(".xsd") && !name.contains(".property"); 
 			}
-			
 		});
 	}
-	
+
+	// TODO now it for test
+	private String[] getUIXmls() {
+		File propertyDirectory = new File(PropertyManager.PROPERTY_FOLDER);
+
+		return propertyDirectory.list(new FilenameFilter() {
+			public boolean accept(File dir, String name) {
+				return !name.contains(".xsd") && !name.contains(".property");
+			}
+
+		});
+	}
+
 }

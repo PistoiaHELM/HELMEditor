@@ -25,14 +25,14 @@ import org.helm.editor.data.AbstractEdgeInfo;
 import org.helm.notation.model.Attachment;
 
 public class SViewEdgeInfo extends AbstractEdgeInfo {
-	
-	
+
 	public SViewEdgeInfo(EdgeType type) {
 		super();
 		this.type = type;
 	}
 
-	public SViewEdgeInfo(EdgeType type, Attachment sourceNodeAtt, Attachment targetNodeAtt) {
+	public SViewEdgeInfo(EdgeType type, Attachment sourceNodeAtt,
+			Attachment targetNodeAtt) {
 		super(sourceNodeAtt, targetNodeAtt);
 		this.type = type;
 	}

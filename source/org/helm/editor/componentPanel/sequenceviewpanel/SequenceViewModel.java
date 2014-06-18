@@ -31,17 +31,17 @@ import org.helm.editor.mapping.GraphMapper;
 
 public interface SequenceViewModel extends GraphMapper {
 
-	//public static final String EDGETYPE_REGULAR = "Regular";
-	//public static final String EDGETYPE_PNODE = "modified phosphate";
-	//public static final String EDGETYPE_PAIR = "Pair";
+	// public static final String EDGETYPE_REGULAR = "Regular";
+	// public static final String EDGETYPE_PNODE = "modified phosphate";
+	// public static final String EDGETYPE_PAIR = "Pair";
 
 	public static final Object MODIFICATION_COUNT = "ModificationCount";
 
 	public static final Object COMPLEMENTARY_VIEW_NODE = "ComplementaryViewNode";
 	public static final Object IS_FLIPPED = "IsFlipped";
-	
+
 	public static final String LABELS_MAP = "edeg-label map";
-	
+
 	public List<Node> getStartingViewNodeList();
 
 	public void addStrartingViewNode(Node viewNode);

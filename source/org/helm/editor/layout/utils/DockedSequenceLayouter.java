@@ -28,17 +28,17 @@ public class DockedSequenceLayouter extends AbstractSequenceLayouter {
 	private int leftvoffset = 0;
 	private int rightvoffset = 0;
 	private Point dock;
-	
+
 	public DockedSequenceLayouter(Point dockPoint, boolean direction) {
 		this.left2right = direction;
 		this.dock = dockPoint;
 	}
-	
+
 	@Override
 	protected Point getNextPoint(Point point) {
 		Point result = new Point(point);
 		if (left2right) {
-			result.x += metrics.distanceH; 
+			result.x += metrics.distanceH;
 		} else {
 			result.x -= metrics.distanceH;
 		}
@@ -54,11 +54,11 @@ public class DockedSequenceLayouter extends AbstractSequenceLayouter {
 		if (left2right) {
 			x = dock.x + metrics.distanceH;
 			y = dock.y + rightvoffset * metrics.distanceV;
-			rightvoffset ++; 
+			rightvoffset++;
 		} else {
 			x = dock.x - metrics.distanceH;
 			y = dock.y + leftvoffset * metrics.distanceV;
-			leftvoffset ++;
+			leftvoffset++;
 		}
 		return new Point(x, y);
 	}

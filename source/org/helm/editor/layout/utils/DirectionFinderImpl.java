@@ -37,7 +37,7 @@ import org.helm.editor.data.NodeMapKeys;
 import org.helm.editor.utility.SequenceGraphTools;
 
 public class DirectionFinderImpl implements DirectionFinder {
-	
+
 	private GraphManager manager;
 	private Graph2D graph;
 
@@ -46,55 +46,59 @@ public class DirectionFinderImpl implements DirectionFinder {
 		this.graph = graph2D;
 	}
 
-
-    //TODO: should return direction in angle. Now true = from left to right, false = right to left
+	// TODO: should return direction in angle. Now true = from left to right,
+	// false = right to left
 	public boolean getDirection(Node dockNode) {
 		boolean result;
 		try {
-			result =  SequenceGraphTools.isLastNucleicacidBackbone(dockNode) || 
-					SequenceGraphTools.isLastPeptideSequenceNode(dockNode, graph);
+			result = SequenceGraphTools.isLastNucleicacidBackbone(dockNode)
+					|| SequenceGraphTools.isLastPeptideSequenceNode(dockNode,
+							graph);
 			if (isInAntiSence(dockNode)) {
 				result = !result;
 			}
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
-		
+
 		if (manager.isFlipped(dockNode)) {
 			result = !result;
 		}
-		
+
 		return result;
 	}
-	
-	private List<Node> getPaired(Node startNode) {
-		NodeMap parentNodeMap = (NodeMap) graph.getDataProvider(NodeMapKeys.NODE2PARENT_HYPERNODE);
-        Graph hyperGraph = manager.getHyperGraph();
-        EdgeMap hyperEdgeDescMap = (EdgeMap) hyperGraph.getDataProvider(EdgeMapKeys.DESCRIPTION);
-        List<Node> startingNodeList = manager.getStartingNodeList();
-        List<Node> result = new ArrayList<Node>();
 
-        Node hyperNode1 = (Node) parentNodeMap.get(startNode);
-        for (Node aStartingNodeList : startingNodeList) {
-            Node hyperNode2 = (Node) parentNodeMap.get(aStartingNodeList);
-            Edge hyperEdge = hyperNode1.getEdge(hyperNode2);
-            if (hyperEdge != null) {
-                String edgeDesc = (String) hyperEdgeDescMap.get(hyperEdge);
-                if (edgeDesc.contains("pair")) {
-                    result.add(aStartingNodeList);
-                }
-            }
-        }
-        return result;   
+	private List<Node> getPaired(Node startNode) {
+		NodeMap parentNodeMap = (NodeMap) graph
+				.getDataProvider(NodeMapKeys.NODE2PARENT_HYPERNODE);
+		Graph hyperGraph = manager.getHyperGraph();
+		EdgeMap hyperEdgeDescMap = (EdgeMap) hyperGraph
+				.getDataProvider(EdgeMapKeys.DESCRIPTION);
+		List<Node> startingNodeList = manager.getStartingNodeList();
+		List<Node> result = new ArrayList<Node>();
+
+		Node hyperNode1 = (Node) parentNodeMap.get(startNode);
+		for (Node aStartingNodeList : startingNodeList) {
+			Node hyperNode2 = (Node) parentNodeMap.get(aStartingNodeList);
+			Edge hyperEdge = hyperNode1.getEdge(hyperNode2);
+			if (hyperEdge != null) {
+				String edgeDesc = (String) hyperEdgeDescMap.get(hyperEdge);
+				if (edgeDesc.contains("pair")) {
+					result.add(aStartingNodeList);
+				}
+			}
+		}
+		return result;
 	}
-	
+
 	public boolean isInAntiSence(Node startNode) {
 		List<Node> paired = getPaired(startNode);
 		if (paired.isEmpty()) {
 			return false;
 		}
 		Node complementary = paired.get(0);
-		return graph.getRealizer(startNode).getCenterY() > graph.getRealizer(complementary).getCenterY();
-		
+		return graph.getRealizer(startNode).getCenterY() > graph.getRealizer(
+				complementary).getCenterY();
+
 	}
 }

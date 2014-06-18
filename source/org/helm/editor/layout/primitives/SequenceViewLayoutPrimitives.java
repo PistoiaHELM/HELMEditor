@@ -66,14 +66,15 @@ import org.helm.notation.model.Attachment;
 
 public class SequenceViewLayoutPrimitives extends AbstractLayoutPrimitives {
 	private static final String SVIEW_ARROW_TYPE_T_SHORT = "SVIEW_T_SHORT";
-	private static final Font SIMPLE_FONT = new Font("Helvetica", Font.PLAIN, 22);
-	private static final Font ITALIC_FONT = new Font("Helvetica", Font.ITALIC, 22);	
-	
+	private static final Font SIMPLE_FONT = new Font("Helvetica", Font.PLAIN,
+			22);
+	private static final Font ITALIC_FONT = new Font("Helvetica", Font.ITALIC,
+			22);
+
 	protected SequenceViewViewMetrics layoutMetrics = null;
 	private LabelConstructor labelConstructor = null;
 
-	public SequenceViewLayoutPrimitives(
-			LabelConstructor labelConstructor,
+	public SequenceViewLayoutPrimitives(LabelConstructor labelConstructor,
 			ViewMetrics baseViewMetrics) {
 		this.layoutMetrics = new SequenceViewViewMetrics(baseViewMetrics);
 		this.labelConstructor = labelConstructor;
@@ -82,8 +83,9 @@ public class SequenceViewLayoutPrimitives extends AbstractLayoutPrimitives {
 			public Rectangle getBounds() {
 				return new Rectangle(1, 7);
 			}
+
 			public void paint(Graphics2D g) {
-				
+
 				Stroke s = g.getStroke();
 				g.setStroke(new BasicStroke(2));
 				g.drawLine(0, -3, 0, 3);
@@ -92,34 +94,44 @@ public class SequenceViewLayoutPrimitives extends AbstractLayoutPrimitives {
 		});
 	}
 
-	public void layoutSequence(LayoutGraph graph, Node sequenceStart, Node sequenceEnd, boolean directOrder) {
+	public void layoutSequence(LayoutGraph graph, Node sequenceStart,
+			Node sequenceEnd, boolean directOrder) {
 		int horizontalIndex = 0;
 
-		NodeList nodeList = getSequenceNodes(sequenceStart, sequenceEnd, graph, true);
+		NodeList nodeList = getSequenceNodes(sequenceStart, sequenceEnd, graph,
+				true);
 		for (NodeCursor cursor = nodeList.nodes(); cursor.ok(); cursor.next()) {
-			graph.setSize(cursor.node(), layoutMetrics.getNodeSize(), layoutMetrics.getNodeSize());
-			graph.setCenter(cursor.node(), 
-					horizontalIndex * layoutMetrics.getHDistanceExt() + layoutMetrics.getXStep(), 
+			graph.setSize(cursor.node(), layoutMetrics.getNodeSize(),
+					layoutMetrics.getNodeSize());
+			graph.setCenter(cursor.node(),
+					horizontalIndex * layoutMetrics.getHDistanceExt()
+							+ layoutMetrics.getXStep(),
 					layoutMetrics.getYStep());
 			horizontalIndex++;
 		}
 	}
 
-	public void layoutLoop(LayoutGraph graph, Node loopStart, Node loopEnd, boolean layoutStartingNode) {
+	public void layoutLoop(LayoutGraph graph, Node loopStart, Node loopEnd,
+			boolean layoutStartingNode) {
 		NodeList nodeList = getSequenceNodes(loopStart, loopEnd, graph, true);
 		// if (loopEnd == null) then it is a circle
-		int count = nodeList.size();//(loopEnd == null) ? nodeList.size() - 1 : nodeList.size(); 
-		double r = layoutMetrics.getVDistanceInt() * 0.5 / Math.sin(Math.PI / count);
+		int count = nodeList.size();// (loopEnd == null) ? nodeList.size() - 1 :
+									// nodeList.size();
+		double r = layoutMetrics.getVDistanceInt() * 0.5
+				/ Math.sin(Math.PI / count);
 
 		// if it is a circle then the starting node equals ending node
 		if (loopEnd == null) {
 			loopEnd = loopStart;
 		}
 		// rewrite later
-		double distancePA = graph.getCenterY(loopEnd) - graph.getCenterY(loopStart);
+		double distancePA = graph.getCenterY(loopEnd)
+				- graph.getCenterY(loopStart);
 
 		// root (r^2 - (distancePA /2)^2)
-		double centerX = Math.signum(distancePA) * Math.pow((r * r - (distancePA * 0.5) * (distancePA * 0.5)), 0.5);
+		double centerX = Math.signum(distancePA)
+				* Math.pow((r * r - (distancePA * 0.5) * (distancePA * 0.5)),
+						0.5);
 		if (centerX != Double.NaN) {
 			centerX = graph.getCenterX(loopStart) + centerX;
 		} else {
@@ -127,14 +139,15 @@ public class SequenceViewLayoutPrimitives extends AbstractLayoutPrimitives {
 		}
 
 		// the center of the loop circle
-		YPoint center = new YPoint(centerX, graph.getCenterY(loopStart) + (distancePA * 0.5));
+		YPoint center = new YPoint(centerX, graph.getCenterY(loopStart)
+				+ (distancePA * 0.5));
 
 		// remove the first and the last node in this list
 		nodeList.popNode();
 		if (loopEnd != loopStart)
 			nodeList.remove(nodeList.size() - 1);
 		// the number of nodes in between
-		NodeCursor nodes = nodeList.nodes(); //nodeList.nodes();
+		NodeCursor nodes = nodeList.nodes(); // nodeList.nodes();
 
 		// the degree of loopStart relative to the horizontal line, counter
 		// clockwise
@@ -144,9 +157,9 @@ public class SequenceViewLayoutPrimitives extends AbstractLayoutPrimitives {
 		}
 
 		double theta;
-		if (distancePA > 0) 
+		if (distancePA > 0)
 			theta = Math.asin(asin);
-		else if (distancePA < 0) 
+		else if (distancePA < 0)
 			theta = Math.PI - Math.asin(asin);
 		else
 			theta = 0.;
@@ -179,13 +192,16 @@ public class SequenceViewLayoutPrimitives extends AbstractLayoutPrimitives {
 			setFlipState(nodes.node(), Math.sin(current_theta) < 0);
 
 			graph.setCenter(nodes.node(), x, y);
-			graph.setSize(nodes.node(), layoutMetrics.getNodeSize(), layoutMetrics.getNodeSize());
+			graph.setSize(nodes.node(), layoutMetrics.getNodeSize(),
+					layoutMetrics.getNodeSize());
 		}
 	}
 
 	public void arrangeNodesVisualisationSettings(Graph2D graph) {
-		DataProvider nodeMap = graph.getDataProvider(SequenceViewModel.MODIFICATION_COUNT);
-		DataProvider labelInfoMap = graph.getDataProvider(NodeMapKeys.LABEL_INFO_MAP);
+		DataProvider nodeMap = graph
+				.getDataProvider(SequenceViewModel.MODIFICATION_COUNT);
+		DataProvider labelInfoMap = graph
+				.getDataProvider(NodeMapKeys.LABEL_INFO_MAP);
 
 		for (Node node : graph.getNodeArray()) {
 			if (MonomerInfoUtils.isChemicalModifierPolymer(node)) {
@@ -194,7 +210,8 @@ public class SequenceViewLayoutPrimitives extends AbstractLayoutPrimitives {
 				realizer.setFillColor(Color.WHITE);
 
 				NodeLabel nl = realizer.getLabel(0);
-				realizer.setSize(nl.getBox().getWidth()+10, nl.getBox().getHeight());
+				realizer.setSize(nl.getBox().getWidth() + 10, nl.getBox()
+						.getHeight());
 				nl.setFontSize(layoutMetrics.getChemNodeFontSize());
 				nl.setFontStyle(Font.BOLD);
 				nl.setModel(NodeLabel.INTERNAL);
@@ -214,10 +231,11 @@ public class SequenceViewLayoutPrimitives extends AbstractLayoutPrimitives {
 				nlable.setPosition(NodeLabel.CENTER);
 				nlable.setTextColor(Color.BLACK);
 
-				if (!nlable.getText().contains("5'") && !nlable.getText().contains("P")) {
+				if (!nlable.getText().contains("5'")
+						&& !nlable.getText().contains("P")) {
 					switch (nodeMap.getInt(node)) {
 					case 0:
-						nlable.setFont(SIMPLE_FONT);				
+						nlable.setFont(SIMPLE_FONT);
 						nlable.setTextColor(LegendPanel.NO_MODIFICATION_COLOR);
 						break;
 					case 1:
@@ -225,7 +243,7 @@ public class SequenceViewLayoutPrimitives extends AbstractLayoutPrimitives {
 						nlable.setTextColor(LegendPanel.ONE_MODIFICATION_COLOR);
 						break;
 					case 2:
-						nlable.setFont(ITALIC_FONT);				
+						nlable.setFont(ITALIC_FONT);
 						nlable.setTextColor(LegendPanel.TWO_MODIFICATION_COLOR);
 						break;
 					default:
@@ -235,10 +253,10 @@ public class SequenceViewLayoutPrimitives extends AbstractLayoutPrimitives {
 					}
 
 					if (nlable.getText().equalsIgnoreCase("X")) {
-						nlable.setFont(ITALIC_FONT);				
+						nlable.setFont(ITALIC_FONT);
 					}
 
-					LabelInfo labelInfo = (LabelInfo)labelInfoMap.get(node);
+					LabelInfo labelInfo = (LabelInfo) labelInfoMap.get(node);
 					// node index
 					if (nodeRealizer.labelCount() >= 2) {
 						nlable = nodeRealizer.getLabel(1);
@@ -248,33 +266,37 @@ public class SequenceViewLayoutPrimitives extends AbstractLayoutPrimitives {
 					}
 					nlable.setTextColor(new Color(0, 100, 150));
 					if (labelInfo.getPositionNumber() != 0) {
-						nlable.setText("" + labelInfo.getPositionNumber());	
+						nlable.setText("" + labelInfo.getPositionNumber());
 					} else {
 						nlable.setText("");
 					}
 					double xOffset = layoutMetrics.getNumberLabelXOffset();
 					int numSymb = nlable.getText().length();
-					if (numSymb > 1){
-						xOffset -= 3 * numSymb; 
+					if (numSymb > 1) {
+						xOffset -= 3 * numSymb;
 					}
 					boolean isFlipped = labelInfo.isFlipped();
-					nlable.setOffset(xOffset, ((isFlipped) ? -1 : 1) * layoutMetrics.getNumberLabelYOffset());
+					nlable.setOffset(xOffset, ((isFlipped) ? -1 : 1)
+							* layoutMetrics.getNumberLabelYOffset());
 				}
 			}
 		}
 
-		// 5 and n labels		
+		// 5 and n labels
 		for (Node node : graph.getNodeArray()) {
-			LabelInfo labelInfo = (LabelInfo)labelInfoMap.get(node);
+			LabelInfo labelInfo = (LabelInfo) labelInfoMap.get(node);
 			String terminalLabel = labelInfo.getTerminalLabel();
-			if (terminalLabel != null && MonomerInfoUtils.isAnnotation(terminalLabel)) {
-				boolean isFlipped = labelInfo.isFlipped() && !isPeptidePolymer(node); 
+			if (terminalLabel != null
+					&& MonomerInfoUtils.isAnnotation(terminalLabel)) {
+				boolean isFlipped = labelInfo.isFlipped()
+						&& !isPeptidePolymer(node);
 				add5label(graph, node, terminalLabel, isFlipped);
 			}
 		}
 	}
 
-	public void add5label(Graph2D graph, Node startingNode, String terminalLabel, boolean isComplimentary) {
+	public void add5label(Graph2D graph, Node startingNode,
+			String terminalLabel, boolean isComplimentary) {
 		NodeRealizer nr = graph.getRealizer(startingNode);
 		NodeLabel label = nr.createNodeLabel();
 
@@ -284,41 +306,45 @@ public class SequenceViewLayoutPrimitives extends AbstractLayoutPrimitives {
 		if (isComplimentary) {
 			complMulX = -1.5;
 			complMulY = -1;
-		} 
+		}
 		label.setText(terminalLabel);
 		int modStartLabelStep = 0;
-		if (!isComplimentary && isSenceOrAntiSence(startingNode, terminalLabel)){
-			modStartLabelStep = layoutMetrics.getModifiedStartLabelStep();			
+		if (!isComplimentary && isSenceOrAntiSence(startingNode, terminalLabel)) {
+			modStartLabelStep = layoutMetrics.getModifiedStartLabelStep();
 		}
 
-		label.setOffset(complMulX * ( layoutMetrics.getXStartLabelOffset() + modStartLabelStep), complMulY* layoutMetrics.getYStartLabelOffset());
+		label.setOffset(complMulX
+				* (layoutMetrics.getXStartLabelOffset() + modStartLabelStep),
+				complMulY * layoutMetrics.getYStartLabelOffset());
 		label.setBackgroundColor(Color.yellow);
 		label.setFontSize(layoutMetrics.getLabelFontSize());
 
 		nr.addLabel(label);
 	}
 
-	private boolean isSenceOrAntiSence(Node startingNode, String text){
-		return ((text.equals("5' ss") || text.equals("5' as")) 
-				&& isNucleotidePolymer(startingNode))
-		|| ((text.equals("n hc") || text.equals("n lc")) 
-				&& isPeptidePolymer(startingNode));
+	private boolean isSenceOrAntiSence(Node startingNode, String text) {
+		return ((text.equals("5' ss") || text.equals("5' as")) && isNucleotidePolymer(startingNode))
+				|| ((text.equals("n hc") || text.equals("n lc")) && isPeptidePolymer(startingNode));
 	}
-	
+
 	public void arrangeEdgesVisualisationSettings(Graph2D graph) {
 		GraphHider graphHider = new GraphHider(graph);
-		EdgeMap edgeMap = (EdgeMap) graph.getDataProvider(EdgeMapKeys.EDGE_INFO);
+		EdgeMap edgeMap = (EdgeMap) graph
+				.getDataProvider(EdgeMapKeys.EDGE_INFO);
 
-		// chem node edges preprocess (depends on the whole graph structure so there should not be hidden edges)
+		// chem node edges preprocess (depends on the whole graph structure so
+		// there should not be hidden edges)
 		for (EdgeCursor edges = graph.edges(); edges.ok(); edges.next()) {
-			EdgeType edgeType = ((SViewEdgeInfo) edgeMap.get(edges.edge())).getType();
+			EdgeType edgeType = ((SViewEdgeInfo) edgeMap.get(edges.edge()))
+					.getType();
 			if (edgeType == EdgeType.CHEM) {
 				arrangeChemEdgePath(graph, edges.edge());
 			}
 		}
-		
+
 		for (EdgeCursor edges = graph.edges(); edges.ok(); edges.next()) {
-			EdgeType edgeType = ((SViewEdgeInfo) edgeMap.get(edges.edge())).getType();
+			EdgeType edgeType = ((SViewEdgeInfo) edgeMap.get(edges.edge()))
+					.getType();
 			Edge e = edges.edge();
 			EdgeRealizer er = graph.getRealizer(e);
 
@@ -327,33 +353,43 @@ public class SequenceViewLayoutPrimitives extends AbstractLayoutPrimitives {
 				er.setLineType(LineType.DOTTED_2);
 				er.setLineColor(Color.BLUE);
 				LayoutUtils.cutEdge(graph, e, 0, 0);
-			} else if (edgeType == EdgeType.BRANCH_BACKBONE || 
-					edgeType == EdgeType.BRANCH_BRANCH ||
-					edgeType == EdgeType.CHEM) {
+			} else if (edgeType == EdgeType.BRANCH_BACKBONE
+					|| edgeType == EdgeType.BRANCH_BRANCH
+					|| edgeType == EdgeType.CHEM) {
 				double cutSourceSize = layoutMetrics.getChemEdgeOffset();
 				double cutTargetSize = layoutMetrics.getChemEdgeOffset();
-				
-				DataProvider edgeInfoMap = graph.getDataProvider(EdgeMapKeys.EDGE_INFO);
-				SViewEdgeInfo edgeInfo = (SViewEdgeInfo)edgeInfoMap.get(edges.edge());
-				Attachment sourceAttachment = edgeInfo.getSourceNodeAttachment();
-				Attachment targetAttachment = edgeInfo.getTargetNodeAttachment();
-				if (!MonomerInfoUtils.isChemicalModifierPolymer(e.source()) &&
-						sourceAttachment.getLabel().equalsIgnoreCase(Attachment.BACKBONE_MONOMER_BRANCH_ATTACHEMENT)) {
-					er.setSourceArrow(Arrow.getCustomArrow(SVIEW_ARROW_TYPE_T_SHORT));
+
+				DataProvider edgeInfoMap = graph
+						.getDataProvider(EdgeMapKeys.EDGE_INFO);
+				SViewEdgeInfo edgeInfo = (SViewEdgeInfo) edgeInfoMap.get(edges
+						.edge());
+				Attachment sourceAttachment = edgeInfo
+						.getSourceNodeAttachment();
+				Attachment targetAttachment = edgeInfo
+						.getTargetNodeAttachment();
+				if (!MonomerInfoUtils.isChemicalModifierPolymer(e.source())
+						&& sourceAttachment.getLabel().equalsIgnoreCase(
+								Attachment.BACKBONE_MONOMER_BRANCH_ATTACHEMENT)) {
+					er.setSourceArrow(Arrow
+							.getCustomArrow(SVIEW_ARROW_TYPE_T_SHORT));
 					cutSourceSize = 0;
-					if (graph.getCenterX(e.target()) == graph.getCenterX(e.source())) {
+					if (graph.getCenterX(e.target()) == graph.getCenterX(e
+							.source())) {
 						cutTargetSize = 0;
 					}
-				} 
-				if (!MonomerInfoUtils.isChemicalModifierPolymer(e.target()) &&
-						targetAttachment.getLabel().equalsIgnoreCase(Attachment.BACKBONE_MONOMER_BRANCH_ATTACHEMENT)) {
-					er.setTargetArrow(Arrow.getCustomArrow(SVIEW_ARROW_TYPE_T_SHORT));
+				}
+				if (!MonomerInfoUtils.isChemicalModifierPolymer(e.target())
+						&& targetAttachment.getLabel().equalsIgnoreCase(
+								Attachment.BACKBONE_MONOMER_BRANCH_ATTACHEMENT)) {
+					er.setTargetArrow(Arrow
+							.getCustomArrow(SVIEW_ARROW_TYPE_T_SHORT));
 					cutTargetSize = 0;
-					if (graph.getCenterX(e.target()) == graph.getCenterX(e.source())) {
+					if (graph.getCenterX(e.target()) == graph.getCenterX(e
+							.source())) {
 						cutSourceSize = 0;
 					}
 				}
-				
+
 				LayoutUtils.cutEdge(graph, e, cutSourceSize, cutTargetSize);
 			}
 
@@ -362,14 +398,15 @@ public class SequenceViewLayoutPrimitives extends AbstractLayoutPrimitives {
 				graphHider.hide(edges.edge());
 			} else if (edgeType == EdgeType.MODIFIED_P) {
 				renderModifiedEdge(e, graph);
-			} 
+			}
 		}
 
 		// TODO
 		if (!graph.isEmpty()) {
 			labelConstructor.addLabelsToSequenceImproved(graph);
 		}
-		//labelConstructor.addLabelsToSequence(graph.firstNode(), graph.lastNode(), graph, false);
+		// labelConstructor.addLabelsToSequence(graph.firstNode(),
+		// graph.lastNode(), graph, false);
 	}
 
 	private void renderModifiedEdge(Edge edge, Graph2D graph) {
@@ -383,7 +420,6 @@ public class SequenceViewLayoutPrimitives extends AbstractLayoutPrimitives {
 		edgeRealizer.setLineColor(LegendPanel.MODIFIED_P_COLOR);
 		edgeRealizer.setLineType(LineType.LINE_4);
 
-
 		double dx = targetRealizer.getCenterX() - sourceRealizer.getCenterX();
 		double dy = targetRealizer.getCenterY() - sourceRealizer.getCenterY();
 		double alpha = LayoutUtils.calculateAngle(dx, dy);
@@ -395,7 +431,7 @@ public class SequenceViewLayoutPrimitives extends AbstractLayoutPrimitives {
 		sourcePort.setOffsets(xOffset, yOffset);
 
 		Port targetPort = edgeRealizer.getTargetPort();
-		targetPort.setOffsets(-xOffset, -yOffset);				
+		targetPort.setOffsets(-xOffset, -yOffset);
 	}
 
 	public Node[] getLoopBounds(Node startingNode, LayoutGraph graph) {
@@ -413,23 +449,24 @@ public class SequenceViewLayoutPrimitives extends AbstractLayoutPrimitives {
 		return layoutMetrics;
 	}
 
-
-
-	//////////////////////////////////
+	// ////////////////////////////////
 	// Chem nodes layout primitives //
-	//////////////////////////////////
+	// ////////////////////////////////
 	/**
 	 * @return x = dX, y = dY
 	 */
-	 public Point getChemNodesFloatongSequenceLayoutMetrics() {
-		return new Point(layoutMetrics.getHDistanceInt(), layoutMetrics.getVDistanceExt());
+	public Point getChemNodesFloatongSequenceLayoutMetrics() {
+		return new Point(layoutMetrics.getHDistanceInt(),
+				layoutMetrics.getVDistanceExt());
 	}
 
 	public Point getChemNodesDockedSequenceLayoutMetrics() {
-		return new Point(layoutMetrics.getHDistanceInt(), layoutMetrics.getVDistanceExt());
+		return new Point(layoutMetrics.getHDistanceInt(),
+				layoutMetrics.getVDistanceExt());
 	}
 
-	public int getChemNodesYLayoutStart(LayoutGraph graph, Set<Node> layoutedNodes) {
+	public int getChemNodesYLayoutStart(LayoutGraph graph,
+			Set<Node> layoutedNodes) {
 		Node lowest = null;
 		for (Node node : layoutedNodes) {
 			if (lowest == null) {

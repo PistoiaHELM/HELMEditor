@@ -25,15 +25,15 @@ import java.awt.Point;
 
 public class LinearSequenceLayouter extends AbstractSequenceLayouter {
 	private Point start;
-	
+
 	public LinearSequenceLayouter(int startX, int startY) {
 		this.start = new Point(startX, startY);
 	}
-	
+
 	@Override
 	protected Point getNextPoint(Point point) {
 		Point result = new Point(point);
-		result.x += metrics.distanceH; 
+		result.x += metrics.distanceH;
 		return result;
 	}
 

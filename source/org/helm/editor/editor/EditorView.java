@@ -37,9 +37,9 @@ public interface EditorView {
 	public DirectionFinder getDirectionFinder();
 
 	public String getEditorAnnotation(Node editorNode);
-	
+
 	public Graph2D getGraph();
-	
+
 	public boolean isFlipped(Node editorStartingNode);
 
 }

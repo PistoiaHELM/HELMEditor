@@ -25,15 +25,16 @@ import java.util.List;
 
 import y.base.Node;
 
-
 /**
  * This interface represents sequence of monomers
  * 
  * @author dzhelezov
- *
+ * 
  */
-public interface NodeSequence extends Iterable<Node>{
+public interface NodeSequence extends Iterable<Node> {
 	public Node getStartNode();
+
 	public boolean isFloating();
+
 	public List<Node> getNodes();
 }

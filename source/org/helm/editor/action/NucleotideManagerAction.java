@@ -29,24 +29,24 @@ import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 
 /**
- *
+ * 
  * @author zhangtianhong
  */
 public class NucleotideManagerAction extends AbstractAction {
 
-    private MacromoleculeEditor editor;
+	private MacromoleculeEditor editor;
 
-    public NucleotideManagerAction(MacromoleculeEditor editor) {
-        super("Launch Nucleotide Manager ...");
-        this.editor = editor;
-    }
+	public NucleotideManagerAction(MacromoleculeEditor editor) {
+		super("Launch Nucleotide Manager ...");
+		this.editor = editor;
+	}
 
-    public void actionPerformed(ActionEvent e) {
-        editor.getFrame().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-        NucleotideManager nm = new NucleotideManager(editor, false);
-        nm.setLocationRelativeTo(editor.getFrame());
-        NucleotideManagerLauncher launcher = new NucleotideManagerLauncher(nm);
-        launcher.execute();
-    }
+	public void actionPerformed(ActionEvent e) {
+		editor.getFrame().setCursor(
+				Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+		NucleotideManager nm = new NucleotideManager(editor, false);
+		nm.setLocationRelativeTo(editor.getFrame());
+		NucleotideManagerLauncher launcher = new NucleotideManagerLauncher(nm);
+		launcher.execute();
+	}
 }
-

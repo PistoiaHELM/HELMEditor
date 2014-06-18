@@ -27,99 +27,98 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-
 /**
  * @author Alexander Makarov
- *
+ * 
  * @param <T>
  */
 public class Group<T extends XmlElement> {
 
 	private List<T> data;
-	
+
 	private String parent;
 	private String name;
-	
+
 	private String shape;
-	
+
 	private XmlElementsComparator comparator;
-	
+
 	public Group() {
 		data = new LinkedList<T>();
 		comparator = new XmlElementsComparator();
-	}	
-	
-	public void setName(String name){
+	}
+
+	public void setName(String name) {
 		this.name = name;
 	}
-	
-	public String getName(){
+
+	public String getName() {
 		return name;
 	}
-	
-	public String getParent(){
+
+	public String getParent() {
 		return parent;
 	}
-	
-	public void setParent(String parent){
-		this.parent =parent;
+
+	public void setParent(String parent) {
+		this.parent = parent;
 	}
-	
-	public void setShape(String shape){
+
+	public void setShape(String shape) {
 		this.shape = shape;
 	}
-	
-	public String getShape(){
+
+	public String getShape() {
 		return shape;
 	}
-	
-	public void addElement(T element){
+
+	public void addElement(T element) {
 		data.add(element);
 	}
-	
-	public Iterator<T> getGroupIterator(){
+
+	public Iterator<T> getGroupIterator() {
 		return data.iterator();
 	}
-	
-	public boolean isElementExists(String elementName){
-		
-		for(T currElement : data){
-			if (elementName.equals(currElement.getName())){ 
-				return true;			
+
+	public boolean isElementExists(String elementName) {
+
+		for (T currElement : data) {
+			if (elementName.equals(currElement.getName())) {
+				return true;
 			}
 		}
-		
+
 		return false;
 	}
-	
+
 	public XmlElement getElementNyName(String elementName) {
-		for(T currElement : data){
-			if (elementName.equals(currElement.getName())){ 
-				return currElement;			
+		for (T currElement : data) {
+			if (elementName.equals(currElement.getName())) {
+				return currElement;
 			}
 		}
-		
+
 		return null;
 
 	}
 
-	public void sort(){
+	public void sort() {
 		Collections.sort(data, comparator);
 	}
-	
+
 	public boolean isEmpty() {
 		return data.isEmpty();
 	}
-	
+
 	private class XmlElementsComparator implements Comparator<T> {
 
 		public int compare(XmlElement o1, XmlElement o2) {
 			return o1.getName().compareTo(o2.getName());
-//			if (o1.getNotation() == null || o2.getNotation() == null) {
-//			}
-//			
-//			return o1.getNotation().compareTo(o2.getNotation());
+			// if (o1.getNotation() == null || o2.getNotation() == null) {
+			// }
+			//
+			// return o1.getNotation().compareTo(o2.getNotation());
 		}
-		
+
 	}
 }

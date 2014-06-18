@@ -35,59 +35,60 @@ import org.helm.notation.model.Monomer;
 
 public class MonomerInfoDialog extends JFrame {
 
-    private JPanel _mainPanel;
-    private MonomerViewer _monomerView;
-    private JFrame _parent;
-    private JButton _okButton;
-    private static MonomerInfoDialog dialog;
+	private JPanel _mainPanel;
+	private MonomerViewer _monomerView;
+	private JFrame _parent;
+	private JButton _okButton;
+	private static MonomerInfoDialog dialog;
 
-    public static MonomerInfoDialog getDialog(JFrame parent) {
-        if (dialog == null) {
-            dialog = new MonomerInfoDialog(parent);
-        }
-        return dialog;
-    }
+	public static MonomerInfoDialog getDialog(JFrame parent) {
+		if (dialog == null) {
+			dialog = new MonomerInfoDialog(parent);
+		}
+		return dialog;
+	}
 
-    private MonomerInfoDialog(JFrame parent) {
+	private MonomerInfoDialog(JFrame parent) {
 
-        _parent = parent;
+		_parent = parent;
 
-        initComponents();
-        configComponents();
-    }
+		initComponents();
+		configComponents();
+	}
 
-    private void initComponents() {
-        _mainPanel = new JPanel();
+	private void initComponents() {
+		_mainPanel = new JPanel();
 
-        _monomerView = MonomerViewer.getNamedInstance("MonomerInfoDialog");
-        _monomerView.setModifiableStatus(false);
-        _mainPanel.add(_monomerView);
+		_monomerView = MonomerViewer.getNamedInstance("MonomerInfoDialog");
+		_monomerView.setModifiableStatus(false);
+		_mainPanel.add(_monomerView);
 
-        _okButton = new JButton("Ok");
-        _mainPanel.add(_okButton);
-    }
+		_okButton = new JButton("Ok");
+		_mainPanel.add(_okButton);
+	}
 
-    private void configComponents() {
-        // config components
-        _mainPanel.setLayout(new BoxLayout(_mainPanel, BoxLayout.Y_AXIS));
+	private void configComponents() {
+		// config components
+		_mainPanel.setLayout(new BoxLayout(_mainPanel, BoxLayout.Y_AXIS));
 
-        _okButton.addActionListener(new ActionListener() {
+		_okButton.addActionListener(new ActionListener() {
 
-            public void actionPerformed(ActionEvent e) {
-                MonomerInfoDialog.this.setVisible(false);
-            }
-        });
+			public void actionPerformed(ActionEvent e) {
+				MonomerInfoDialog.this.setVisible(false);
+			}
+		});
 
-        // config frame
-        setDefaultCloseOperation(HIDE_ON_CLOSE);
-        setTitle("Monomer Info");
-        setIconImage(IconGenerator.getImage(IconGenerator.HELM_APP_ICON_RESOURCE_URL));
-        setContentPane(_mainPanel);
-        pack();
-        setLocationRelativeTo(_parent);
-    }
+		// config frame
+		setDefaultCloseOperation(HIDE_ON_CLOSE);
+		setTitle("Monomer Info");
+		setIconImage(IconGenerator
+				.getImage(IconGenerator.HELM_APP_ICON_RESOURCE_URL));
+		setContentPane(_mainPanel);
+		pack();
+		setLocationRelativeTo(_parent);
+	}
 
-    public void setMonomer(Monomer monomer) {
-        _monomerView.setMonomer(monomer);
-    }
+	public void setMonomer(Monomer monomer) {
+		_monomerView.setMonomer(monomer);
+	}
 }

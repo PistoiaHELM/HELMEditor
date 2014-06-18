@@ -26,21 +26,21 @@ import java.util.Map;
 import y.base.Graph;
 import y.base.Node;
 
-
-public class PairEdgesCreator implements NotationCreator{
+public class PairEdgesCreator implements NotationCreator {
 
 	private static Condition EDGE_CONDITION = new PairableEdgesCondition();
-	
+
 	private static final int HYPER_GRAPH_POSITION = 0;
 	private static final int NAME_MAP_POSITION = 1;
-	
+
 	@SuppressWarnings("unchecked")
 	public String createNotationPart(Object[] args) {
-		
-		Graph hyperGraph = (Graph)args[HYPER_GRAPH_POSITION];
-		Map<Node, String> nameMap = (Map<Node, String>)args[NAME_MAP_POSITION];
-		
-		return RegularEdgesCreator.appendEdgesWithCondition(hyperGraph, nameMap, EDGE_CONDITION);
+
+		Graph hyperGraph = (Graph) args[HYPER_GRAPH_POSITION];
+		Map<Node, String> nameMap = (Map<Node, String>) args[NAME_MAP_POSITION];
+
+		return RegularEdgesCreator.appendEdgesWithCondition(hyperGraph,
+				nameMap, EDGE_CONDITION);
 	}
 
 }

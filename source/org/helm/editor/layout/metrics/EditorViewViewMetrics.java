@@ -21,42 +21,40 @@
  ******************************************************************************/
 package org.helm.editor.layout.metrics;
 
-
 public class EditorViewViewMetrics implements IViewMetrics {
-	//distance in vertical direction
-    public final static int DISTANCE_V = 60;
-    //distance in horizontal direction
-    public final static int DISTANCE_H = 60;
+	// distance in vertical direction
+	public final static int DISTANCE_V = 60;
+	// distance in horizontal direction
+	public final static int DISTANCE_H = 60;
 
-    public final static int INTERNAL_DISTANCE_V = 45;
-//    public final static int EXTERNAL_DISTANCE_H = 33;
-//    public final static int EXTERNAL_DISTANCE_V = 60;
-    public final static int INTERNAL_DISTANCE_H = 60;
+	public final static int INTERNAL_DISTANCE_V = 45;
+	// public final static int EXTERNAL_DISTANCE_H = 33;
+	// public final static int EXTERNAL_DISTANCE_V = 60;
+	public final static int INTERNAL_DISTANCE_H = 60;
 
-    
-    public int getShiftForFlippedNucleotideSequence() {
+	public int getShiftForFlippedNucleotideSequence() {
 		return 2 * DISTANCE_H;
 	}
 
 	public int getShiftForFlippedPeptideSequence() {
 		return DISTANCE_H;
 	}
-    
-    public int getHDistanceExt() {
-        return DISTANCE_H;
-    }
 
-    public int getVDistanceExt() {
-        return DISTANCE_V;
-    }
+	public int getHDistanceExt() {
+		return DISTANCE_H;
+	}
 
-    public int getHDistanceInt() {
-        return INTERNAL_DISTANCE_H;
-    }
+	public int getVDistanceExt() {
+		return DISTANCE_V;
+	}
 
-    public int getVDistanceInt() {
-        return INTERNAL_DISTANCE_V;
-    }
+	public int getHDistanceInt() {
+		return INTERNAL_DISTANCE_H;
+	}
+
+	public int getVDistanceInt() {
+		return INTERNAL_DISTANCE_V;
+	}
 
 	public int getChemEdgePathHorisontalStep() {
 		return INTERNAL_DISTANCE_H / 2;

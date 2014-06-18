@@ -21,8 +21,11 @@
  ******************************************************************************/
 package org.helm.editor.manager;
 
+import org.helm.editor.data.MonomerStoreCache;
 import org.helm.notation.MonomerFactory;
+import org.helm.notation.MonomerStore;
 import org.helm.notation.model.Monomer;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -30,99 +33,111 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.swing.JOptionPane;
 import javax.swing.table.AbstractTableModel;
 
 /**
- *
+ * 
  * @author zhangtianhong
  */
 public class MonomerTableModel extends AbstractTableModel {
 
-    private List<Monomer> monomers;
-    private String[] columnNames;
-    private String polymerType;
-    private String[] polymerTypes;
+	private List<Monomer> monomers;
+	private String[] columnNames;
+	private String polymerType;
+	private String[] polymerTypes;
 
-    public MonomerTableModel(String polymerType) {
-        init(polymerType);
-    }
+	public MonomerTableModel(String polymerType) {
+		this(polymerType, MonomerStoreCache.getInstance()
+				.getCombinedMonomerStore());
+	}
 
-    public int getRowCount() {
-        if (monomers == null) {
-            return 0;
-        } else {
-            return monomers.size();
+	public MonomerTableModel(String polymerType, MonomerStore monomerStore) {
+		init(polymerType, monomerStore);
+	}
 
-        }
-    }
+	public int getRowCount() {
+		if (monomers == null) {
+			return 0;
+		} else {
+			return monomers.size();
 
-    public int getColumnCount() {
-        return columnNames.length;
+		}
+	}
 
-    }
+	public int getColumnCount() {
+		return columnNames.length;
 
-    @Override
-    public String getColumnName(int columnIndex) {
-        return columnNames[columnIndex];
-    }
+	}
 
-    public Object getValueAt(int rowIndex, int columnIndex) {
-        Monomer mo = monomers.get(rowIndex);
-        switch (columnIndex) {
-            case 0:
-                return mo.getAlternateId();
-            case 1:
-                return mo.getNaturalAnalog();
-            case 2:
-                return mo.getName();
-            case 3:
-                return mo.getCanSMILES();
-            default:
-                return "N/A";
-        }
-    }
-    
-    public List<Monomer> getMonomerList() {
-        return monomers;
-    }
+	@Override
+	public String getColumnName(int columnIndex) {
+		return columnNames[columnIndex];
+	}
 
-    public String[] getPolymerTypes() {
-        return polymerTypes;
-    }
-    
-    private void init(String polymerType) {
-        this.polymerType = polymerType;
-        columnNames = new String[]{
-                    "Symbol",
-                    "Natural Analog",
-                    "Name",
-                    "Structure"
-                };
+	public Object getValueAt(int rowIndex, int columnIndex) {
+		Monomer mo = monomers.get(rowIndex);
+		switch (columnIndex) {
+		case 0:
+			return mo.getAlternateId();
+		case 1:
+			return mo.getNaturalAnalog();
+		case 2:
+			return mo.getName();
+		case 3:
+			return mo.getCanSMILES();
+		default:
+			return "N/A";
+		}
+	}
 
-        Map<String, Map<String, Monomer>> map = null;
-        try {
-            map = MonomerFactory.getInstance().getMonomerDB();
-        } catch (Exception ex) {
-            Logger.getLogger(MonomerTableModel.class.getName()).log(Level.SEVERE, null, ex);
-            JOptionPane.showMessageDialog(null, "Error reading monomer DB document", "Warning", JOptionPane.WARNING_MESSAGE);
-            map = null;
-        }
+	public List<Monomer> getMonomerList() {
+		return monomers;
+	}
 
-        monomers = new ArrayList<Monomer>();
-        if (null != map) {
-            Set<String> typeSet = map.keySet();
-            polymerTypes = typeSet.toArray(new String[typeSet.size()]);
-                    
-            
-            Map<String, Monomer> tmpMap = map.get(polymerType);
-            Set keyset = tmpMap.keySet();
-            for (Iterator i = keyset.iterator(); i.hasNext();) {
-                String key = (String) i.next();
-                Monomer m = tmpMap.get(key);
-                monomers.add(m);
-            }
-        }
-    }
+	public String[] getPolymerTypes() {
+		return polymerTypes;
+	}
+
+	private void init(String polymerType, MonomerStore monomerStore) {
+
+		this.polymerType = polymerType;
+		columnNames = new String[] { "Symbol", "Natural Analog", "Name",
+				"Structure" };
+
+		if (monomerStore == null) {
+			return;
+		}
+		Map<String, Map<String, Monomer>> map = null;
+		try {
+
+			map = monomerStore.getMonomerDB();
+			// map = MonomerFactory.getInstance().getMonomerDB();
+		} catch (Exception ex) {
+			Logger.getLogger(MonomerTableModel.class.getName()).log(
+					Level.SEVERE, null, ex);
+			JOptionPane.showMessageDialog(null,
+					"Error reading monomer DB document", "Warning",
+					JOptionPane.WARNING_MESSAGE);
+			map = null;
+		}
+
+		monomers = new ArrayList<Monomer>();
+		if (null != map) {
+			Set<String> typeSet = map.keySet();
+			polymerTypes = typeSet.toArray(new String[typeSet.size()]);
+
+			Map<String, Monomer> tmpMap = map.get(polymerType);
+			if (null != tmpMap) {
+				Set keyset = tmpMap.keySet();
+				for (Iterator i = keyset.iterator(); i.hasNext();) {
+					String key = (String) i.next();
+					Monomer m = tmpMap.get(key);
+					monomers.add(m);
+				}
+			}
+		}
+	}
+
 }
-

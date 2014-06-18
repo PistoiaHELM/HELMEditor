@@ -39,7 +39,6 @@ public class NucleotideSequenceTransformer extends AbstractSequenceTransformer {
 	private Queue<Node> bfsResult = new LinkedList<Node>();
 	private LinkedList<Node> PNodes = new LinkedList<Node>();
 
-	
 	public static final String P_LEFT_LABEL = "l";
 	public static final String P_RIGHT_LABEL = "r";
 	public static final String P_LEFT_RIGHT_LABEL = "b";
@@ -70,17 +69,17 @@ public class NucleotideSequenceTransformer extends AbstractSequenceTransformer {
 		if (!bfsResult.isEmpty()) {
 			Node n = bfsResult.poll();
 			if (MonomerInfoUtils.isBranchMonomer(n)) {
-				//should never happen
+				// should never happen
 				viewSequence.add(createBranch(n));
 			} else {
 				addViewNode(n);
 			}
 		}
-		
+
 		mapPNodes();
 		addPEdges();
 	}
-	
+
 	@Override
 	protected void fillLabelMaps() {
 		for (Node viewNode : viewSequence) {
@@ -100,23 +99,23 @@ public class NucleotideSequenceTransformer extends AbstractSequenceTransformer {
 
 		mapPLinkerLabels();
 	}
-	
+
 	private void addPEdges() {
 		for (Node p : PNodes) {
 			Node source = getSinglePredecessor(p);
 			Node target = getSingleSuccessor(p);
-			
+
 			if ((source == null) || (target == null)) {
 				continue;
 			}
-			
+
 			Node viewSource = viewModel.getViewNode(source);
 			Node viewTarget = viewModel.getViewNode(target);
-			
+
 			addEdge(viewSource, viewTarget, p);
 		}
 	}
-	
+
 	private void mapPNodes() {
 		for (Node p : PNodes) {
 			Node succ = getSingleSuccessor(p);
@@ -132,26 +131,28 @@ public class NucleotideSequenceTransformer extends AbstractSequenceTransformer {
 			}
 		}
 	}
-	
-	
+
 	private void mapPLinkerLabels() {
-		//special case with 2 p labels
+		// special case with 2 p labels
 		if ((viewSequence.size() == 1) && (PNodes.size() == 2)) {
 			Node seqNode = viewSequence.get(0);
 			Node p1 = PNodes.get(0);
 			Node p2 = PNodes.get(1);
-			
-			viewNodesLabelsMap.set(seqNode, 
-					P_LEFT_RIGHT_LABEL + getLabelText(p1) + 
-					LABEL_DELIMETER + getLabelText(p2));
-			
+
+			viewNodesLabelsMap.set(seqNode, P_LEFT_RIGHT_LABEL
+					+ getLabelText(p1) + LABEL_DELIMETER + getLabelText(p2));
+
 			LabelInfo labelInfo = getLabelInfo(seqNode);
-			labelInfo.setLeftLinker(MonomerInfoUtils.getMonomerID(p1) == null ? "p" : MonomerInfoUtils.getMonomerID(p1));
-			labelInfo.setRightLinker(MonomerInfoUtils.getMonomerID(p2) == null ? "p" : MonomerInfoUtils.getMonomerID(p2));
-			
+			labelInfo
+					.setLeftLinker(MonomerInfoUtils.getMonomerID(p1) == null ? "p"
+							: MonomerInfoUtils.getMonomerID(p1));
+			labelInfo
+					.setRightLinker(MonomerInfoUtils.getMonomerID(p2) == null ? "p"
+							: MonomerInfoUtils.getMonomerID(p2));
+
 			return;
 		}
-		
+
 		for (Node p : PNodes) {
 			// skip the P node if it has 2 regular neighbors
 			if (p.degree() > 2) {
@@ -159,48 +160,51 @@ public class NucleotideSequenceTransformer extends AbstractSequenceTransformer {
 			}
 			Node succ = getSingleSuccessor(p);
 			Node prev = getSinglePredecessor(p);
-			if (succ != null && MonomerInfoUtils.isChemicalModifierPolymer(succ)) {
+			if (succ != null
+					&& MonomerInfoUtils.isChemicalModifierPolymer(succ)) {
 				succ = null;
 			}
-			if (prev != null && MonomerInfoUtils.isChemicalModifierPolymer(prev)) {
+			if (prev != null
+					&& MonomerInfoUtils.isChemicalModifierPolymer(prev)) {
 				prev = null;
 			}
 			if (succ != null && prev != null) {
 				continue;
 			}
-			// set labels 
-			String name = MonomerInfoUtils.getMonomerID(p) == null ? "p" : MonomerInfoUtils.getMonomerID(p);
+			// set labels
+			String name = MonomerInfoUtils.getMonomerID(p) == null ? "p"
+					: MonomerInfoUtils.getMonomerID(p);
 			if (succ != null) {
-				viewNodesLabelsMap.set(viewModel.getViewNode(succ), 
+				viewNodesLabelsMap.set(viewModel.getViewNode(succ),
 						P_LEFT_LABEL + getLabelText(p));
 				getLabelInfo(viewModel.getViewNode(succ)).setLeftLinker(name);
 			} else if (prev != null) {
-				viewNodesLabelsMap.set(viewModel.getViewNode(prev), 
+				viewNodesLabelsMap.set(viewModel.getViewNode(prev),
 						P_RIGHT_LABEL + getLabelText(p));
 				getLabelInfo(viewModel.getViewNode(prev)).setRightLinker(name);
 			}
 		}
 	}
-	
+
 	private String getLabelText(Node node) {
-		if (isUnmodifierP(node)){
+		if (isUnmodifierP(node)) {
 			return node.toString();
 		}
-		
+
 		return P_MODIFIED_LABEL;
 	}
 
 	private boolean isUnmodifierP(Node node) {
-		if (node == null){
+		if (node == null) {
 			return false;
 		}
-		
+
 		return node.toString().equalsIgnoreCase("p");
 	}
 
 	private Node createBranch(Node editorBranch) {
-		Node viewNode = createNode(MonomerInfoUtils
-				.getNaturalAnalog(editorBranch), view);
+		Node viewNode = createNode(
+				MonomerInfoUtils.getNaturalAnalog(editorBranch), view);
 		viewModel.putViewNode(editorBranch, viewNode);
 		return viewNode;
 	}
@@ -242,7 +246,7 @@ public class NucleotideSequenceTransformer extends AbstractSequenceTransformer {
 			editorBranch = bfsResult.poll();
 			viewNode = createBranch(editorBranch);
 		}
-		
+
 		if (editorBranch != null) {
 			viewModel.putViewNode(editorBranch, viewNode);
 		}
@@ -259,11 +263,11 @@ public class NucleotideSequenceTransformer extends AbstractSequenceTransformer {
 			return;
 		}
 		Edge e = view.createEdge(viewSource, viewTarget);
-		viewEdgeTypes.set(e, 
-			MonomerInfoUtils.getMonomer(PLinker).isModified() ? 
-					new SViewEdgeInfo(EdgeType.MODIFIED_P) : 
-					new SViewEdgeInfo(EdgeType.REGULAR));
+		viewEdgeTypes
+				.set(e,
+						MonomerInfoUtils.getMonomer(PLinker).isModified() ? new SViewEdgeInfo(
+								EdgeType.MODIFIED_P) : new SViewEdgeInfo(
+								EdgeType.REGULAR));
 	}
 
-	
 }

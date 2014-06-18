@@ -52,201 +52,203 @@ import org.helm.editor.editor.EditorViewModelImpl;
  */
 public class SequenceViewControllerImpl implements SequenceViewController {
 
-    private volatile SequenceViewLayout _sequenceViewLayout;
-    private boolean layoutMode;
-    // IMPORTANT! TURN ON BEFORE PRODUCTION
-    private static final boolean USE_CACHE = false;
-    private static final int DEFAULT_NUMBER_SEQUENCES = 2;
+	private volatile SequenceViewLayout _sequenceViewLayout;
+	private boolean layoutMode;
+	// IMPORTANT! TURN ON BEFORE PRODUCTION
+	private static final boolean USE_CACHE = false;
+	private static final int DEFAULT_NUMBER_SEQUENCES = 2;
 
-    public SequenceViewControllerImpl() {
+	public SequenceViewControllerImpl() {
 
-        _sequenceViewLayout = new SequenceViewLayoutImpl();
+		_sequenceViewLayout = new SequenceViewLayoutImpl();
 
-        final Graph2DView currnetView = _sequenceViewLayout.getGraph2DView();
+		final Graph2DView currnetView = _sequenceViewLayout.getGraph2DView();
 
-        currnetView.getCanvasComponent().addMouseListener(new MouseAdapter() {
+		currnetView.getCanvasComponent().addMouseListener(new MouseAdapter() {
 
-            public void mouseClicked(MouseEvent e) {
-                if (e.getButton() == MouseEvent.BUTTON3) {
-                    _sequenceViewLayout.getPopupMenu().show(e.getComponent(),
-                            e.getX(), e.getY());
-                }
-            }
-        });
+			public void mouseClicked(MouseEvent e) {
+				if (e.getButton() == MouseEvent.BUTTON3) {
+					_sequenceViewLayout.getPopupMenu().show(e.getComponent(),
+							e.getX(), e.getY());
+				}
+			}
+		});
 
-        Graph2D graph = currnetView.getGraph2D();
-        NodeMap modificationCountMap = graph.createNodeMap();
-        graph.addDataProvider(SequenceViewModel.MODIFICATION_COUNT,
-                modificationCountMap);
+		Graph2D graph = currnetView.getGraph2D();
+		NodeMap modificationCountMap = graph.createNodeMap();
+		graph.addDataProvider(SequenceViewModel.MODIFICATION_COUNT,
+				modificationCountMap);
 
-        graph.addDataProvider(EdgeMapKeys.EDGE_INFO, graph.createEdgeMap());
+		graph.addDataProvider(EdgeMapKeys.EDGE_INFO, graph.createEdgeMap());
 
-        graph.addDataProvider(SequenceViewModel.LABELS_MAP, graph.createNodeMap());
-        graph.addDataProvider(NodeMapKeys.LABEL_INFO_MAP, graph.createNodeMap());
+		graph.addDataProvider(SequenceViewModel.LABELS_MAP,
+				graph.createNodeMap());
+		graph.addDataProvider(NodeMapKeys.LABEL_INFO_MAP, graph.createNodeMap());
 
-        
-        currnetView.getCanvasComponent().addMouseWheelListener(
-                new Graph2DViewMouseWheelZoomListener());
-    }
+		currnetView.getCanvasComponent().addMouseWheelListener(
+				new Graph2DViewMouseWheelZoomListener());
+	}
 
-    /**
-     * renders a notation to a sequence image
-     *
-     * @param notation
-     * @return image
-     */
-    public Image toImage(String notation) throws NotationException,
-            MonomerException, IOException, JDOMException, StructureException {
+	/**
+	 * renders a notation to a sequence image
+	 * 
+	 * @param notation
+	 * @return image
+	 */
+	public Image toImage(String notation) throws NotationException,
+			MonomerException, IOException, JDOMException, StructureException {
 
-        setNotation(notation);
+		setNotation(notation);
 
-        return _sequenceViewLayout.toImage();
-    }
+		return _sequenceViewLayout.toImage();
+	}
 
-    /**
-     * renders a notation to a sequence image
-     *
-     * @param notation
-     * @param width
-     * @param hight
-     * @return Image -- an Image of the notatin
-     * @throws org.helm.notation.NotationException
-     * @throws org.helm.notation.MonomerException
-     * @throws java.io.IOException
-     * @throws org.jdom.JDOMException
-     */
-    public Image toImage(String notation, int width, int hight)
-            throws NotationException, MonomerException, IOException,
-            JDOMException, StructureException {
-        setNotation(notation);
+	/**
+	 * renders a notation to a sequence image
+	 * 
+	 * @param notation
+	 * @param width
+	 * @param hight
+	 * @return Image -- an Image of the notatin
+	 * @throws org.helm.notation.NotationException
+	 * @throws org.helm.notation.MonomerException
+	 * @throws java.io.IOException
+	 * @throws org.jdom.JDOMException
+	 */
+	public Image toImage(String notation, int width, int hight)
+			throws NotationException, MonomerException, IOException,
+			JDOMException, StructureException {
+		setNotation(notation);
 
-        return _sequenceViewLayout.toImage(width, hight);
-    }
+		return _sequenceViewLayout.toImage(width, hight);
+	}
 
-    /**
-     * set notation to this display panel.
-     *
-     * @param notation
-     * @throws org.helm.notation.NotationException
-     * @throws org.helm.notation.MonomerException
-     * @throws java.io.IOException
-     * @throws org.jdom.JDOMException
-     */
-    public synchronized void setNotation(String notation) throws NotationException,
-            MonomerException, IOException, JDOMException, StructureException {
-        if (notation == null || notation.length() == 0) {
-            _sequenceViewLayout.reset();
-            return;
-        }
+	/**
+	 * set notation to this display panel.
+	 * 
+	 * @param notation
+	 * @throws org.helm.notation.NotationException
+	 * @throws org.helm.notation.MonomerException
+	 * @throws java.io.IOException
+	 * @throws org.jdom.JDOMException
+	 */
+	public synchronized void setNotation(String notation)
+			throws NotationException, MonomerException, IOException,
+			JDOMException, StructureException {
+		if (notation == null || notation.length() == 0) {
+			_sequenceViewLayout.reset();
+			return;
+		}
 
-        CacheController cacheController = CacheController.getInstance();
+		CacheController cacheController = CacheController.getInstance();
 
-        if (checkCache(notation)) {
-            _sequenceViewLayout.replaceView(initializeCachedView(notation));
-        } else {
-            EditorViewModel editorModel = null;
-//            try {
-                editorModel = new EditorViewModelImpl(notation);
-//            } catch (Exception e) {
-//                _sequenceViewLayout.appendErrorNode();
-//                return;
-//            }
+		if (checkCache(notation)) {
+			_sequenceViewLayout.replaceView(initializeCachedView(notation));
+		} else {
+			EditorViewModel editorModel = null;
+			// try {
+			editorModel = new EditorViewModelImpl(notation);
+			// } catch (Exception e) {
+			// _sequenceViewLayout.appendErrorNode();
+			// return;
+			// }
 
-            _sequenceViewLayout.setLayoutMode(layoutMode);
-            _sequenceViewLayout.setupEditorModel(editorModel);
-            _sequenceViewLayout.setComposteFlag(isComposite(notation));
+			_sequenceViewLayout.setLayoutMode(layoutMode);
+			_sequenceViewLayout.setupEditorModel(editorModel);
+			_sequenceViewLayout.setComposteFlag(isComposite(notation));
 
-            cacheController.addToCache(notation, _sequenceViewLayout.copyGraph2DView());
-        }
-    }
+			cacheController.addToCache(notation,
+					_sequenceViewLayout.copyGraph2DView());
+		}
+	}
 
-    private boolean isComposite(String notation) {
+	private boolean isComposite(String notation) {
 
-        if (notation == null) {
-            return false;
-        }
+		if (notation == null) {
+			return false;
+		}
 
-        String[] connectiosAndStrands = notation.split("[$]");
-        if (connectiosAndStrands == null || connectiosAndStrands.length == 0) {
-            return false;
-        }
+		String[] connectiosAndStrands = notation.split("[$]");
+		if (connectiosAndStrands == null || connectiosAndStrands.length == 0) {
+			return false;
+		}
 
-        return connectiosAndStrands[0].split("RNA|PEPTIDE").length > DEFAULT_NUMBER_SEQUENCES;
-    }
+		return connectiosAndStrands[0].split("RNA|PEPTIDE").length > DEFAULT_NUMBER_SEQUENCES;
+	}
 
-    public JPanel getSequenceView() {
-        return (JPanel) _sequenceViewLayout;
-    }
+	public JPanel getSequenceView() {
+		return (JPanel) _sequenceViewLayout;
+	}
 
-    public void refreshSequenceView() {
-        _sequenceViewLayout.refreshLayout();
-    }
+	public void refreshSequenceView() {
+		_sequenceViewLayout.refreshLayout();
+	}
 
-    public Graph2DView getView() {
-        return _sequenceViewLayout.getGraph2DView();
-    }
+	public Graph2DView getView() {
+		return _sequenceViewLayout.getGraph2DView();
+	}
 
-    public void appendErrorNode() {
-        _sequenceViewLayout.appendErrorNode();
-    }
+	public void appendErrorNode() {
+		_sequenceViewLayout.appendErrorNode();
+	}
 
-    public void minimizeGaps() {
-        _sequenceViewLayout.minimizeGaps();
-    }
+	public void minimizeGaps() {
+		_sequenceViewLayout.minimizeGaps();
+	}
 
-    public void setAligment(int viewType) {
-        _sequenceViewLayout.setAlignment(viewType);
-    }
+	public void setAligment(int viewType) {
+		_sequenceViewLayout.setAlignment(viewType);
+	}
 
-    public void updateAlignment() {
-        _sequenceViewLayout.updateAlignment();
-    }
+	public void updateAlignment() {
+		_sequenceViewLayout.updateAlignment();
+	}
 
-    private Graph2DView initializeCachedView(String notation) {
+	private Graph2DView initializeCachedView(String notation) {
 
-        CacheController cacheController = CacheController.getInstance();
+		CacheController cacheController = CacheController.getInstance();
 
-        Graph2DView cachedView = cacheController.getCachedValue(notation);
+		Graph2DView cachedView = cacheController.getCachedValue(notation);
 
-        Graph2D copyGraph = new Graph2D(cachedView.getGraph2D());
-        copyGraph.addDataProvider(SequenceViewModel.MODIFICATION_COUNT,
-                copyGraph.createNodeMap());
-        copyGraph.addDataProvider(NodeMapKeys.MONOMER_REF, copyGraph.createNodeMap());
-        copyGraph.addDataProvider(EdgeMapKeys.EDGE_INFO, copyGraph.createEdgeMap());
+		Graph2D copyGraph = new Graph2D(cachedView.getGraph2D());
+		copyGraph.addDataProvider(SequenceViewModel.MODIFICATION_COUNT,
+				copyGraph.createNodeMap());
+		copyGraph.addDataProvider(NodeMapKeys.MONOMER_REF,
+				copyGraph.createNodeMap());
+		copyGraph.addDataProvider(EdgeMapKeys.EDGE_INFO,
+				copyGraph.createEdgeMap());
 
-        Graph2DView view = new Graph2DView(copyGraph);
-        return view;
-    }
+		Graph2DView view = new Graph2DView(copyGraph);
+		return view;
+	}
 
-    private boolean checkCache(String notation) {
-        if (isFromPanes()) {
-            return false;
-        }
+	private boolean checkCache(String notation) {
+		if (isFromPanes()) {
+			return false;
+		}
 
+		CacheController cacheController = CacheController.getInstance();
+		if (USE_CACHE && cacheController.isValueInCache(notation)) {
+			return true;
+		}
 
-        CacheController cacheController = CacheController.getInstance();
-        if (USE_CACHE && cacheController.isValueInCache(notation)) {
-            return true;
-        }
+		return false;
+	}
 
-        return false;
-    }
+	private boolean isFromPanes() {
+		for (StackTraceElement se : Thread.currentThread().getStackTrace()) {
+			if (se.getClassName().contains("SequenceViewPanes")) {
+				return true;
+			}
+		}
+		return false;
+	}
 
-    private boolean isFromPanes() {
-        for (StackTraceElement se : Thread.currentThread().getStackTrace()) {
-            if (se.getClassName().contains("SequenceViewPanes")) {
-                return true;
-            }
-        }
-        return false;
-    }
+	public void setLayoutMode(boolean mode) {
+		layoutMode = mode;
+	}
 
-
-    public void setLayoutMode(boolean mode) {
-        layoutMode = mode;
-    }
-
-    public double getBoundOffset() {
-        return _sequenceViewLayout.getBoundOffset();
-    }
+	public double getBoundOffset() {
+		return _sequenceViewLayout.getBoundOffset();
+	}
 }

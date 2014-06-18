@@ -41,137 +41,147 @@ import javax.swing.UIManager;
 import org.jdom.JDOMException;
 
 /**
- *
+ * 
  * @author lih25
  */
 public class SiRNARenderer extends JComponent {
 
-    private String notation;
-    private BufferedImage buffereredImage = null;
-    /**
-     * previous width and height of the display screen
-     */
-    private int preWidth = 0;
-    private int preHeight = 0;
-    private Font font = null;
-    /**
-     * the space between characters
-     */
-    private int space = 2;
+	private String notation;
+	private BufferedImage buffereredImage = null;
+	/**
+	 * previous width and height of the display screen
+	 */
+	private int preWidth = 0;
+	private int preHeight = 0;
+	private Font font = null;
+	/**
+	 * the space between characters
+	 */
+	private int space = 2;
 
-    /**
-     * create a component with a giving notation
-     * @param notation
-     */
-    public SiRNARenderer(String notation) {
-        super();
-        this.notation = notation;
-    }
+	/**
+	 * create a component with a giving notation
+	 * 
+	 * @param notation
+	 */
+	public SiRNARenderer(String notation) {
+		super();
+		this.notation = notation;
+	}
 
-    /**
-     * create a component with no notation
-     */
-    public SiRNARenderer() {
-        super();
-    }
+	/**
+	 * create a component with no notation
+	 */
+	public SiRNARenderer() {
+		super();
+	}
 
-    @Override
-    protected void paintComponent(Graphics g) {
-        int width = getWidth();
-        int height = getHeight();
+	@Override
+	protected void paintComponent(Graphics g) {
+		int width = getWidth();
+		int height = getHeight();
 
-        if (preHeight != height || preWidth != width) {
-            setImageDirty();
-            preHeight = height;
-            preWidth = width;
-        }
+		if (preHeight != height || preWidth != width) {
+			setImageDirty();
+			preHeight = height;
+			preWidth = width;
+		}
 
-        if (buffereredImage == null) {
-            try {
-                buffereredImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-                Graphics bufferedGraphics = buffereredImage.createGraphics();
-                String[] formatedString = ComplexNotationParser.getFormatedSirnaSequences(notation, " ", "|");
-                char[] sequenceChars = null;
-                bufferedGraphics.setFont(getFont().deriveFont(Font.BOLD));
-                if (font != null) {
-                    bufferedGraphics.setFont(font);
-                }
+		if (buffereredImage == null) {
+			try {
+				buffereredImage = new BufferedImage(width, height,
+						BufferedImage.TYPE_INT_ARGB);
+				Graphics bufferedGraphics = buffereredImage.createGraphics();
+				String[] formatedString = ComplexNotationParser
+						.getFormatedSirnaSequences(notation, " ", "|");
+				char[] sequenceChars = null;
+				bufferedGraphics.setFont(getFont().deriveFont(Font.BOLD));
+				if (font != null) {
+					bufferedGraphics.setFont(font);
+				}
 
-                FontMetrics metrics = this.getFontMetrics(bufferedGraphics.getFont());
+				FontMetrics metrics = this.getFontMetrics(bufferedGraphics
+						.getFont());
 
-                int charWidth = metrics.charWidth('W');
-                int charHeight = metrics.getMaxAscent();
-                int startX = charWidth;
-                int startY = charHeight;
+				int charWidth = metrics.charWidth('W');
+				int charHeight = metrics.getMaxAscent();
+				int startX = charWidth;
+				int startY = charHeight;
 
-                startY = startY < 0 ? 0 : startY;
+				startY = startY < 0 ? 0 : startY;
 
-                int sequenceIndex = 0;
-                int charIndex = 0;
-                int w = 0;
+				int sequenceIndex = 0;
+				int charIndex = 0;
+				int w = 0;
 
-                for (String sequence : formatedString) {
-                    sequenceChars = sequence.toCharArray();
-                    charIndex = 0;
-                    if (sequenceIndex == 1) {
-                        bufferedGraphics.setColor(Color.blue);
-                    }
-                    for (char c : sequenceChars) {
-                        if (sequenceIndex != 1) {
-                            bufferedGraphics.setColor(ColorMap.getNucleotidesColor(String.valueOf(c)));
-                        }
-                        w = metrics.charWidth(c);
-                        bufferedGraphics.drawChars(new char[]{c},
-                                0, 1, startX + (charWidth + space) * charIndex + (charWidth - w) / 2,
-                                startY + charHeight * sequenceIndex);
-                        charIndex++;
-                    }
+				for (String sequence : formatedString) {
+					sequenceChars = sequence.toCharArray();
+					charIndex = 0;
+					if (sequenceIndex == 1) {
+						bufferedGraphics.setColor(Color.blue);
+					}
+					for (char c : sequenceChars) {
+						if (sequenceIndex != 1) {
+							bufferedGraphics.setColor(ColorMap
+									.getNucleotidesColor(String.valueOf(c)));
+						}
+						w = metrics.charWidth(c);
+						bufferedGraphics.drawChars(new char[] { c }, 0, 1,
+								startX + (charWidth + space) * charIndex
+										+ (charWidth - w) / 2, startY
+										+ charHeight * sequenceIndex);
+						charIndex++;
+					}
 
-                    sequenceIndex++;
-                }
+					sequenceIndex++;
+				}
 
+			} catch (NotationException ex) {
+				Logger.getLogger(SiRNARenderer.class.getName()).log(
+						Level.SEVERE, null, ex);
+			} catch (MonomerException ex) {
+				Logger.getLogger(SiRNARenderer.class.getName()).log(
+						Level.SEVERE, null, ex);
+			} catch (IOException ex) {
+				Logger.getLogger(SiRNARenderer.class.getName()).log(
+						Level.SEVERE, null, ex);
+			} catch (JDOMException ex) {
+				Logger.getLogger(SiRNARenderer.class.getName()).log(
+						Level.SEVERE, null, ex);
+			} catch (StructureException ex) {
+				Logger.getLogger(SiRNARenderer.class.getName()).log(
+						Level.SEVERE, null, ex);
+			}
 
-            } catch (NotationException ex) {
-                Logger.getLogger(SiRNARenderer.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (MonomerException ex) {
-                Logger.getLogger(SiRNARenderer.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (IOException ex) {
-                Logger.getLogger(SiRNARenderer.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (JDOMException ex) {
-                Logger.getLogger(SiRNARenderer.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (StructureException ex) {
-                Logger.getLogger(SiRNARenderer.class.getName()).log(Level.SEVERE, null, ex);
-            }
+		}
 
+		g.drawImage(buffereredImage, 0, 0, this);
+	}
 
+	/**
+	 * Set the notation of the display
+	 * 
+	 * @param notation
+	 *            : complex notation
+	 */
+	public void setNotation(String notation) {
+		if (this.notation == null || !this.notation.equalsIgnoreCase(notation)) {
+			this.notation = notation;
+			setImageDirty();
+		}
 
-        }
+	}
 
-        g.drawImage(buffereredImage, 0, 0, this);
-    }
+	@Override
+	public void setFont(Font font) {
+		super.setFont(font);
+		this.font = font;
+		setImageDirty();
+	}
 
-    /**
-     * Set the notation of the display
-     * @param notation : complex notation
-     */
-    public void setNotation(String notation) {
-        if (this.notation == null || !this.notation.equalsIgnoreCase(notation)) {
-            this.notation = notation;
-            setImageDirty();
-        }
-
-    }
-
-    @Override
-    public void setFont(Font font) {
-        super.setFont(font);
-        this.font = font;
-        setImageDirty();
-    }
-
-    private void setImageDirty() {
-        buffereredImage = null;
-        repaint();
-    }
+	private void setImageDirty() {
+		buffereredImage = null;
+		repaint();
+	}
 
 }

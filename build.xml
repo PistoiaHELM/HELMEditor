@@ -40,7 +40,7 @@
         <filter token="verbose" value="true"/>
         <property name="jar.file.name" value="${name}-${version}.jar"/>
         <property name="jar.file" value="${dist.dir}/${jar.file.name}"/>
-        <property name="toolkit.jar.file.name" value="HELMNotationToolkit-1.0.1.jar"/>
+        <property name="toolkit.jar.file.name" value="HELMNotationToolkit-1.0.2.jar"/>
         <property name="toolkit.jar.file" value="${lib.dir}/${toolkit.jar.file.name}"/>
         <property name="applet.helm.jar.name" value="HELM"/>
         <property name="applet.lib.jar.name" value="AppletLibs"/>

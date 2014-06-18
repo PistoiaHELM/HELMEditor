@@ -21,7 +21,6 @@
  ******************************************************************************/
 package org.helm.editor.editor;
 
-
 import java.io.IOException;
 import java.util.List;
 import org.jdom.JDOMException;
@@ -38,32 +37,33 @@ import org.helm.editor.utility.ExceptionHandler;
 import org.helm.editor.utility.Graph2NotationTranslator;
 import org.helm.editor.utility.NotationParser;
 
-public class EditorViewModelImpl implements EditorViewModel{
+public class EditorViewModelImpl implements EditorViewModel {
 	private Graph2D editor;
 	private GraphManager editorGraphManager;
-	
-	public EditorViewModelImpl(String notation) throws NotationException, MonomerException, IOException, JDOMException, StructureException  {
+
+	public EditorViewModelImpl(String notation) throws NotationException,
+			MonomerException, IOException, JDOMException, StructureException {
 		GraphPair graphPair = NotationParser.getGraphPair(notation);
 
 		editor = graphPair.getGraph();
 		editorGraphManager = graphPair.getGraphManager();
-		
+
 		Graph2NotationTranslator.updateHyperGraph(editor, editorGraphManager);
 	}
-	
+
 	public boolean isEmpty() {
-		return editor == null || editor.isEmpty() || 
-		editorGraphManager == null || editorGraphManager.getStartingNodeList().isEmpty();
+		return editor == null || editor.isEmpty() || editorGraphManager == null
+				|| editorGraphManager.getStartingNodeList().isEmpty();
 	}
-	
+
 	public Node[] getEditorGraphNodes() {
 		return editor.getNodeArray();
 	}
-	
+
 	public Graph2D getEditorGraph() {
 		return editor;
 	}
-	
+
 	public void sortEditorStartingNodes() {
 		try {
 			editorGraphManager.sortStartingNodeList();
@@ -71,15 +71,15 @@ public class EditorViewModelImpl implements EditorViewModel{
 			ExceptionHandler.handleException(e);
 		}
 	}
-	
+
 	public List<Node> getEditorStartingNodes() {
 		return editorGraphManager.getStartingNodeList();
 	}
-	
+
 	public boolean isFlipped(Node editorStartingNode) {
 		return editorGraphManager.isFlipped(editorStartingNode);
 	}
-	
+
 	public EditorViewImpl renderView() {
 		EditorViewImpl view = new EditorViewImpl(editor, editorGraphManager);
 		view.renderView();

@@ -39,38 +39,38 @@ public class EditorViewImpl implements EditorView {
 	private SequenceLayout _sequenceLayout;
 	private Graph2D _source;
 	private GraphManager _graphManager;
-	
+
 	public EditorViewImpl(Graph2D source, GraphManager manager) {
 		_source = source;
 		_graphManager = manager;
 	}
-	
+
 	public void renderView() {
 		Graph2DView parentView = new Graph2DView();
-        parentView.setGraph2D(_source);
+		parentView.setGraph2D(_source);
 
-        try {
-        	_sequenceLayout = new SequenceLayout(parentView, _graphManager);
-        	
-//        	_sequenceLayout.doLayout();
+		try {
+			_sequenceLayout = new SequenceLayout(parentView, _graphManager);
 
-            annotator = _graphManager.getAnnotator();
-            annotator.setGraph2D(_source);
-            annotator.annotateAllBasePosition();
-        } catch (Exception e) {
-            ExceptionHandler.handleException(e);
-        }
+			// _sequenceLayout.doLayout();
+
+			annotator = _graphManager.getAnnotator();
+			annotator.setGraph2D(_source);
+			annotator.annotateAllBasePosition();
+		} catch (Exception e) {
+			ExceptionHandler.handleException(e);
+		}
 
 	}
-	
+
 	public NodeLabel getEditorLabel(Node editorNode) {
 		return annotator.getLabel(editorNode);
 	}
- 
+
 	public ChemSequenceHolder getChemSequenceHolder() {
 		return _graphManager.getChemSequenceHolder();
 	}
-	
+
 	public DirectionFinder getDirectionFinder() {
 		return _sequenceLayout.getDirectionFinder();
 	}
@@ -82,9 +82,8 @@ public class EditorViewImpl implements EditorView {
 	public Graph2D getGraph() {
 		return _source;
 	}
-	
+
 	public boolean isFlipped(Node editorStartingNode) {
 		return _graphManager.isFlipped(editorStartingNode);
 	}
 }
-

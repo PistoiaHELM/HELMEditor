@@ -24,250 +24,426 @@
 package org.helm.editor.action;
 
 import chemaxon.struc.Molecule;
+
 import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+
 import org.helm.editor.controller.ModelController;
+import org.helm.editor.data.MonomerStoreCache;
 import org.helm.editor.editor.MacromoleculeEditor;
 import org.helm.editor.utility.ExceptionHandler;
 import org.helm.editor.utility.NotationParser;
 import org.helm.editor.worker.PDBFileGenerator;
+import org.helm.notation.MonomerFactory;
+import org.helm.notation.MonomerStore;
+import org.helm.notation.model.Monomer;
 import org.helm.notation.tools.ComplexNotationParser;
 import org.helm.notation.tools.StructureParser;
+import org.helm.notation.tools.xHelmNotationExporter;
+import org.helm.notation.tools.xHelmNotationParser;
+import org.jdom.Document;
+import org.jdom.Element;
+import org.jdom.input.SAXBuilder;
 
 /**
  * try to decompose structures in drawing pane into multiple structures
- *
+ * 
  * @author zhangtianhong
  */
 public class FileMenuAction extends TextMenuAction {
 
-    public static final int OPEN_ACTION_TYPE = 4;
+	public static final int OPEN_ACTION_TYPE = 4;
 
-    public FileMenuAction(MacromoleculeEditor editor, String textType, int actionType) {
-        super(editor, textType, actionType);
-    }
+	public FileMenuAction(MacromoleculeEditor editor, String textType,
+			int actionType) {
+		super(editor, textType, actionType);
+	}
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        if (actionType == OPEN_ACTION_TYPE) {
-            if (textType.equals(NOTATION_TEXT_TYPE)) {
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		if (actionType == OPEN_ACTION_TYPE) {
 
-                String title = "Open " + textType + " File";
-                TextFileFilter fileFilter = getTextFileFilter(textType);
+			// User chooses file
+			TextFileFilter fileFilter = getTextFileFilter(textType);
 
-                chooser.setFileFilter(fileFilter);
-                if (chooser.showOpenDialog(editor.getFrame()) == JFileChooser.APPROVE_OPTION) {
-                    String name = chooser.getSelectedFile().toString();
+			chooser.setFileFilter(fileFilter);
+			if (chooser.showOpenDialog(editor.getFrame()) == JFileChooser.APPROVE_OPTION) {
+				String name = chooser.getSelectedFile().toString();
+				String title = "Open " + textType + " File";
 
-                    List<String> notations = new ArrayList<String>();
-                    try {
-                        editor.getFrame().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-                        FileReader fr = new FileReader(name);
-                        BufferedReader br = new BufferedReader(fr);
-                        String line = br.readLine();
-                        while (null != line) {
-                            if (line.length() > 0) {
-                                notations.add(line);
-                            }
-                            line = br.readLine();
-                        }
-                        fr.close();
-                        br.close();
-                    } catch (Exception ex) {
-                        ExceptionHandler.handleException(ex);
-                        return;
-                    } finally {
-                        editor.getFrame().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-                    }
+				// loading file
+				if (textType.equals(NOTATION_TEXT_TYPE)) {
+					loadNotationFile(name, title);
+				} else if (textType.equals(XHELM_TEXT_TYPE)) {
+					try {
+						loadXHelmNotationFile(name, title);
+					} catch (Exception ex) {
+						ExceptionHandler.handleException(ex);
+						return;
+					} finally {
+						editor.getFrame()
+								.setCursor(
+										Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+					}
+				}
 
-                    if (notations.isEmpty()) {
-                        JOptionPane.showMessageDialog(editor.getFrame(), "The input file " + name + " is empty!", title, JOptionPane.WARNING_MESSAGE);
-                        return;
-                    }
+			}
 
-                    List<String> invalidNotations = new ArrayList<String>();
-                    for (int i = 0; i < notations.size(); i++) {
-                        String note = notations.get(i);
-                        note = NotationParser.removeChemMonomerBracket(note);
-                        notations.set(i, note);
-                        try {
-                            ComplexNotationParser.validateComplexNotation(note);
-                        } catch (Exception ex) {
-                            invalidNotations.add(note);
-                        }
-                    }
+		} else if (actionType == SAVE_ACTION_TYPE) {
+			String title = "Save " + textType + " File";
+			String notation = editor.getNotation();
+			if (null == notation || notation.trim().length() == 0) {
+				JOptionPane.showMessageDialog(editor.getFrame(),
+						"Structure is empty!", title,
+						JOptionPane.WARNING_MESSAGE);
+				return;
+			}
 
-                    if (!invalidNotations.isEmpty()) {
-                        int result = JOptionPane.showConfirmDialog(editor.getFrame(),
-                                "The input file " + name + " contains " + invalidNotations.size() + " invalid notation(s),\ndo you want to skip them and continue?",
-                                title, JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-                        if (JOptionPane.NO_OPTION == result) {
-                            return;
-                        } else {
-                            notations.removeAll(invalidNotations);
-                        }
-                    }
+			String[] notations = new String[0];
+			try {
+				editor.getFrame().setCursor(
+						Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+				notations = ComplexNotationParser.decompose(notation);
+			} catch (Exception ex) {
+				ExceptionHandler.handleException(ex);
+				return;
+			} finally {
+				editor.getFrame().setCursor(
+						Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+			}
 
-                    String notation = editor.getNotation();
-                    if (null != notation && notation.trim().length() > 0) {
-                        int result = JOptionPane.showConfirmDialog(editor.getFrame(),
-                                "Structures exist in the sketch pane,\ndo you want to clear them before opening your file?",
-                                title, JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-                        if (JOptionPane.YES_OPTION == result) {
-                            editor.reset();
-                            notation = editor.getNotation();
-                        }
-                    }
+			String textToSave = null;
+			if (textType.equals(NOTATION_TEXT_TYPE)) {
+				StringBuilder sb = new StringBuilder();
+				try {
+					for (String helm : notations) {
+						String canHelm = ComplexNotationParser
+								.getCanonicalNotation(helm);
+						String processedNote = NotationParser
+								.addChemMonomerBracket(canHelm);
+						;
+						sb.append(processedNote);
+						sb.append("\n");
+					}
+				} catch (Exception ex) {
+					ExceptionHandler.handleException(ex);
+					return;
+				} finally {
+					editor.getFrame().setCursor(
+							Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+				}
+				textToSave = sb.toString();
+			} else if (textType.equals(XHELM_TEXT_TYPE)) {
+				textToSave = xHelmNotationExporter.writeXHELM(notation,
+						MonomerStoreCache.getInstance()
+								.getCombinedMonomerStore());
+			} else if (textType.equals(CANONICAL_HELM_TEXT_TYPE)) {
+				StringBuilder sb = new StringBuilder();
+				try {
+					for (String helm : notations) {
+						String canHelm = ComplexNotationParser
+								.getCanonicalNotation(helm);
+						sb.append(canHelm);
+						sb.append("\n");
+					}
+				} catch (Exception ex) {
+					ExceptionHandler.handleException(ex);
+					return;
+				} finally {
+					editor.getFrame().setCursor(
+							Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+				}
+				textToSave = sb.toString();
+			} else if (textType.equals(SMILES_TEXT_TYPE)) {
+				StringBuilder sb = new StringBuilder();
+				try {
+					editor.getFrame().setCursor(
+							Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+					for (String note : notations) {
+						String smiles = ComplexNotationParser
+								.getComplexPolymerSMILES(note);
+						Molecule mol = StructureParser.getMolecule(smiles);
+						mol.dearomatize();
+						mol.clean(2, null);
+						String text = mol.exportToFormat("smiles");
+						sb.append(text);
+						sb.append("\n");
+					}
+				} catch (Exception ex) {
+					ExceptionHandler.handleException(ex);
+					return;
+				} finally {
+					editor.getFrame().setCursor(
+							Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+				}
+				textToSave = sb.toString();
 
-                    if (null == notation || notation.trim().length() == 0) {
-                        notation = notations.get(0);
-                        notations.remove(0);
-                    }
+			} else if (textType.equals(PDB_TEXT_TYPE)) {
+				StringBuilder sb = new StringBuilder();
+				try {
+					editor.getFrame().setCursor(
+							Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+					for (int i = 0; i < notations.length; i++) {
+						String note = notations[i];
+						String smiles = ComplexNotationParser
+								.getComplexPolymerSMILES(note);
+						String pdb = PDBFileGenerator
+								.SMILES2OpenBabelPDB(smiles);
+						pdb.replace("UNNAMED", "" + (i + 1));
+						sb.append(pdb);
+						sb.append("$$$$\n");
+					}
+				} catch (Exception ex) {
+					ExceptionHandler.handleException(ex);
+					return;
+				} finally {
+					editor.getFrame().setCursor(
+							Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+				}
+				textToSave = sb.toString();
+			} else if (textType.equals(MOLFILE_TEXT_TYPE)) {
+				StringBuilder sb = new StringBuilder();
+				try {
+					editor.getFrame().setCursor(
+							Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+					for (int i = 0; i < notations.length; i++) {
+						String note = notations[i];
+						String smiles = ComplexNotationParser
+								.getComplexPolymerSMILES(note);
+						Molecule mol = StructureParser.getMolecule(smiles);
+						mol.dearomatize();
+						mol.clean(2, null);
+						String text = mol.exportToFormat("mol");
+						text = "Record " + (i + 1) + " " + text;
+						sb.append(text);
+						sb.append("$$$$\n");
+					}
+				} catch (Exception ex) {
+					ExceptionHandler.handleException(ex);
+					return;
+				} finally {
+					editor.getFrame().setCursor(
+							Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+				}
 
-                    try {
-                        editor.getFrame().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-                        for (String note : notations) {
-                            String standardNote = ComplexNotationParser.standardize(note);
-                            notation = ComplexNotationParser.getCombinedComlexNotation(notation, standardNote);
-                        }
-                    } catch (Exception ex) {
-                        ExceptionHandler.handleException(ex);
-                        return;
-                    } finally {
-                        editor.getFrame().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-                    }
+				textToSave = sb.toString();
+			} else {
+				throw new UnsupportedOperationException(
+						"Unsupported structure format type :" + textType);
+			}
 
-                    editor.synchronizeZoom();
-                    ModelController.notationUpdated(notation, editor.getOwnerCode());
-                }
-            }
-        } else if (actionType == SAVE_ACTION_TYPE) {
-            String title = "Save " + textType + " File";
-            String notation = editor.getNotation();
-            if (null == notation || notation.trim().length() == 0) {
-                JOptionPane.showMessageDialog(editor.getFrame(), "Structure is empty!", title, JOptionPane.WARNING_MESSAGE);
-                return;
-            }
+			save(textToSave);
 
-            String[] notations = new String[0];
-            try {
-                editor.getFrame().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-                notations = ComplexNotationParser.decompose(notation);
-            } catch (Exception ex) {
-                ExceptionHandler.handleException(ex);
-                return;
-            } finally {
-                editor.getFrame().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-            }
+		}
+	}
 
+	private void loadXHelmNotationFile(String fileName, String title) {
 
-            String textToSave = null;
-            if (textType.equals(NOTATION_TEXT_TYPE)) {
-                StringBuilder sb = new StringBuilder();
-                try {
-                    for (String helm : notations) {
-                        String canHelm = ComplexNotationParser.getCanonicalNotation(helm);
-                        String processedNote = NotationParser.addChemMonomerBracket(canHelm);;
-                        sb.append(processedNote);
-                        sb.append("\n");
-                    }
-                } catch (Exception ex) {
-                    ExceptionHandler.handleException(ex);
-                    return;
-                } finally {
-                    editor.getFrame().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-                }
-                textToSave = sb.toString();
-            } else if (textType.equals(CANONICAL_HELM_TEXT_TYPE)) {
-                StringBuilder sb = new StringBuilder();
-                try {
-                    for (String helm : notations) {
-                        String canHelm = ComplexNotationParser.getCanonicalNotation(helm);
-                        sb.append(canHelm);
-                        sb.append("\n");
-                    }
-                } catch (Exception ex) {
-                    ExceptionHandler.handleException(ex);
-                    return;
-                } finally {
-                    editor.getFrame().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-                }
-                textToSave = sb.toString();
-            } else if (textType.equals(SMILES_TEXT_TYPE)) {
-                StringBuilder sb = new StringBuilder();
-                try {
-                    editor.getFrame().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-                    for (String note : notations) {
-                        String smiles = ComplexNotationParser.getComplexPolymerSMILES(note);
-                        Molecule mol = StructureParser.getMolecule(smiles);
-                        mol.dearomatize();
-                        mol.clean(2, null);
-                        String text = mol.exportToFormat("smiles");
-                        sb.append(text);
-                        sb.append("\n");
-                    }
-                } catch (Exception ex) {
-                    ExceptionHandler.handleException(ex);
-                    return;
-                } finally {
-                    editor.getFrame().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-                }
-                textToSave = sb.toString();
+		FileInputStream in;
+		Element xHELMRootElement;
+		try {
+			in = new FileInputStream(fileName);
 
-            } else if (textType.equals(PDB_TEXT_TYPE)) {
-                StringBuilder sb = new StringBuilder();
-                try {
-                    editor.getFrame().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-                    for (int i = 0; i < notations.length; i++) {
-                        String note = notations[i];
-                        String smiles = ComplexNotationParser.getComplexPolymerSMILES(note);
-                        String pdb = PDBFileGenerator.SMILES2OpenBabelPDB(smiles);
-                        pdb.replace("UNNAMED", "" + (i + 1));
-                        sb.append(pdb);
-                        sb.append("$$$$\n");
-                    }
-                } catch (Exception ex) {
-                    ExceptionHandler.handleException(ex);
-                    return;
-                } finally {
-                    editor.getFrame().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-                }
-                textToSave = sb.toString();
-            } else if (textType.equals(MOLFILE_TEXT_TYPE)) {
-                StringBuilder sb = new StringBuilder();
-                try {
-                    editor.getFrame().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-                    for (int i = 0; i < notations.length; i++) {
-                        String note = notations[i];
-                        String smiles = ComplexNotationParser.getComplexPolymerSMILES(note);
-                        Molecule mol = StructureParser.getMolecule(smiles);
-                        mol.dearomatize();
-                        mol.clean(2, null);
-                        String text = mol.exportToFormat("mol");
-                        text = "Record " + (i + 1) + " " + text;
-                        sb.append(text);
-                        sb.append("$$$$\n");
-                    }
-                } catch (Exception ex) {
-                    ExceptionHandler.handleException(ex);
-                    return;
-                } finally {
-                    editor.getFrame().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-                }
+			SAXBuilder builder = new SAXBuilder();
+			Document doc = builder.build(in);
 
-                textToSave = sb.toString();
-            } else {
-                throw new UnsupportedOperationException("Unsupported structure format type :" + textType);
-            }
+			xHELMRootElement = doc.getRootElement();
 
-            save(textToSave);
+		} catch (Exception ex) {
+			JOptionPane.showMessageDialog(editor.getFrame(), "The input file "
+					+ fileName + " could not be read!", title,
+					JOptionPane.WARNING_MESSAGE);
+			return;
+		}
 
-        }
-    }
+		String helmString;
+		MonomerStore store;
+		try {
+			helmString = xHelmNotationParser
+					.getComplexNotationString(xHELMRootElement);
+
+			// read monomers to store
+			store = xHelmNotationParser.getMonomerStore(xHELMRootElement);
+
+		} catch (Exception ex) {
+			JOptionPane.showMessageDialog(editor.getFrame(),
+					"The HELM code could not be read!", title,
+					JOptionPane.WARNING_MESSAGE);
+			return;
+		}
+
+		String editorNotation = editor.getNotation();
+		if (null != editorNotation && editorNotation.trim().length() > 0) {
+			int result = JOptionPane
+					.showConfirmDialog(
+							editor.getFrame(),
+							"Structures exist in the sketch pane,\ndo you want to clear them before opening your file?",
+							title, JOptionPane.YES_NO_OPTION,
+							JOptionPane.QUESTION_MESSAGE);
+			if (JOptionPane.YES_OPTION == result) {
+				editor.reset();
+				editorNotation = editor.getNotation();
+			}
+		}
+
+		try {
+			ComplexNotationParser.validateComplexNotation(helmString, store);
+			// add monomers, but cancel when adding failed.
+			helmString = MonomerStoreCache.getInstance().addExternalMonomers(
+					this.editor.getFrame(), store, helmString);
+			if (helmString == null)
+				return;
+		} catch (IllegalArgumentException ex) {
+			JOptionPane.showMessageDialog(editor.getFrame(), ex.getMessage(),
+					title, JOptionPane.WARNING_MESSAGE);
+		} catch (Exception ex) {
+			JOptionPane.showMessageDialog(editor.getFrame(),
+					"Invalid Notation!", title, JOptionPane.WARNING_MESSAGE);
+			return;
+		}
+
+		try {
+			editor.getFrame().setCursor(
+					Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+			MonomerStore monomerStore = MonomerStoreCache.getInstance()
+					.getCombinedMonomerStore();
+			String standardNote = ComplexNotationParser.standardize(helmString,
+					monomerStore);
+			editorNotation = ComplexNotationParser.getCombinedComlexNotation(
+					editorNotation, standardNote, monomerStore);
+
+		} catch (Exception ex) {
+			ExceptionHandler.handleException(ex);
+			return;
+		} finally {
+			editor.getFrame().setCursor(
+					Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+		}
+
+		editor.synchronizeZoom();
+		ModelController.notationUpdated(editorNotation, editor.getOwnerCode());
+	}
+
+	private void loadNotationFile(String fileName, String title) {
+
+		List<String> notations = new ArrayList<String>();
+		try {
+			editor.getFrame().setCursor(
+					Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+			FileReader fr = new FileReader(fileName);
+			BufferedReader br = new BufferedReader(fr);
+			String line = br.readLine();
+			while (null != line) {
+				if (line.length() > 0) {
+					notations.add(line);
+				}
+				line = br.readLine();
+			}
+			fr.close();
+			br.close();
+		} catch (Exception ex) {
+			ExceptionHandler.handleException(ex);
+			return;
+		} finally {
+			editor.getFrame().setCursor(
+					Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+		}
+
+		if (notations.isEmpty()) {
+			JOptionPane.showMessageDialog(editor.getFrame(), "The input file "
+					+ fileName + " is empty!", title,
+					JOptionPane.WARNING_MESSAGE);
+			return;
+		}
+
+		List<String> invalidNotations = new ArrayList<String>();
+		for (int i = 0; i < notations.size(); i++) {
+			String note = notations.get(i);
+			note = NotationParser.removeChemMonomerBracket(note);
+			notations.set(i, note);
+			try {
+				ComplexNotationParser.validateComplexNotation(note);
+			} catch (Exception ex) {
+				invalidNotations.add(note);
+			}
+		}
+
+		if (!invalidNotations.isEmpty()) {
+			int result = JOptionPane
+					.showConfirmDialog(
+							editor.getFrame(),
+							"The input file "
+									+ fileName
+									+ " contains "
+									+ invalidNotations.size()
+									+ " invalid notation(s),\ndo you want to skip them and continue?",
+							title, JOptionPane.YES_NO_OPTION,
+							JOptionPane.QUESTION_MESSAGE);
+			if (JOptionPane.NO_OPTION == result) {
+				return;
+			} else {
+				notations.removeAll(invalidNotations);
+			}
+		}
+
+		String editorNotation = editor.getNotation();
+		if (null != editorNotation && editorNotation.trim().length() > 0) {
+			int result = JOptionPane
+					.showConfirmDialog(
+							editor.getFrame(),
+							"Structures exist in the sketch pane,\ndo you want to clear them before opening your file?",
+							title, JOptionPane.YES_NO_OPTION,
+							JOptionPane.QUESTION_MESSAGE);
+			if (JOptionPane.YES_OPTION == result) {
+				editor.reset();
+				editorNotation = editor.getNotation();
+			}
+		}
+
+		if (null == editorNotation || editorNotation.trim().length() == 0) {
+			editorNotation = notations.get(0);
+			notations.remove(0);
+		}
+
+		try {
+			editor.getFrame().setCursor(
+					Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+			for (String note : notations) {
+				String standardNote = ComplexNotationParser.standardize(note);
+				editorNotation = ComplexNotationParser
+						.getCombinedComlexNotation(editorNotation, standardNote);
+			}
+		} catch (Exception ex) {
+			ExceptionHandler.handleException(ex);
+			return;
+		} finally {
+			editor.getFrame().setCursor(
+					Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+		}
+
+		try {
+			// refresh images for adhoc monomers
+			for (Monomer m : MonomerFactory.getInstance().getMonomerStore()
+					.getAllMonomersList()) {
+				if (m.isAdHocMonomer()) {
+					org.helm.editor.utility.MonomerNodeHelper
+							.generateImageFile(m, true);
+				}
+			}
+		} catch (Exception ex) {
+
+		}
+
+		editor.synchronizeZoom();
+		ModelController.notationUpdated(editorNotation, editor.getOwnerCode());
+
+	}
 }

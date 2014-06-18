@@ -34,84 +34,90 @@ import y.base.NodeMap;
 
 /**
  * compare two hyper node
+ * 
  * @author LIH25
  */
 public class NodeComparator implements Comparator<Node> {
-    
 
-    /**
-     * The same node that the two nodes being compared to are both connected to, if there is any
-     */
-    private Node parentNode = null;
+	/**
+	 * The same node that the two nodes being compared to are both connected to,
+	 * if there is any
+	 */
+	private Node parentNode = null;
 
-    public NodeComparator(Node parentNode) {
-        super();
-        this.parentNode = parentNode;
-    }
+	public NodeComparator(Node parentNode) {
+		super();
+		this.parentNode = parentNode;
+	}
 
-    public void setParentNode(Node parentNode) {
-        this.parentNode = parentNode;
-    }
+	public void setParentNode(Node parentNode) {
+		this.parentNode = parentNode;
+	}
 
-    public int compare(final Node node1, final Node node2) {
-        Graph graph = node1.getGraph();
-        final NodeMap nodeNameMap = (NodeMap) graph.getDataProvider(NodeMapKeys.HYPERNODE_POLYMER_NOTATION);
-        final NodeMap nodeTypeMap = (NodeMap) graph.getDataProvider(NodeMapKeys.HYPERNODE_POLYMER_TYPE);
+	public int compare(final Node node1, final Node node2) {
+		Graph graph = node1.getGraph();
+		final NodeMap nodeNameMap = (NodeMap) graph
+				.getDataProvider(NodeMapKeys.HYPERNODE_POLYMER_NOTATION);
+		final NodeMap nodeTypeMap = (NodeMap) graph
+				.getDataProvider(NodeMapKeys.HYPERNODE_POLYMER_TYPE);
 
-        String type1 = (String) nodeTypeMap.get(node1);
-        String type2 = (String) nodeTypeMap.get(node2);
-      
-        if (comparePolymerType(type1, type2) != 0) {
-            return comparePolymerType(type1, type2);
-        } else { //two node are of the same type
-            if(parentNode != null){
-                Edge edge1 = parentNode.getEdge(node1);
-                Edge edge2 = parentNode.getEdge(node2);
-                
-                EdgeMap edgeMap = (EdgeMap)graph.getDataProvider(EdgeMapKeys.DESCRIPTION);
-                String edgeDesc1 = (String) edgeMap.get(edge1);
-                String edgeDesc2 = (String) edgeMap.get(edge2);
-                
-                if(edgeDesc1.contains(Attachment.PAIR_ATTACHMENT)){
-                    return -1;
-                }else if (edgeDesc2.contains(Attachment.PAIR_ATTACHMENT)){
-                    return 1;
-                }
-            }
-            
-            String name1 = (String) nodeNameMap.get(node1);
-            String name2 = (String) nodeNameMap.get(node2);
+		String type1 = (String) nodeTypeMap.get(node1);
+		String type2 = (String) nodeTypeMap.get(node2);
 
-            if (name1.compareToIgnoreCase(name2) != 0) {
-                return name1.compareToIgnoreCase(name2);
-            } else {
-                return (node1.degree() - node2.degree());
-            }
-        }
+		if (comparePolymerType(type1, type2) != 0) {
+			return comparePolymerType(type1, type2);
+		} else { // two node are of the same type
+			if (parentNode != null) {
+				Edge edge1 = parentNode.getEdge(node1);
+				Edge edge2 = parentNode.getEdge(node2);
 
-    }
+				EdgeMap edgeMap = (EdgeMap) graph
+						.getDataProvider(EdgeMapKeys.DESCRIPTION);
+				String edgeDesc1 = (String) edgeMap.get(edge1);
+				String edgeDesc2 = (String) edgeMap.get(edge2);
 
-    /**
-     * compare two poly types
-     * @param polyType1
-     * @param polyType2
-     * @return -1: polyType1 < polyType2; 0 : equal; 1: polyType1 > polyType2
-     */
-    private static int comparePolymerType(String polyType1, String polyType2) {
-        //NUCLIEC_ACID_POLYMER_TYPE < PEPTIDE_POLYMER_TYPE < CHEM
-        if (polyType1.equalsIgnoreCase(polyType2)) {
-            return 0;
-        } else if (polyType1.equalsIgnoreCase(Monomer.NUCLIEC_ACID_POLYMER_TYPE)) {
-            return -1;
-        } else if (polyType1.equalsIgnoreCase(Monomer.PEPTIDE_POLYMER_TYPE)) {
-            if (polyType2.equalsIgnoreCase(Monomer.NUCLIEC_ACID_POLYMER_TYPE)) {
-                return 1;
-            } else { //polyType2.equalsIgnoreCase(Monomer.CHEMICAL_POLYMER_TYPE)
-                return -1;
-            }
-        } else //if(polyType1.equalsIgnoreCase(Monomer.CHEMICAL_POLYMER_TYPE)){
-        {
-            return 1;
-        }
-    }
+				if (edgeDesc1.contains(Attachment.PAIR_ATTACHMENT)) {
+					return -1;
+				} else if (edgeDesc2.contains(Attachment.PAIR_ATTACHMENT)) {
+					return 1;
+				}
+			}
+
+			String name1 = (String) nodeNameMap.get(node1);
+			String name2 = (String) nodeNameMap.get(node2);
+
+			if (name1.compareToIgnoreCase(name2) != 0) {
+				return name1.compareToIgnoreCase(name2);
+			} else {
+				return (node1.degree() - node2.degree());
+			}
+		}
+
+	}
+
+	/**
+	 * compare two poly types
+	 * 
+	 * @param polyType1
+	 * @param polyType2
+	 * @return -1: polyType1 < polyType2; 0 : equal; 1: polyType1 > polyType2
+	 */
+	private static int comparePolymerType(String polyType1, String polyType2) {
+		// NUCLIEC_ACID_POLYMER_TYPE < PEPTIDE_POLYMER_TYPE < CHEM
+		if (polyType1.equalsIgnoreCase(polyType2)) {
+			return 0;
+		} else if (polyType1
+				.equalsIgnoreCase(Monomer.NUCLIEC_ACID_POLYMER_TYPE)) {
+			return -1;
+		} else if (polyType1.equalsIgnoreCase(Monomer.PEPTIDE_POLYMER_TYPE)) {
+			if (polyType2.equalsIgnoreCase(Monomer.NUCLIEC_ACID_POLYMER_TYPE)) {
+				return 1;
+			} else { // polyType2.equalsIgnoreCase(Monomer.CHEMICAL_POLYMER_TYPE)
+				return -1;
+			}
+		} else // if(polyType1.equalsIgnoreCase(Monomer.CHEMICAL_POLYMER_TYPE)){
+		{
+			return 1;
+		}
+	}
 }

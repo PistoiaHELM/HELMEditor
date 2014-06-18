@@ -27,28 +27,27 @@ import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 
 /**
- *
+ * 
  * @author zhangtianhong
  */
 public class ProteinEditorAction extends AbstractAction {
 
-    private MacromoleculeEditor editor;
-    private ProteinEditorDialog editorDialog;
+	private MacromoleculeEditor editor;
+	private ProteinEditorDialog editorDialog;
 
-    public ProteinEditorAction(MacromoleculeEditor editor) {
-        super("Launch Protein Editor ...");
-        this.editor = editor;
-    }
+	public ProteinEditorAction(MacromoleculeEditor editor) {
+		super("Launch Protein Editor ...");
+		this.editor = editor;
+	}
 
-    public void actionPerformed(ActionEvent e) {
-        if (null == editorDialog) {
-            editorDialog = new ProteinEditorDialog(editor.getFrame(), false);
-            editorDialog.setLocationRelativeTo(editor.getFrame());
-        }
+	public void actionPerformed(ActionEvent e) {
+		if (null == editorDialog) {
+			editorDialog = new ProteinEditorDialog(editor.getFrame(), false);
+			editorDialog.setLocationRelativeTo(editor.getFrame());
+		}
 
-        if (!editorDialog.isVisible()) {
-            editorDialog.setVisible(true);
-        }
-    }
+		if (!editorDialog.isVisible()) {
+			editorDialog.setVisible(true);
+		}
+	}
 }
-

@@ -41,15 +41,15 @@ public interface GraphElementConstructor {
 	public static final int BRANCH_BRANCH_EDGE = 3;
 	public static final int SIMPLE_EDGE = 4;
 
-	
 	public static final int REALIZE_CHEM_EDGE = 0;
 	public static final int REALIZE_NEIBOURS = 1;
 
-	//public static final String EDGETYPE_CHEM = "Chem";
+	// public static final String EDGETYPE_CHEM = "Chem";
 
 	Node createNode(String label, int nodeType);
 
-	void createEdge(Edge currentEdge, Attachment sourceAttachment, Attachment targetAttachment, int edgeType);
+	void createEdge(Edge currentEdge, Attachment sourceAttachment,
+			Attachment targetAttachment, int edgeType);
 
 	Object realize(Graph2D graph, Object realizedObject, int realizationType);
 

@@ -27,12 +27,14 @@ import y.base.Node;
  * User: dzhelezov
  */
 public interface DirectionFinder {
-    /**
-     * Determines best direction where sequence should layout starting with given node
-     *
-     * @param node starting node of the sequence
-     * @return true = from left to right, false = right to left
-     */
-     //TODO: should return direction in angle.
-    public boolean getDirection(Node node);
+	/**
+	 * Determines best direction where sequence should layout starting with
+	 * given node
+	 * 
+	 * @param node
+	 *            starting node of the sequence
+	 * @return true = from left to right, false = right to left
+	 */
+	// TODO: should return direction in angle.
+	public boolean getDirection(Node node);
 }

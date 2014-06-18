@@ -28,27 +28,31 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 
 /**
- * A custom TableCellRenderer based on Graph2DView and complex HELM notation string
- * Could be big and slow, but can deal with hybrid structures
+ * A custom TableCellRenderer based on Graph2DView and complex HELM notation
+ * string Could be big and slow, but can deal with hybrid structures
+ * 
  * @author zhangtianhong
  */
 public class HELMMonomerGraphTableCellRenderer extends DefaultTableCellRenderer {
 
-    private MacroMoleculeViewer viewer;
+	private MacroMoleculeViewer viewer;
 
-    public HELMMonomerGraphTableCellRenderer() {
-        viewer = new MacroMoleculeViewer(false);
-    }
+	public HELMMonomerGraphTableCellRenderer() {
+		viewer = new MacroMoleculeViewer(false);
+	}
 
-    @Override
-    public Component getTableCellRendererComponent(JTable table, Object notation,
-            boolean isSelected, boolean hasFocus, int row, int column) {
-        viewer.setNotation((String) notation);
-//        int cellWidth = (int) table.getCellRect(row, column, true).getWidth();
-//        int cellHeight = (int) table.getCellRect(row, column, true).getHeight();
-//        viewer.setSize(cellWidth, cellHeight);
-//        viewer.getGraph2d().fitGraph2DView();
+	@Override
+	public Component getTableCellRendererComponent(JTable table,
+			Object notation, boolean isSelected, boolean hasFocus, int row,
+			int column) {
+		viewer.setNotation((String) notation);
+		// int cellWidth = (int) table.getCellRect(row, column,
+		// true).getWidth();
+		// int cellHeight = (int) table.getCellRect(row, column,
+		// true).getHeight();
+		// viewer.setSize(cellWidth, cellHeight);
+		// viewer.getGraph2d().fitGraph2DView();
 
-        return viewer;
-    }
+		return viewer;
+	}
 }

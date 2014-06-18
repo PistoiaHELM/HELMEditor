@@ -26,7 +26,7 @@ import y.base.NodeList;
 public class GraphManagerInfo {
 
 	private GraphManager _graphManager;
-	
+
 	private NodeList _specialBases;
 
 	public GraphManager getGraphManager() {
@@ -44,7 +44,5 @@ public class GraphManagerInfo {
 	public void setSpecialBases(NodeList bases) {
 		_specialBases = bases;
 	}
-	
-	
-	
+
 }

@@ -43,38 +43,40 @@ public class ChemSequenceHolderImpl implements ChemSequenceHolder {
 	private Set<NodeSequence> allSequences;
 	private Set<NodeSequence> dockedSequences = new LinkedHashSet<NodeSequence>();
 	private List<Node> pendantChemNodes = new ArrayList<Node>();
-    private LayoutGraph graph;
+	private LayoutGraph graph;
 
-    //private Set<Node> visited = new HashSet<Node>();
-    
+	// private Set<Node> visited = new HashSet<Node>();
+
 	public ChemSequenceHolderImpl(LayoutGraph graph) {
 		this.dockNode2ChemSequence = new HashMap<Node, List<NodeSequence>>();
 		this.graph = graph;
 		this.allSequences = new LinkedHashSet<NodeSequence>();
 	}
 
-    public void pushNode(Node node) {
-		if (!MonomerInfoUtils.isChemicalModifierPolymer(node)){// || visited.contains(node)) {
+	public void pushNode(Node node) {
+		if (!MonomerInfoUtils.isChemicalModifierPolymer(node)) {// ||
+																// visited.contains(node))
+																// {
 			return;
 		}
 		if (GraphUtils.getChemicalNeighborsCount(node) > 1) {
 			return;
 		}
 
-        if (node.neighbors().size() <= 1) {
-            pendantChemNodes.add(node);
-        }
+		if (node.neighbors().size() <= 1) {
+			pendantChemNodes.add(node);
+		}
 
 		NodeSequence sequence = new MonomerNodeSequenceImpl(graph, node) {
 			@Override
 			protected boolean isNodeRightMonomerType(Graph graph, Node node) {
 				return MonomerInfoUtils.isChemicalModifierPolymer(node);
 			}
-			
+
 		};
-		
+
 		allSequences.add(sequence);
-        boolean added = false;
+		boolean added = false;
 		for (Node neighbour : GraphUtils.getNeighbours(node)) {
 			if (!MonomerInfoUtils.isChemicalModifierPolymer(neighbour)) {
 				addSequenceToDock(sequence, neighbour);
@@ -85,19 +87,20 @@ public class ChemSequenceHolderImpl implements ChemSequenceHolder {
 			}
 		}
 
-//		visited.addAll(sequence.getNodes());
+		// visited.addAll(sequence.getNodes());
 	}
 
-    public List<Node> getPendantNodes() {
-        return Collections.unmodifiableList(pendantChemNodes);
-    }
+	public List<Node> getPendantNodes() {
+		return Collections.unmodifiableList(pendantChemNodes);
+	}
 
 	public Set<NodeSequence> getSequences() {
-		Set<NodeSequence> result = new LinkedHashSet<NodeSequence>(allSequences.size());
+		Set<NodeSequence> result = new LinkedHashSet<NodeSequence>(
+				allSequences.size());
 		result.addAll(allSequences);
 		return result;
 	}
-	
+
 	public List<NodeSequence> getConnectedSequences(Node dockNode) {
 		List<NodeSequence> result = dockNode2ChemSequence.get(dockNode);
 		return result == null ? new ArrayList<NodeSequence>() : result;
@@ -109,7 +112,7 @@ public class ChemSequenceHolderImpl implements ChemSequenceHolder {
 		result.addAll(docks);
 		return result;
 	}
-	
+
 	public Set<NodeSequence> getDockedSequences() {
 		return dockedSequences;
 	}
@@ -124,9 +127,5 @@ public class ChemSequenceHolderImpl implements ChemSequenceHolder {
 		sequences.add(sequence);
 		dockNode2ChemSequence.put(dockNode, sequences);
 	}
-	
 
-
-    
 }
-

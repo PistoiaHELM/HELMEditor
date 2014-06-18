@@ -90,7 +90,8 @@ public class ConvertNotationController {
 
 		ConvertionResult result = new ConvertionResult();
 		try {
-			NucleotideConverter nucleotideConverter = NucleotideConverter.getInstance();			
+			NucleotideConverter nucleotideConverter = NucleotideConverter
+					.getInstance();
 			result.setNotation(nucleotideConverter.getComplexNotation(notation));
 		} catch (Exception ex) {
 			result.setException(ex);

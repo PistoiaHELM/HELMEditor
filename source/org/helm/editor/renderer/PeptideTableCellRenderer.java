@@ -30,62 +30,67 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 
 /**
- * A custom TableCellRenderer based on Graph2DView and complex HELM notation string
- * Could be big and slow, but can deal with hybrid structures
+ * A custom TableCellRenderer based on Graph2DView and complex HELM notation
+ * string Could be big and slow, but can deal with hybrid structures
+ * 
  * @author zhangtianhong
  */
 public class PeptideTableCellRenderer extends DefaultTableCellRenderer {
 
-    private int tickInterval;
-    private int lettersPerLine;
-    private int positionLabelMode;
-    private PeptideSequenceViewer viewer;
+	private int tickInterval;
+	private int lettersPerLine;
+	private int positionLabelMode;
+	private PeptideSequenceViewer viewer;
 
-    public PeptideTableCellRenderer() {
-        this(PeptideSequenceViewer.DEFAULT_TICK_INTERVAL, PeptideSequenceViewer.DEFAULT_LETTERS_PER_LINE, PeptideSequenceViewer.TOP_TICK_MODE);
-    }
+	public PeptideTableCellRenderer() {
+		this(PeptideSequenceViewer.DEFAULT_TICK_INTERVAL,
+				PeptideSequenceViewer.DEFAULT_LETTERS_PER_LINE,
+				PeptideSequenceViewer.TOP_TICK_MODE);
+	}
 
-    public PeptideTableCellRenderer(int tickInterval,int lettersPerLine, int positionLabelMode) {
-        super();
-        viewer = new PeptideSequenceViewer(tickInterval, lettersPerLine, positionLabelMode);
-    }
+	public PeptideTableCellRenderer(int tickInterval, int lettersPerLine,
+			int positionLabelMode) {
+		super();
+		viewer = new PeptideSequenceViewer(tickInterval, lettersPerLine,
+				positionLabelMode);
+	}
 
-    public int getLettersPerLine() {
-        return lettersPerLine;
-    }
+	public int getLettersPerLine() {
+		return lettersPerLine;
+	}
 
-    public void setLettersPerLine(int lettersPerLine) {
-        this.lettersPerLine = lettersPerLine;
-    }
+	public void setLettersPerLine(int lettersPerLine) {
+		this.lettersPerLine = lettersPerLine;
+	}
 
-    public int getPositionLabelMode() {
-        return positionLabelMode;
-    }
+	public int getPositionLabelMode() {
+		return positionLabelMode;
+	}
 
-    public void setPositionLabelMode(int positionLabelMode) {
-        this.positionLabelMode = positionLabelMode;
-    }
+	public void setPositionLabelMode(int positionLabelMode) {
+		this.positionLabelMode = positionLabelMode;
+	}
 
-    public int getTickInterval() {
-        return tickInterval;
-    }
+	public int getTickInterval() {
+		return tickInterval;
+	}
 
-    public void setTickInterval(int tickInterval) {
-        this.tickInterval = tickInterval;
-    }
+	public void setTickInterval(int tickInterval) {
+		this.tickInterval = tickInterval;
+	}
 
-    @Override
-    public Component getTableCellRendererComponent(JTable table, Object value,
-            boolean isSelected, boolean hasFocus, int row, int column) {
+	@Override
+	public Component getTableCellRendererComponent(JTable table, Object value,
+			boolean isSelected, boolean hasFocus, int row, int column) {
 
-        PeptidePolymer polymer = new PeptidePolymer();
-        if (value instanceof PeptidePolymer) {
-            polymer = (PeptidePolymer) value;
-        } else if (value instanceof String) {
-            polymer = new PeptidePolymer((String) value);
-        }
-        viewer.setPeptidePolymer(polymer);
-        return viewer;
-    }
+		PeptidePolymer polymer = new PeptidePolymer();
+		if (value instanceof PeptidePolymer) {
+			polymer = (PeptidePolymer) value;
+		} else if (value instanceof String) {
+			polymer = new PeptidePolymer((String) value);
+		}
+		viewer.setPeptidePolymer(polymer);
+		return viewer;
+	}
 
 }

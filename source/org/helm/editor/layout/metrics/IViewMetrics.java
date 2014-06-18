@@ -21,16 +21,18 @@
  ******************************************************************************/
 package org.helm.editor.layout.metrics;
 
-
 public interface IViewMetrics {
 	int getShiftForFlippedNucleotideSequence();
+
 	int getShiftForFlippedPeptideSequence();
-	
+
 	int getChemEdgePathHorisontalStep();
+
 	int getChemEdgePathVerticalStep();
-	
+
 	int getChemNodeToBackboneNodeDistance();
-	
-    int getHDistanceExt();
-    int getVDistanceExt();
+
+	int getHDistanceExt();
+
+	int getVDistanceExt();
 }

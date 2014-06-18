@@ -29,24 +29,24 @@ import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 
 /**
- *
+ * 
  * @author zhangtianhong
  */
 public class MonomerManagerAction extends AbstractAction {
 
-    private MacromoleculeEditor editor;
+	private MacromoleculeEditor editor;
 
-    public MonomerManagerAction(MacromoleculeEditor editor) {
-        super("Launch Monomer Manager ...");
-        this.editor = editor;
-    }
+	public MonomerManagerAction(MacromoleculeEditor editor) {
+		super("Launch Monomer Manager ...");
+		this.editor = editor;
+	}
 
-    public void actionPerformed(ActionEvent e) {
-        editor.getFrame().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-        MonomerManager mm = new MonomerManager(editor, false);
-        mm.setLocationRelativeTo(editor.getFrame());
-        MonomerManagerLauncher launcher = new MonomerManagerLauncher(mm);
-        launcher.execute();
-    }
+	public void actionPerformed(ActionEvent e) {
+		editor.getFrame().setCursor(
+				Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+		MonomerManager mm = new MonomerManager(editor, false);
+		mm.setLocationRelativeTo(editor.getFrame());
+		MonomerManagerLauncher launcher = new MonomerManagerLauncher(mm);
+		launcher.execute();
+	}
 }
-

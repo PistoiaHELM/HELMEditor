@@ -29,11 +29,11 @@ import y.base.Node;
 
 public class EmptyChemSequenceHolder implements ChemSequenceHolder {
 	private static ChemSequenceHolder instance = new EmptyChemSequenceHolder();
-	
+
 	public static ChemSequenceHolder getInstance() {
 		return instance;
 	}
-	
+
 	public List<NodeSequence> getConnectedSequences(Node dockNode) {
 		return Collections.emptyList();
 	}

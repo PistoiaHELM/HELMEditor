@@ -30,38 +30,38 @@ import org.helm.editor.utility.TemplatesModel;
 public class DataRegistry {
 	private static DataRegistry instance;
 	private Map<String, TemplatesModel> templatesRegistry;
-	
+
 	private Map<String, List<String>> typeRelationship;
-	
+
 	private DataRegistry() {
 		templatesRegistry = new HashMap<String, TemplatesModel>();
 		typeRelationship = new HashMap<String, List<String>>();
 	}
-	
+
 	public static DataRegistry getInstance() {
 		if (instance == null) {
 			instance = new DataRegistry();
 		}
-		
+
 		return instance;
 	}
-	
-	public void registerType(String type, List<String> subTypes){
+
+	public void registerType(String type, List<String> subTypes) {
 		typeRelationship.put(type, subTypes);
 	}
-	
+
 	public void registerTemplateList(String type, TemplatesModel model) {
-		templatesRegistry.put(type, model);		
+		templatesRegistry.put(type, model);
 	}
-	
+
 	public List<TemplatesModel> getTemplateModels(String polymerType) {
 		List<TemplatesModel> result = new LinkedList<TemplatesModel>();
-		
+
 		List<String> types = typeRelationship.get(polymerType);
-		for(String currType : types){
+		for (String currType : types) {
 			result.add(templatesRegistry.get(currType));
 		}
-		
+
 		return result;
 	}
 }

@@ -55,29 +55,30 @@ import org.helm.editor.utility.xmlparser.data.ShapedXmlFragment;
 import org.helm.editor.utility.xmlparser.data.XmlElement;
 import org.helm.editor.utility.xmlparser.data.XmlFragment;
 
-
 /**
  * This class represent tab in "accordion" panel
+ * 
  * @author Alexander Makarov
  */
 public class PolymerUI extends FloorTabbedPane {
 
 	private Polymer polymerData;
-	
+
 	private Graph2DView view;
 	private MacromoleculeEditor editor;
-	
+
 	private static final String EMPTY_STRING = "";
-	
+
 	private ArrayList<String> groupList = new ArrayList<String>();
 	private HashMap<String, JComponent> tabs = new HashMap<String, JComponent>();
-	
-//	private JPanel otherPanel;
-//	
-//	private Map<String, Group<XmlFragment>> otherFragments;
-	
+
+	// private JPanel otherPanel;
+	//
+	// private Map<String, Group<XmlFragment>> otherFragments;
+
 	/**
 	 * Construct tab that based on xml parsed data
+	 * 
 	 * @param polymer
 	 * @param view
 	 * @param editor
@@ -85,208 +86,219 @@ public class PolymerUI extends FloorTabbedPane {
 	 * @throws IOException
 	 * @throws JDOMException
 	 */
-	public PolymerUI(Polymer polymer, Graph2DView view, MacromoleculeEditor editor) 
-		throws MonomerException, IOException, JDOMException {
+	public PolymerUI(Polymer polymer, Graph2DView view,
+			MacromoleculeEditor editor) throws MonomerException, IOException,
+			JDOMException {
 		polymerData = polymer;
-		this.view = view; 
+		this.view = view;
 		this.editor = editor;
-		
-		DataRegistry.getInstance().registerType(polymerData.getName(), polymerData.getSubTypes());
-		
+
+		DataRegistry.getInstance().registerType(polymerData.getName(),
+				polymerData.getSubTypes());
+
 		constructPanel();
-		
-//		constructOthersTab();
+
+		// constructOthersTab();
 	}
-	
 
 	/**
 	 * @return Title of tab in "accordion"
 	 */
-	public String getTitle(){
+	public String getTitle() {
 		return polymerData.getTitle();
 	}
-	
+
 	/**
 	 * @return Color of tab title
 	 */
-	public Color getTitleColor(){
+	public Color getTitleColor() {
 		return polymerData.getTitleColor();
 	}
-	
+
 	/**
-	 * @throws JDOMException 
-	 * @throws IOException 
-	 * @throws MonomerException 
-	 * @throws NotationException 
+	 * @throws JDOMException
+	 * @throws IOException
+	 * @throws MonomerException
+	 * @throws NotationException
 	 */
-//	private void constructOthersTab() throws MonomerException, IOException, JDOMException {
-//		Collection<Group<XmlFragment>> otherGroupsCollection = otherFragments.values();
-//		if (otherGroupsCollection.isEmpty()) {
-//			return;
-//		}
-//		Group<XmlFragment> otherGroup = new Group<XmlFragment>();
-//		
-//		// add all fragments to one group
-//		for (Group<XmlFragment> group : otherGroupsCollection) {
-//			Iterator<XmlFragment> groupIterator = group.getGroupIterator();
-//			while (groupIterator.hasNext()) {
-//				XmlFragment fragment = groupIterator.next();
-//				String name  = fragment.getName();
-//				ShapedXmlFragment analog = null;
-//				try {
-//					analog = polymerData.getNaturalAnalogFragment(name);
-//				} catch (Exception e) {
-//					analog = null;
-//				}
-//				if (analog == null) {
-//					ShapedXmlFragment shaped = new ShapedXmlFragment(fragment.getName(), null);
-//					shaped.setBackgroundColor(fragment.getBackgroundColor());
-//					shaped.setFontColor(fragment.getFontColor());
-//					shaped.setShape(group.getShape());
-//					otherGroup.addElement(shaped);
-//				} else {
-//					otherGroup.addElement(analog);
-//				}
-//			}
-//		}
-//						
-//		otherPanel = new BaseXMLPanel<XmlFragment>(otherGroup, 
-//				polymerData.getName(), view, editor);
-//		
-//		addTab("Other", otherPanel);
-//		
-//		 clear other
-//		otherFragments.clear();
-//	}
-		
-	private void constructPanel() 
-		throws MonomerException, IOException, JDOMException {
-		
-//		otherFragments = polymerData.getDataComplement();
-		
+	// private void constructOthersTab() throws MonomerException, IOException,
+	// JDOMException {
+	// Collection<Group<XmlFragment>> otherGroupsCollection =
+	// otherFragments.values();
+	// if (otherGroupsCollection.isEmpty()) {
+	// return;
+	// }
+	// Group<XmlFragment> otherGroup = new Group<XmlFragment>();
+	//
+	// // add all fragments to one group
+	// for (Group<XmlFragment> group : otherGroupsCollection) {
+	// Iterator<XmlFragment> groupIterator = group.getGroupIterator();
+	// while (groupIterator.hasNext()) {
+	// XmlFragment fragment = groupIterator.next();
+	// String name = fragment.getName();
+	// ShapedXmlFragment analog = null;
+	// try {
+	// analog = polymerData.getNaturalAnalogFragment(name);
+	// } catch (Exception e) {
+	// analog = null;
+	// }
+	// if (analog == null) {
+	// ShapedXmlFragment shaped = new ShapedXmlFragment(fragment.getName(),
+	// null);
+	// shaped.setBackgroundColor(fragment.getBackgroundColor());
+	// shaped.setFontColor(fragment.getFontColor());
+	// shaped.setShape(group.getShape());
+	// otherGroup.addElement(shaped);
+	// } else {
+	// otherGroup.addElement(analog);
+	// }
+	// }
+	// }
+	//
+	// otherPanel = new BaseXMLPanel<XmlFragment>(otherGroup,
+	// polymerData.getName(), view, editor);
+	//
+	// addTab("Other", otherPanel);
+	//
+	// clear other
+	// otherFragments.clear();
+	// }
+
+	private void constructPanel() throws MonomerException, IOException,
+			JDOMException {
+
+		// otherFragments = polymerData.getDataComplement();
+
 		constructComplexPanels(polymerData.getFragmentGroups());
 		constructComplexPanels(polymerData.getMonomerGroups());
-		
-		constructSimplePanels(polymerData.getFragmentGroups());		
+
+		constructSimplePanels(polymerData.getFragmentGroups());
 		constructSimplePanels(polymerData.getMonomerGroups());
-		
+
 		addTabs();
 		addComponentListener(new ComponentAdapter() {
-			
+
 			@Override
 			public void componentShown(ComponentEvent e) {
 				for (JComponent panel : tabs.values()) {
 					if (panel instanceof JTabbedPane) {
-						JTabbedPane tabbed = (JTabbedPane)panel;
+						JTabbedPane tabbed = (JTabbedPane) panel;
 						for (int i = 0; i < tabbed.getTabCount(); i++) {
-							BaseXMLPanel t = (BaseXMLPanel)tabbed.getComponent(i);
+							BaseXMLPanel t = (BaseXMLPanel) tabbed
+									.getComponent(i);
 							if (t != null)
-							   t.clearSelection();
+								t.clearSelection();
 						}
 					} else {
 						if (panel instanceof BaseXMLPanel) {
-							((BaseXMLPanel)panel).clearSelection();
+							((BaseXMLPanel) panel).clearSelection();
 						}
 					}
 				}
 			}
-			
-			
+
 		});
 	}
 
-	private <T extends XmlElement> void constructComplexPanels(Collection<Group<T>> collection) 
-		throws MonomerException, IOException, JDOMException {
+	private <T extends XmlElement> void constructComplexPanels(
+			Collection<Group<T>> collection) throws MonomerException,
+			IOException, JDOMException {
 		Set<String> setOfParentGroups = new LinkedHashSet<String>();
-		for (Group<T> currGroup : collection){
+		for (Group<T> currGroup : collection) {
 			// remember index
 			registerGroup(currGroup);
-			
+
 			String parentGroup = currGroup.getParent();
-			
-			if (parentGroup != null && !parentGroup.equals(EMPTY_STRING) 
-					&& !setOfParentGroups.contains(parentGroup)){
-				
+
+			if (parentGroup != null && !parentGroup.equals(EMPTY_STRING)
+					&& !setOfParentGroups.contains(parentGroup)) {
+
 				setOfParentGroups.add(parentGroup);
-				
-				List<Group<T>> childGroups = polymerData.getChildGroups(parentGroup, collection);
-				final JTabbedPane parentTab = new JTabbedPane(JTabbedPane.TOP, JTabbedPane.WRAP_TAB_LAYOUT);
+
+				List<Group<T>> childGroups = polymerData.getChildGroups(
+						parentGroup, collection);
+				final JTabbedPane parentTab = new JTabbedPane(JTabbedPane.TOP,
+						JTabbedPane.WRAP_TAB_LAYOUT);
 				int tabCount = childGroups.size();
 				final String[] tabTitles = new String[tabCount];
 				final String[] boldTabTitles = new String[tabCount];
 				final BaseXMLPanel[] panels = new BaseXMLPanel[tabCount];
-				for(int i = 0; i < tabCount; i++){					
+				for (int i = 0; i < tabCount; i++) {
 					Group<T> currChildGroup = childGroups.get(i);
 					tabTitles[i] = currChildGroup.getName();
-					boldTabTitles[i] = "<html><b>" + tabTitles[i] + "</b></html>";
-					
-					BaseXMLPanel panel = new BaseXMLPanel<T>(
-							currChildGroup, polymerData.getName(), view, editor);
-//					if (tabTitles[i].equals("Other")) {
-//						String currName = currGroup.getName();
-//						Group<XmlFragment> otherGroup = otherFragments.get(currName);
-//						if (otherGroup == null) {
-//							continue;
-//						}
-//						otherFragments.remove(currName);
-//						panel = new BaseXMLPanel<XmlFragment>(
-//								otherGroup, polymerData.getName(), view, editor);
-//					} else {
-//						panel = new BaseXMLPanel<T>(
-//							currChildGroup, polymerData.getName(), view, editor);
-//					}
+					boldTabTitles[i] = "<html><b>" + tabTitles[i]
+							+ "</b></html>";
+
+					BaseXMLPanel panel = new BaseXMLPanel<T>(currChildGroup,
+							polymerData.getName(), view, editor);
+					// if (tabTitles[i].equals("Other")) {
+					// String currName = currGroup.getName();
+					// Group<XmlFragment> otherGroup =
+					// otherFragments.get(currName);
+					// if (otherGroup == null) {
+					// continue;
+					// }
+					// otherFragments.remove(currName);
+					// panel = new BaseXMLPanel<XmlFragment>(
+					// otherGroup, polymerData.getName(), view, editor);
+					// } else {
+					// panel = new BaseXMLPanel<T>(
+					// currChildGroup, polymerData.getName(), view, editor);
+					// }
 					parentTab.addTab(tabTitles[i], panel);
 					panels[i] = panel;
 				}
 				prepareTab(parentGroup, parentTab);
-				
+
 				parentTab.addChangeListener(new ChangeListener() {
 					public void stateChanged(ChangeEvent e) {
-		                int selectedIndex = parentTab.getSelectedIndex();
+						int selectedIndex = parentTab.getSelectedIndex();
 
-		                for (int i = 0; i < parentTab.getTabCount(); i++) {
-		                	if (i == selectedIndex) {
-		                		parentTab.setTitleAt(i, boldTabTitles[i]);
-		                	} else {		                		
-		                		parentTab.setTitleAt(i, tabTitles[i]);                		
-		                	}
-		                }
-		                panels[selectedIndex].clearSelection();
+						for (int i = 0; i < parentTab.getTabCount(); i++) {
+							if (i == selectedIndex) {
+								parentTab.setTitleAt(i, boldTabTitles[i]);
+							} else {
+								parentTab.setTitleAt(i, tabTitles[i]);
+							}
+						}
+						panels[selectedIndex].clearSelection();
 					}
-					
+
 				});
-				
+
 				int selected = parentTab.getSelectedIndex();
 				parentTab.setTitleAt(selected, boldTabTitles[selected]);
 			}
 		}
 	}
-	
-	private <T extends XmlElement> void constructSimplePanels(Collection<Group<T>> collection) 
-		throws MonomerException, IOException, JDOMException{
-		for(Group<T> currGroup : collection) {
+
+	private <T extends XmlElement> void constructSimplePanels(
+			Collection<Group<T>> collection) throws MonomerException,
+			IOException, JDOMException {
+		for (Group<T> currGroup : collection) {
 			registerGroup(currGroup);
-			if (!currGroup.getParent().equals(EMPTY_STRING) || 
-					polymerData.checkParentGroup(currGroup, collection)) {
+			if (!currGroup.getParent().equals(EMPTY_STRING)
+					|| polymerData.checkParentGroup(currGroup, collection)) {
 				continue;
 			}
-			
-			BaseXMLPanel<T> panel = new BaseXMLPanel<T>(currGroup, polymerData.getName(), view, editor);
+
+			BaseXMLPanel<T> panel = new BaseXMLPanel<T>(currGroup,
+					polymerData.getName(), view, editor);
 			prepareTab(currGroup.getName(), panel);
 		}
 	}
-	
+
 	private void registerGroup(Group group) {
 		String groupName = group.getName();
-		if (! groupList.contains(groupName)) {
+		if (!groupList.contains(groupName)) {
 			groupList.add(groupName);
-		}		
+		}
 	}
-	
+
 	private void prepareTab(String tabName, JComponent component) {
 		tabs.put(tabName, component);
 	}
-	
+
 	private void addTabs() {
 		for (String name : groupList) {
 			if (tabs.containsKey(name)) {

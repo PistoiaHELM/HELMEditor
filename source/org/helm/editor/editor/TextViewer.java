@@ -37,66 +37,64 @@ import javax.swing.JTextArea;
 
 public class TextViewer extends JFrame {
 
+	private JTextArea textArea;
+	private JFrame parent;
+	private JButton okButton;
+	private static TextViewer instance;
+	private static Dimension MIN_SIZE = new Dimension(600, 400);
 
+	public static TextViewer getInstance(JFrame parent) {
+		if (instance == null) {
+			instance = new TextViewer(parent);
+		}
+		return instance;
+	}
 
-    private JTextArea textArea;
-    private JFrame parent;
-    private JButton okButton;
-    private static TextViewer instance;
-    private static Dimension MIN_SIZE = new Dimension(600, 400);
+	private TextViewer(JFrame parent) {
+		this.parent = parent;
+		initComponents();
+	}
 
-    public static TextViewer getInstance(JFrame parent) {
-        if (instance == null) {
-            instance = new TextViewer(parent);
-        }
-        return instance;
-    }
+	private void initComponents() {
+		JPanel mainPanel = new JPanel();
 
-    private TextViewer(JFrame parent) {
-        this.parent = parent;
-        initComponents();
-    }
+		textArea = new JTextArea();
+		textArea.setColumns(60);
+		textArea.setEditable(false);
+		textArea.setLineWrap(true);
+		textArea.setRows(8);
 
-    private void initComponents() {
-        JPanel mainPanel = new JPanel();
+		JScrollPane scroll = new JScrollPane();
+		scroll.setViewportView(textArea);
 
+		okButton = new JButton("Ok");
+		okButton.addActionListener(new ActionListener() {
 
-        textArea = new JTextArea();
-        textArea.setColumns(60);
-        textArea.setEditable(false);
-        textArea.setLineWrap(true);
-        textArea.setRows(8);
+			public void actionPerformed(ActionEvent e) {
+				setVisible(false);
+			}
+		});
+		Box buttonBox = Box.createHorizontalBox();
+		buttonBox.add(Box.createHorizontalGlue());
+		buttonBox.add(okButton);
+		buttonBox.add(Box.createHorizontalGlue());
 
-        JScrollPane  scroll = new JScrollPane();
-        scroll.setViewportView(textArea);
+		mainPanel.setLayout(new BorderLayout());
+		mainPanel.add(scroll, BorderLayout.CENTER);
+		mainPanel.add(buttonBox, BorderLayout.SOUTH);
 
-        okButton = new JButton("Ok");
-        okButton.addActionListener(new ActionListener() {
+		setDefaultCloseOperation(HIDE_ON_CLOSE);
+		setIconImage(IconGenerator
+				.getImage(IconGenerator.HELM_APP_ICON_RESOURCE_URL));
+		setContentPane(mainPanel);
+		setPreferredSize(MIN_SIZE);
+		pack();
+		setLocationRelativeTo(parent);
+	}
 
-            public void actionPerformed(ActionEvent e) {
-                setVisible(false);
-            }
-        });
-        Box buttonBox = Box.createHorizontalBox();
-        buttonBox.add(Box.createHorizontalGlue());
-        buttonBox.add(okButton);
-        buttonBox.add(Box.createHorizontalGlue());
-
-        mainPanel.setLayout(new BorderLayout());
-        mainPanel.add(scroll, BorderLayout.CENTER);
-        mainPanel.add(buttonBox, BorderLayout.SOUTH);
-
-        setDefaultCloseOperation(HIDE_ON_CLOSE);
-        setIconImage(IconGenerator.getImage(IconGenerator.HELM_APP_ICON_RESOURCE_URL));
-        setContentPane(mainPanel);
-        setPreferredSize(MIN_SIZE);
-        pack();
-        setLocationRelativeTo(parent);
-    }
-
-    public void setText(String text) {
-        textArea.setText(text);
-        setVisible(true);
-    }
+	public void setText(String text) {
+		textArea.setText(text);
+		setVisible(true);
+	}
 
 }

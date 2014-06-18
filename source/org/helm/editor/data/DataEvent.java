@@ -27,19 +27,19 @@ import java.util.Map;
 public class DataEvent {
 	private Map<String, Object> data = new HashMap<String, Object>();
 	private DataEventType type;
-	
+
 	public DataEvent(DataEventType type) {
 		this.type = type;
 	}
-	
+
 	public void setData(String key, Object value) {
 		data.put(key, value);
 	}
-	
+
 	public Object getData(String key) {
 		return data.get(key);
 	}
-	
+
 	public DataEventType getType() {
 		return type;
 	}

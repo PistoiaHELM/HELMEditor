@@ -41,17 +41,17 @@ import org.helm.editor.utility.MonomerInfoUtils;
 public class SequenceViewIterator extends SenseIterator {
 	private Node queuedP = null;
 	Set<Node> visitedP = new HashSet<Node>();
-	
+
 	public SequenceViewIterator(Graph graph, Node startNode) {
 		super(graph, startNode);
 	}
 
 	@Override
 	protected boolean isOk(Node node) {
-		if (MonomerInfoUtils.isChemicalModifierPolymer(node)) 
-			 return false;
-		//in case of cyclic structures, prevent 2 linkers being queued 
-		//simultaneosly at the beginning 
+		if (MonomerInfoUtils.isChemicalModifierPolymer(node))
+			return false;
+		// in case of cyclic structures, prevent 2 linkers being queued
+		// simultaneosly at the beginning
 		if (MonomerInfoUtils.isPMonomer(node)) {
 			if (queuedP == null) {
 				if (visitedP.contains(node)) {
@@ -65,7 +65,7 @@ public class SequenceViewIterator extends SenseIterator {
 		}
 		return true;
 	}
-	
+
 	@Override
 	public void preProcess(Node node) {
 		if (queuedP == node) {
@@ -73,51 +73,49 @@ public class SequenceViewIterator extends SenseIterator {
 		}
 		visitedP.add(node);
 	}
-	
+
 	@Override
 	protected Set<Node> getAdjacentNodes(Node node) {
 		Set<Node> neighbours = GraphUtils.getSuccessors(node);
-		
+
 		EdgeCursor edges = node.outEdges();
 		for (; edges.ok(); edges.next()) {
 			Edge e = edges.edge();
 			Node n = e.opposite(node);
 			if (MonomerInfoUtils.isPair(e)) {
 				neighbours.remove(n);
-			}	
+			}
 		}
-		
+
 		Node[] sorted = new Node[neighbours.size()];
-		
-		Arrays.sort(neighbours.toArray(sorted),
-    		new Comparator<Node>() {
-				public int compare(Node o1, Node o2) {
-					if (MonomerInfoUtils.isChemicalModifierPolymer(o2)) {
-						return -1;
-					}
-					if (MonomerInfoUtils.isChemicalModifierPolymer(o1)) {
-						return 1;
-					}
-					if (MonomerInfoUtils.isPMonomer(o2)) {
-						return -1;
-					}
-					if (MonomerInfoUtils.isPMonomer(o1)) {
-						return 1;
-					}
-					if (MonomerInfoUtils.isBranchMonomer(o2)) {
-						return -1;
-					}
-					if (MonomerInfoUtils.isBranchMonomer(o1)) {
-						return 1;
-					}
-					return 0;
+
+		Arrays.sort(neighbours.toArray(sorted), new Comparator<Node>() {
+			public int compare(Node o1, Node o2) {
+				if (MonomerInfoUtils.isChemicalModifierPolymer(o2)) {
+					return -1;
 				}
-        });
-		
-        
+				if (MonomerInfoUtils.isChemicalModifierPolymer(o1)) {
+					return 1;
+				}
+				if (MonomerInfoUtils.isPMonomer(o2)) {
+					return -1;
+				}
+				if (MonomerInfoUtils.isPMonomer(o1)) {
+					return 1;
+				}
+				if (MonomerInfoUtils.isBranchMonomer(o2)) {
+					return -1;
+				}
+				if (MonomerInfoUtils.isBranchMonomer(o1)) {
+					return 1;
+				}
+				return 0;
+			}
+		});
+
 		LinkedHashSet<Node> result = new LinkedHashSet<Node>();
-        Collections.addAll(result, sorted);
-        return result;
+		Collections.addAll(result, sorted);
+		return result;
 	}
 
 }

@@ -41,76 +41,77 @@ public class UITemplateManager {
 
 	private String schemaPath;
 	private String uiTempaltePath;
-	
+
 	private TemplateValidator validator;
 	private TemplateParser parser;
-	
+
 	private Template uiTemplate;
-	
+
 	public UITemplateManager(String schemaPath, String uiTemplatePath) {
 		validator = new UITemplateValidator();
 		parser = new DomParser();
-		
+
 		this.schemaPath = schemaPath;
 		this.uiTempaltePath = uiTemplatePath;
 	}
-	
-	
-	public void loadTemplates() throws ValidationTemplateExcaption, TemplateParsingException {
+
+	public void loadTemplates() throws ValidationTemplateExcaption,
+			TemplateParsingException {
 		validator.setSchema(schemaPath);
-		
+
 		validator.validate(uiTempaltePath);
-		
-		uiTemplate = parser.parse(uiTempaltePath);		
+
+		uiTemplate = parser.parse(uiTempaltePath);
 	}
-	
-	public void setUITemplatePath(String templatePath) throws ValidationTemplateExcaption, TemplateParsingException{
-		uiTempaltePath = templatePath;		
+
+	public void setUITemplatePath(String templatePath)
+			throws ValidationTemplateExcaption, TemplateParsingException {
+		uiTempaltePath = templatePath;
 		loadTemplates();
 	}
-	
-	public Iterator<Polymer> getPolymerIntertor(){
+
+	public Iterator<Polymer> getPolymerIntertor() {
 		return uiTemplate.getPolymersInterator();
 	}
-	
-	public Template.UIType getUIType(){
+
+	public Template.UIType getUIType() {
 		return uiTemplate.getUiType();
 	}
-	
-	public boolean isTree(){
+
+	public boolean isTree() {
 		return uiTemplate.getUiType() == Template.UIType.TREE;
 	}
-	
-	public boolean isTabbedPane(){
+
+	public boolean isTabbedPane() {
 		return uiTemplate.getUiType() == Template.UIType.TAB;
 	}
-	
-	public boolean isSearchPane(){
+
+	public boolean isSearchPane() {
 		return uiTemplate.getUiType() == Template.UIType.SEARCH;
 	}
-	
-	public List<Polymer> getPolymerList(){
+
+	public List<Polymer> getPolymerList() {
 		List<Polymer> resultList = new ArrayList<Polymer>();
 		Iterator<Polymer> iter = uiTemplate.getPolymersInterator();
-		while(iter.hasNext()){
+		while (iter.hasNext()) {
 			resultList.add(iter.next());
 		}
-		
+
 		return resultList;
 	}
-	
-	public Polymer getPolymerByName(String name){
+
+	public Polymer getPolymerByName(String name) {
 		Iterator<Polymer> iter = uiTemplate.getPolymersInterator();
-		
+
 		while (iter.hasNext()) {
 			Polymer currPolymer = iter.next();
-			
-			if (currPolymer.getName().equalsIgnoreCase(name)){
+
+			if (currPolymer.getName().equalsIgnoreCase(name)) {
 				return currPolymer;
 			}
 		}
-		
+
 		return null;
 	}
-	
+
 }

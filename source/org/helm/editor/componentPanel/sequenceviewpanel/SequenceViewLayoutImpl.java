@@ -92,7 +92,7 @@ public class SequenceViewLayoutImpl extends JPanel implements
 	private boolean isCompositeChain = false;
 
 	private String errorMessage = "Invalid Notation";
-	
+
 	public SequenceViewLayoutImpl() {
 
 		_view = new Graph2DView();
@@ -108,8 +108,9 @@ public class SequenceViewLayoutImpl extends JPanel implements
 		setSize(20, 20);
 
 		popup = new JPopupMenu("copy");
-		JMenuItem copyToClipbordItem = new JMenuItem("Copy current image to clipboard");
-                copyToClipbordItem.addActionListener(new ActionListener() {
+		JMenuItem copyToClipbordItem = new JMenuItem(
+				"Copy current image to clipboard");
+		copyToClipbordItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				ClipBoardProcessor.copy(SaveAsPNG
 						.getBufferedImageFromImage(_view.getImage()));
@@ -152,10 +153,10 @@ public class SequenceViewLayoutImpl extends JPanel implements
 
 		copyGraph2D.addDataProvider(SequenceViewModel.MODIFICATION_COUNT,
 				copyGraph2D.createNodeMap());
-		copyGraph2D.addDataProvider(NodeMapKeys.MONOMER_REF, copyGraph2D
-				.createNodeMap());
-		copyGraph2D.addDataProvider(EdgeMapKeys.EDGE_INFO, copyGraph2D
-				.createEdgeMap());
+		copyGraph2D.addDataProvider(NodeMapKeys.MONOMER_REF,
+				copyGraph2D.createNodeMap());
+		copyGraph2D.addDataProvider(EdgeMapKeys.EDGE_INFO,
+				copyGraph2D.createEdgeMap());
 
 		copyView.setGraph2D(copyGraph2D);
 
@@ -171,29 +172,30 @@ public class SequenceViewLayoutImpl extends JPanel implements
 		Graph2D viewGraph = _view.getGraph2D();
 		viewGraph.addDataProvider(SequenceViewModel.MODIFICATION_COUNT,
 				viewGraph.createNodeMap());
-		viewGraph.addDataProvider(NodeMapKeys.MONOMER_REF, viewGraph
-				.createNodeMap());
-		viewGraph.addDataProvider(EdgeMapKeys.EDGE_INFO, viewGraph
-				.createEdgeMap());
+		viewGraph.addDataProvider(NodeMapKeys.MONOMER_REF,
+				viewGraph.createNodeMap());
+		viewGraph.addDataProvider(EdgeMapKeys.EDGE_INFO,
+				viewGraph.createEdgeMap());
 
-		viewGraph.addDataProvider(SequenceViewModel.COMPLEMENTARY_VIEW_NODE, viewGraph
-				.createNodeMap());
-		viewGraph.addDataProvider(SequenceViewModel.IS_FLIPPED, viewGraph
-				.createNodeMap());
-		viewGraph.addDataProvider(NodeMapKeys.NODE2STARTING_NODE, viewGraph.createNodeMap());
-		viewGraph.addDataProvider(NodeMapKeys.NODE2PARENT_HYPERNODE, viewGraph.createNodeMap());
-		viewGraph.addDataProvider(NodeMapKeys.HYPERNODE2STARTING_NODE, viewGraph.createNodeMap());
-		
-		
-		
+		viewGraph.addDataProvider(SequenceViewModel.COMPLEMENTARY_VIEW_NODE,
+				viewGraph.createNodeMap());
+		viewGraph.addDataProvider(SequenceViewModel.IS_FLIPPED,
+				viewGraph.createNodeMap());
+		viewGraph.addDataProvider(NodeMapKeys.NODE2STARTING_NODE,
+				viewGraph.createNodeMap());
+		viewGraph.addDataProvider(NodeMapKeys.NODE2PARENT_HYPERNODE,
+				viewGraph.createNodeMap());
+		viewGraph.addDataProvider(NodeMapKeys.HYPERNODE2STARTING_NODE,
+				viewGraph.createNodeMap());
+
 		viewModel = new SequenceViewModelImpl(viewGraph);
 		_labelConstructor.setUpView(viewModel);
 
 		if (!editorModel.isEmpty()) {
 			transform();
 			runLayout();
-		}		
-		
+		}
+
 		_layoutMetrics.updateView();
 	}
 
@@ -212,18 +214,18 @@ public class SequenceViewLayoutImpl extends JPanel implements
 
 	public void replaceView(Graph2DView view) {
 		removeAll();
-		
+
 		_view = view;
-//		_view = copyGraph2DView();
+		// _view = copyGraph2DView();
 		_layoutMetrics.setGraph2DView(_view);
-		
-//		updateAlignment();
-		
+
+		// updateAlignment();
+
 		add(_view, BorderLayout.CENTER);
-		
+
 		_view.updateView();
-//		refreshLayout();
-		
+		// refreshLayout();
+
 		revalidate();
 		super.repaint();
 	}
@@ -234,11 +236,11 @@ public class SequenceViewLayoutImpl extends JPanel implements
 
 		editorModel = newEditorModel;
 		editorView = editorModel.renderView();
-		
+
 		_labelConstructor.setUpModels(editorModel, editorView);
 
 		initView();
-		
+
 		revalidate();
 	}
 
@@ -280,13 +282,10 @@ public class SequenceViewLayoutImpl extends JPanel implements
 
 	private void runLayout() {
 		// hack to use layout module
-		AbstractLayoutPrimitives layoutPrimitives = isLayoutForComponentView 
-			? new ComponentViewLayoutPrimitives(
-					_labelConstructor, 
-					_layoutMetrics)
-			: new SequenceViewLayoutPrimitives(
-					_labelConstructor,
-					_layoutMetrics);
+		AbstractLayoutPrimitives layoutPrimitives = isLayoutForComponentView ? new ComponentViewLayoutPrimitives(
+				_labelConstructor, _layoutMetrics)
+				: new SequenceViewLayoutPrimitives(_labelConstructor,
+						_layoutMetrics);
 
 		StructuresLayoutModule layoutModule = new StructuresLayoutModule();
 		layoutModule.setLayoutPrimitives(layoutPrimitives);
@@ -295,7 +294,7 @@ public class SequenceViewLayoutImpl extends JPanel implements
 		layoutPrimitives.arrangeNodesVisualisationSettings(_view.getGraph2D());
 		layoutPrimitives.arrangeEdgesVisualisationSettings(_view.getGraph2D());
 
-		_layoutMetrics.updateView();		
+		_layoutMetrics.updateView();
 		_view.getGraph2D().updateViews();
 	}
 
@@ -317,18 +316,21 @@ public class SequenceViewLayoutImpl extends JPanel implements
 		_elementsFactory.setUpViewModel(viewModel);
 		for (; edges.ok(); edges.next()) {
 			Edge currentEdge = edges.edge();
-			EditorEdgeInfoData edgeInfo = (EditorEdgeInfoData) pairEdgeMap.get(currentEdge);
+			EditorEdgeInfoData edgeInfo = (EditorEdgeInfoData) pairEdgeMap
+					.get(currentEdge);
 			if (edgeInfo != null && edgeInfo.isPair()) {
 				_elementsFactory.createEdge(currentEdge,
 						edgeInfo.getSourceNodeAttachment(),
 						edgeInfo.getTargetNodeAttachment(),
 						ViewElementsConstructor.PAIR_EDGE);
-			} else if (edgeInfo != null && edgeInfo.isPBranchBackbone() && MonomerInfoUtils.isPBranchEdge(currentEdge)) {
+			} else if (edgeInfo != null && edgeInfo.isPBranchBackbone()
+					&& MonomerInfoUtils.isPBranchEdge(currentEdge)) {
 				_elementsFactory.createEdge(currentEdge,
 						edgeInfo.getSourceNodeAttachment(),
 						edgeInfo.getTargetNodeAttachment(),
 						ViewElementsConstructor.BACKBONE_BRANCH_EDGE);
-			} else if (edgeInfo != null && edgeInfo.isPBranchBranch() && MonomerInfoUtils.isPBranchEdge(currentEdge)) {
+			} else if (edgeInfo != null && edgeInfo.isPBranchBranch()
+					&& MonomerInfoUtils.isPBranchEdge(currentEdge)) {
 				_elementsFactory.createEdge(currentEdge,
 						edgeInfo.getSourceNodeAttachment(),
 						edgeInfo.getTargetNodeAttachment(),
@@ -350,8 +352,7 @@ public class SequenceViewLayoutImpl extends JPanel implements
 
 	private void transformSequences() throws NotationException,
 			MonomerException, JDOMException, IOException {
-		
-		
+
 		for (Node node : editorModel.getEditorStartingNodes()) {
 
 			List<Node> viewSequence = viewModel.transform(node);
@@ -359,22 +360,23 @@ public class SequenceViewLayoutImpl extends JPanel implements
 			if (MonomerInfoUtils.isChemicalModifierPolymer(node)) {
 				continue;
 			}
-			
-			if ((viewSequence != null) && (!viewSequence.isEmpty())){
+
+			if ((viewSequence != null) && (!viewSequence.isEmpty())) {
 
 				// TODO: move all labeling to the label layouter //
-				///////////////////////////////////////////////////
-				///////////////////////////////////////////////////
-				NodeMap positionMap = (NodeMap)_view.getGraph2D().
-							getDataProvider(NodeMapKeys.LABEL_INFO_MAP);
+				// /////////////////////////////////////////////////
+				// /////////////////////////////////////////////////
+				NodeMap positionMap = (NodeMap) _view.getGraph2D()
+						.getDataProvider(NodeMapKeys.LABEL_INFO_MAP);
 				for (Node n : viewSequence) {
-					LabelInfo info = (LabelInfo)positionMap.get(n);
-					assignNumber(_view.getGraph2D(), info.getPositionNumber(), n, false);
+					LabelInfo info = (LabelInfo) positionMap.get(n);
+					assignNumber(_view.getGraph2D(), info.getPositionNumber(),
+							n, false);
 				}
-				
-				////////////////////////////////////////////////////
-				///////////////////////////////////////////////////
-				
+
+				// //////////////////////////////////////////////////
+				// /////////////////////////////////////////////////
+
 			}
 		}
 	}
@@ -393,20 +395,21 @@ public class SequenceViewLayoutImpl extends JPanel implements
 		Annotator.configAnnotationLabel(positionLabel, isPeptide);
 
 		String posititonString = String.valueOf(positionCount);
-		
+
 		int numSymb = posititonString.length();
 		double xOffset = _layoutMetrics.getNumberLabelXOffset();
-		if (numSymb > 1){
-			 xOffset -= 3 * numSymb; 
+		if (numSymb > 1) {
+			xOffset -= 3 * numSymb;
 		}
-		
+
 		positionLabel.setModel(NodeLabel.FREE);
-		positionLabel.setOffset(xOffset, _layoutMetrics.getNumberLabelYOffset());
-		
+		positionLabel
+				.setOffset(xOffset, _layoutMetrics.getNumberLabelYOffset());
+
 		positionLabel.setText(posititonString);
 		positionLabel.setFontSize(_layoutMetrics.getNumberLabelFontSize());
 		nr.addLabel(positionLabel);
-		
+
 		return nr;
 	}
 

@@ -28,20 +28,21 @@ import org.helm.editor.utility.MonomerInfoUtils;
 /**
  * User: dzhelezov
  */
-public class ConnectedComponentsIterator extends AbstractConnectedComponentIterator {
+public class ConnectedComponentsIterator extends
+		AbstractConnectedComponentIterator {
 
-    public ConnectedComponentsIterator(Graph graph, Node startNode) {
-        super(graph, startNode);
-    }
+	public ConnectedComponentsIterator(Graph graph, Node startNode) {
+		super(graph, startNode);
+	}
 
-    protected boolean isOk(Node node) {
-        return true;  
-    }
+	protected boolean isOk(Node node) {
+		return true;
+	}
 
-    @Override
-    protected void processOkNode(Node n) {
-        if (MonomerInfoUtils.isChemicalModifierPolymer(n)) {
-            //System.out.print(MonomerInfoUtils.getMonomerID(graph, n) + " ");
-        }
-    }
+	@Override
+	protected void processOkNode(Node n) {
+		if (MonomerInfoUtils.isChemicalModifierPolymer(n)) {
+			// System.out.print(MonomerInfoUtils.getMonomerID(graph, n) + " ");
+		}
+	}
 }

@@ -35,7 +35,7 @@ import y.base.Node;
  * 
  * 
  * @author Dmitry Zhelezov
- *
+ * 
  */
 public class SenseIterator extends AbstractBfsIterator {
 
@@ -47,23 +47,21 @@ public class SenseIterator extends AbstractBfsIterator {
 	protected boolean isOk(Node node) {
 		return !MonomerInfoUtils.isChemicalModifierPolymer(node);
 	}
-	
+
 	@Override
 	protected Set<Node> getAdjacentNodes(Node node) {
 		Set<Node> result = new HashSet<Node>();
-        Graph graph = node.getGraph();
+		Graph graph = node.getGraph();
 		Edge[] edges = graph.getEdgeArray();
-        for (Edge e : edges) {
-            if (MonomerInfoUtils.isPair(e)) {
-            	continue;
-            }
-        	if ((e.source() == node) || (e.target() == node)) {
-			    result.add(e.opposite(node));
-            }
-        }
-        return result;
+		for (Edge e : edges) {
+			if (MonomerInfoUtils.isPair(e)) {
+				continue;
+			}
+			if ((e.source() == node) || (e.target() == node)) {
+				result.add(e.opposite(node));
+			}
+		}
+		return result;
 	}
-	
-	
-	
+
 }

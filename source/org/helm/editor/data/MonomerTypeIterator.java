@@ -29,7 +29,7 @@ import y.base.Node;
 
 abstract class MonomerTypeIterator extends AbstractBfsIterator {
 	private List<Node> dockNodes;
-	
+
 	public MonomerTypeIterator(Graph graph, Node startNode) {
 		super(graph, startNode);
 		this.dockNodes = new ArrayList<Node>();
@@ -39,7 +39,7 @@ abstract class MonomerTypeIterator extends AbstractBfsIterator {
 	protected void processDockNode(Node node) {
 		dockNodes.add(node);
 	}
-	
+
 	public List<Node> getDockNodes() {
 		if (hasNext()) {
 			throw new IllegalStateException();

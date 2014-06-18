@@ -27,28 +27,27 @@ import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 
 /**
- *
+ * 
  * @author zhangtianhong
  */
 public class ADCEditorAction extends AbstractAction {
 
-    private MacromoleculeEditor editor;
-    private ADCEditorFrame editorDialog;
+	private MacromoleculeEditor editor;
+	private ADCEditorFrame editorDialog;
 
-    public ADCEditorAction(MacromoleculeEditor editor) {
-        super("Launch ADC Editor ...");
-        this.editor = editor;
-    }
+	public ADCEditorAction(MacromoleculeEditor editor) {
+		super("Launch ADC Editor ...");
+		this.editor = editor;
+	}
 
-    public void actionPerformed(ActionEvent e) {
-        if (null == editorDialog) {
-            editorDialog = new ADCEditorFrame();
-            editorDialog.setLocationRelativeTo(editor.getFrame());
-        }
+	public void actionPerformed(ActionEvent e) {
+		if (null == editorDialog) {
+			editorDialog = new ADCEditorFrame();
+			editorDialog.setLocationRelativeTo(editor.getFrame());
+		}
 
-        if (!editorDialog.isVisible()) {
-            editorDialog.setVisible(true);
-        }
-    }
+		if (!editorDialog.isVisible()) {
+			editorDialog.setVisible(true);
+		}
+	}
 }
-

@@ -33,62 +33,67 @@ import java.util.logging.Logger;
 import org.jdesktop.swingworker.SwingWorker;
 
 /**
- *
+ * 
  * @author zhangtianhong
  */
 public class ProteinViewerUpdater extends SwingWorker<Void, Void> {
 
-    private String notation;
-    private ProteinViewer viewer;
-    private PeptidePolymer peptidePolymer;
-    private StringBuilder stringBuilder;
+	private String notation;
+	private ProteinViewer viewer;
+	private PeptidePolymer peptidePolymer;
+	private StringBuilder stringBuilder;
 
-    private DecimalFormat decimalFormat = new DecimalFormat("#.##");
+	private DecimalFormat decimalFormat = new DecimalFormat("#.##");
 
-    public ProteinViewerUpdater(ProteinViewer viewer, String notation) {
-        this.viewer = viewer;
-        this.notation = notation;
-    }
+	public ProteinViewerUpdater(ProteinViewer viewer, String notation) {
+		this.viewer = viewer;
+		this.notation = notation;
+	}
 
-    @Override
-    protected Void doInBackground() throws Exception {
+	@Override
+	protected Void doInBackground() throws Exception {
 
-        peptidePolymer = new PeptidePolymer(notation);
-        stringBuilder = new StringBuilder();
+		peptidePolymer = new PeptidePolymer(notation);
+		stringBuilder = new StringBuilder();
 
-        String[] notations = null;
-        try {
-            notations = ComplexNotationParser.decompose(notation);
-        } catch (Exception ex) {
-            Logger.getLogger(ProteinViewerUpdater.class.getName()).log(Level.SEVERE, null, ex);
-            stringBuilder.append("**unable to decompose**\n");
-            return null;
-        }
+		String[] notations = null;
+		try {
+			notations = ComplexNotationParser.decompose(notation);
+		} catch (Exception ex) {
+			Logger.getLogger(ProteinViewerUpdater.class.getName()).log(
+					Level.SEVERE, null, ex);
+			stringBuilder.append("**unable to decompose**\n");
+			return null;
+		}
 
-        for (int i = 0; i < notations.length; i++) {
-            if (stringBuilder.length() > 0) {
-                stringBuilder.append("\n");
-            }
-            stringBuilder.append("No: " + (i + 1) + "\n");
-            try {
-//                String smiles = ComplexNotationParser.getComplexPolymerSMILES(notations[i]);
-//                MoleculeInfo mi = StructureParser.getMoleculeInfo(smiles);
-                MoleculeInfo mi = ComplexNotationParser.getMoleculeInfo(notations[i]);
-                stringBuilder.append("MF: " + mi.getMolecularFormula() + "\n");
-                stringBuilder.append("MW: " + decimalFormat.format(mi.getMolecularWeight()) + "\n");
-            } catch (Exception ex) {
-                Logger.getLogger(ProteinViewer.class.getName()).log(Level.SEVERE, null, ex);
-                stringBuilder.append("**unable to calculate**\n");
-            }
-        }
+		for (int i = 0; i < notations.length; i++) {
+			if (stringBuilder.length() > 0) {
+				stringBuilder.append("\n");
+			}
+			stringBuilder.append("No: " + (i + 1) + "\n");
+			try {
+				// String smiles =
+				// ComplexNotationParser.getComplexPolymerSMILES(notations[i]);
+				// MoleculeInfo mi = StructureParser.getMoleculeInfo(smiles);
+				MoleculeInfo mi = ComplexNotationParser
+						.getMoleculeInfo(notations[i]);
+				stringBuilder.append("MF: " + mi.getMolecularFormula() + "\n");
+				stringBuilder.append("MW: "
+						+ decimalFormat.format(mi.getMolecularWeight()) + "\n");
+			} catch (Exception ex) {
+				Logger.getLogger(ProteinViewer.class.getName()).log(
+						Level.SEVERE, null, ex);
+				stringBuilder.append("**unable to calculate**\n");
+			}
+		}
 
-        return null;
-    }
+		return null;
+	}
 
-    @Override
-    protected void done() {
-        viewer.setPeptidePolymer(peptidePolymer);
-        viewer.setMoleculeProperty(stringBuilder.toString());
-        viewer.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-    }
+	@Override
+	protected void done() {
+		viewer.setPeptidePolymer(peptidePolymer);
+		viewer.setMoleculeProperty(stringBuilder.toString());
+		viewer.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+	}
 }

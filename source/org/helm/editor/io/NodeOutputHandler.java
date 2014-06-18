@@ -24,7 +24,6 @@ package org.helm.editor.io;
 import org.helm.editor.data.MonomerInfo;
 import org.helm.editor.data.NodeMapKeys;
 
-
 import org.graphdrawing.graphml.writer.GraphMLWriteContext;
 import org.graphdrawing.graphml.writer.XmlWriter;
 import y.base.Graph;
@@ -32,33 +31,34 @@ import y.base.NodeMap;
 import yext.graphml.writer.AbstractOutputHandler;
 
 /**
- *
+ * 
  * @author lih25
  */
 public class NodeOutputHandler extends AbstractOutputHandler {
 
-    @Override
-    public void printDataOutput(GraphMLWriteContext arg0, Graph graph, Object node, XmlWriter writer) {
-        final NodeMap nodemap = (NodeMap) graph.getDataProvider(NodeMapKeys.MONOMER_REF);
+	@Override
+	public void printDataOutput(GraphMLWriteContext arg0, Graph graph,
+			Object node, XmlWriter writer) {
+		final NodeMap nodemap = (NodeMap) graph
+				.getDataProvider(NodeMapKeys.MONOMER_REF);
 
-        MonomerInfo monomerInfo = (MonomerInfo) nodemap.get(node);
-        writer.writeStartElement(IOConstants.POLYMER_TYPE, null);
-        writer.writeAttribute("value", monomerInfo.getPolymerType());
-        writer.writeEndElement();
+		MonomerInfo monomerInfo = (MonomerInfo) nodemap.get(node);
+		writer.writeStartElement(IOConstants.POLYMER_TYPE, null);
+		writer.writeAttribute("value", monomerInfo.getPolymerType());
+		writer.writeEndElement();
 
-        writer.writeStartElement(IOConstants.MONOMER_ID, IOConstants.MONOMER_ID);
-        writer.writeAttribute("value", monomerInfo.getMonomerID());
-        writer.writeEndElement();
+		writer.writeStartElement(IOConstants.MONOMER_ID, IOConstants.MONOMER_ID);
+		writer.writeAttribute("value", monomerInfo.getMonomerID());
+		writer.writeEndElement();
 
+	}
 
-    }
+	public void printKeyAttributes(GraphMLWriteContext arg0, XmlWriter writer) {
+		writer.writeAttribute(IOConstants.POLYMER_TYPE, true);
+		writer.writeAttribute(IOConstants.MONOMER_ID, true);
+	}
 
-    public void printKeyAttributes(GraphMLWriteContext arg0, XmlWriter writer) {
-        writer.writeAttribute(IOConstants.POLYMER_TYPE, true);
-        writer.writeAttribute(IOConstants.MONOMER_ID, true);
-    }
-
-    public void printKeyOutput(GraphMLWriteContext arg0, XmlWriter arg1) {
-//        throw new UnsupportedOperationException("Not supported yet.");
-    }
+	public void printKeyOutput(GraphMLWriteContext arg0, XmlWriter arg1) {
+		// throw new UnsupportedOperationException("Not supported yet.");
+	}
 }

@@ -32,63 +32,64 @@ import org.helm.editor.data.NodeSequence;
  * User: dzhelezov
  */
 public class MappedChemSequenceHolder implements ChemSequenceHolder {
-    private GraphMapper mapper;
-    private ChemSequenceHolder sourceHolder;
+	private GraphMapper mapper;
+	private ChemSequenceHolder sourceHolder;
 
-    public MappedChemSequenceHolder(GraphMapper mapper, ChemSequenceHolder sourceHolder) {
-        this.mapper = mapper;
-        this.sourceHolder = sourceHolder;
-    }
+	public MappedChemSequenceHolder(GraphMapper mapper,
+			ChemSequenceHolder sourceHolder) {
+		this.mapper = mapper;
+		this.sourceHolder = sourceHolder;
+	}
 
-    public List<Node> getPendantNodes() {
-        return getTargetList(sourceHolder.getPendantNodes());
-    }
+	public List<Node> getPendantNodes() {
+		return getTargetList(sourceHolder.getPendantNodes());
+	}
 
-    public Set<NodeSequence> getSequences() {
-        return getTargetSet(sourceHolder.getSequences());
-    }
+	public Set<NodeSequence> getSequences() {
+		return getTargetSet(sourceHolder.getSequences());
+	}
 
-    public List<NodeSequence> getConnectedSequences(Node dockNode) {
-        Set<NodeSequence> result = new HashSet<NodeSequence>();
-        for (Node sourceDockNode : mapper.getSourceNodes(dockNode)) {
-            result.addAll(getTargetList(sourceHolder.getConnectedSequences(sourceDockNode)));
-        }
-        return Arrays.asList(result.toArray(new NodeSequence[result.size()]));
-    }
+	public List<NodeSequence> getConnectedSequences(Node dockNode) {
+		Set<NodeSequence> result = new HashSet<NodeSequence>();
+		for (Node sourceDockNode : mapper.getSourceNodes(dockNode)) {
+			result.addAll(getTargetList(sourceHolder
+					.getConnectedSequences(sourceDockNode)));
+		}
+		return Arrays.asList(result.toArray(new NodeSequence[result.size()]));
+	}
 
-    public List<Node> getDockedNodes() {
-        return getTargetList(sourceHolder.getDockedNodes());
-    }
+	public List<Node> getDockedNodes() {
+		return getTargetList(sourceHolder.getDockedNodes());
+	}
 
-    public Set<NodeSequence> getDockedSequences() {
-        return getTargetSet(sourceHolder.getDockedSequences());
-    }
+	public Set<NodeSequence> getDockedSequences() {
+		return getTargetSet(sourceHolder.getDockedSequences());
+	}
 
-    private <T> List<T> getTargetList(List<T> sourceList) {
-        List<T> result = new ArrayList<T>();
-        for (T source : sourceList) {
-            result.add(getTargetInstance(source));
-        }
-        return result;
-    }
+	private <T> List<T> getTargetList(List<T> sourceList) {
+		List<T> result = new ArrayList<T>();
+		for (T source : sourceList) {
+			result.add(getTargetInstance(source));
+		}
+		return result;
+	}
 
-    private <T> Set<T> getTargetSet(Set<T> sourceSet) {
-        Set<T> result = new LinkedHashSet<T>();
-        for (T source : sourceSet) {
-            result.add(getTargetInstance(source));
-        }
-        return result;
-    }
+	private <T> Set<T> getTargetSet(Set<T> sourceSet) {
+		Set<T> result = new LinkedHashSet<T>();
+		for (T source : sourceSet) {
+			result.add(getTargetInstance(source));
+		}
+		return result;
+	}
 
-    @SuppressWarnings("unchecked")
-    private <T> T getTargetInstance(T source) {
-        if (source instanceof NodeSequence) {
-            return (T)(new MappedNodeSequence(mapper, (NodeSequence)source));
-        } else if (source instanceof Node) {
-            return (T)(mapper.getTargetNode((Node)source));
-        }
-        throw new RuntimeException();
-    }
-
+	@SuppressWarnings("unchecked")
+	private <T> T getTargetInstance(T source) {
+		if (source instanceof NodeSequence) {
+			return (T) (new MappedNodeSequence(mapper, (NodeSequence) source));
+		} else if (source instanceof Node) {
+			return (T) (mapper.getTargetNode((Node) source));
+		}
+		throw new RuntimeException();
+	}
 
 }
