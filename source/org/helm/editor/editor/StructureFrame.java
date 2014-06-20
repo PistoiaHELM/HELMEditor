@@ -135,8 +135,10 @@ public class StructureFrame extends JFrame {
 				else
 					return null;
 			}
-			if (r3 && (!r1 || !r2) || r2 && !r1 || !r1)
-				return null;
+			// The requirement for attachment points (R groups) in ad hoc
+			// monomers is too stringent(XHELM-77)
+			// if (r3 && (!r1 || !r2) || r2 && !r1 || !r1)
+			// return null;
 
 			// if not, then create new one
 
