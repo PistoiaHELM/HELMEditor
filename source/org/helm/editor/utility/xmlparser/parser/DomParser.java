@@ -283,7 +283,7 @@ public class DomParser implements TemplateParser {
 	}
 
 	private Group<XmlMonomer> generateOtherMonomerGroup(Polymer polymer)
-			throws TemplateParsingException {
+			throws TemplateParsingException, MonomerException, IOException, JDOMException {
 		Group<XmlMonomer> monomerGroup = null;
 		monomerGroup = new Group<XmlMonomer>();
 		monomerGroup.setName(Polymer.DEFAULT_OTHERS_GROUP_NAME);
@@ -296,8 +296,11 @@ public class DomParser implements TemplateParser {
 		 * monomerFactory.getMonomerDB(); Map<String, Monomer> currDataSet =
 		 * monomerDB.get(polymer.getName());
 		 */
-		Map<String, Monomer> currDataSet = MonomerStoreCache.getInstance()
-				.getCombinedMonomerStore().getMonomerDB()
+		// Bug: No combined store here, because the "other" group should only contain already registered monomers
+		// fetch MonomerDB without new monomers instead
+		Map<String, Monomer> currDataSet = MonomerFactory.getInstance().getMonomerDB(false)
+				// MonomerStoreCache.getInstance()
+				//.getCombinedMonomerStore().getMonomerDB()
 				.get(polymer.getName());
 
 		for (String currElement : currDataSet.keySet()) {
