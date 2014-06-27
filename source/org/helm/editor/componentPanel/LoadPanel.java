@@ -47,6 +47,7 @@ import javax.swing.JTextField;
 import org.helm.editor.controller.ModelController;
 import org.helm.editor.data.MonomerStoreCache;
 import org.helm.editor.editor.MacromoleculeEditor;
+import org.helm.editor.utility.ExceptionHandler;
 import org.helm.editor.utility.NotationParser;
 import org.helm.notation.MonomerFactory;
 import org.helm.notation.MonomerStore;
@@ -195,7 +196,7 @@ public class LoadPanel extends JPanel {
 
 	private void loadXHELMNotation(String inputText) {
 		try {
-			String existingNotation = editor.getNotation();
+			//String existingNotation = editor.getNotation();
 
 			Document doc = new SAXBuilder().build(new StringReader(inputText));
 
@@ -204,31 +205,46 @@ public class LoadPanel extends JPanel {
 			MonomerStore store = xHelmNotationParser.getMonomerStore(doc
 					.getRootElement());
 			// processes notation and writes inline monomers to store
-			ComplexNotationParser.validateComplexNotation(helm, store);
+			try {
+				ComplexNotationParser.validateComplexNotation(helm, store);
 
-			// add monomers, but cancel loading when adding failed
-			helm = MonomerStoreCache.getInstance().addExternalMonomers(
+				// add monomers, but cancel loading when adding failed
+				helm = MonomerStoreCache.getInstance().addExternalMonomers(
 					editor.getFrame(), store, helm);
-			if (helm == null)
+				if (helm == null)
+					return;
+			} catch (IllegalArgumentException ex) {
+				JOptionPane.showMessageDialog(editor.getFrame(), ex.getMessage(),
+						"xhelm", JOptionPane.WARNING_MESSAGE);
+			} catch (Exception ex) {
+				JOptionPane.showMessageDialog(editor.getFrame(),
+						"Invalid Notation!", "xhelm", JOptionPane.WARNING_MESSAGE);
 				return;
+			}
 
-			String complexNotation = ComplexNotationParser.standardize(helm,
-					store);
-
-			String newNotation = null;
-			if (null != existingNotation
-					&& existingNotation.trim().length() > 0) {
-				newNotation = ComplexNotationParser.getCombinedComlexNotation(
-						existingNotation, complexNotation);
-			} else {
-				newNotation = complexNotation;
+			//MW: exception during monomer renaming
+			String editorNotation = null;
+			try {
+				MonomerStore monomerStore = MonomerStoreCache.getInstance()
+						.getCombinedMonomerStore();
+				String standardNote = ComplexNotationParser.standardize(helm,
+						monomerStore);
+				editorNotation = ComplexNotationParser.getCombinedComlexNotation(
+						editorNotation, standardNote, monomerStore);
+				
+							
+			} catch (Exception ex) {
+				ExceptionHandler.handleException(ex);
+				return;
+			} finally {
+				editor.getFrame().setCursor(
+						Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 			}
 
 			editor.synchronizeZoom();
-			ModelController.notationUpdated(newNotation, _ownerCode);
+			ModelController.notationUpdated(editorNotation, _ownerCode);
 		} catch (Exception ex) {
-			// JF: HELM-24: "Error Loading HELM" durch " Error loading XHELM"
-			// ersetzt
+			
 			JOptionPane.showMessageDialog(editor.getFrame(), ex.getMessage(),
 					"Error Loading XHELM Notation", JOptionPane.ERROR_MESSAGE);
 			Logger.getLogger(LoadPanel.class.getName()).log(Level.SEVERE, null,
