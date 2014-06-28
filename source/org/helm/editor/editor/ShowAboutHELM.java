@@ -9,12 +9,12 @@ import javax.swing.AbstractAction;
 
 public class ShowAboutHELM extends AbstractAction {
 
-    public ShowAboutHELM() {
-        super("About HELM Editor");
-    }
+	public ShowAboutHELM() {
+		super("About HELM Editor");
+	}
 
-    public void actionPerformed(ActionEvent e) {
-        HELMAboutBox aboutBox = new HELMAboutBox(null, true);
-        aboutBox.setVisible(true);
-    }
+	public void actionPerformed(ActionEvent e) {
+		HELMAboutBox aboutBox = new HELMAboutBox(null, true);
+		aboutBox.setVisible(true);
+	}
 }

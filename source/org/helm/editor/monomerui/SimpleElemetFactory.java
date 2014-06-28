@@ -26,9 +26,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.jdom.JDOMException;
-
 import org.helm.notation.MonomerException;
 import org.helm.notation.MonomerFactory;
+import org.helm.notation.MonomerStore;
+import org.helm.editor.data.MonomerStoreCache;
 import org.helm.editor.data.MonomerInfo;
 import org.helm.editor.data.NodeMapKeys;
 import org.helm.editor.realizer.MonomerNodeRealizer;
@@ -54,235 +55,260 @@ import y.view.hierarchy.GroupNodeRealizer;
 import y.view.hierarchy.HierarchyManager;
 
 /**
- * Factory for one node  
+ * Factory for one node
+ * 
  * @author Alexander Makarov
  */
 public class SimpleElemetFactory {
 
-    private static Map<String, Map<String, Monomer>> monomerDB;
-    private static final double DEFAULT_NODE_SIZE = 30;
-    private static SimpleElemetFactory instance;
-    private static final Logger log = Logger.getLogger(SimpleElemetFactory.class.toString());
+	// private static Map<String, Map<String, Monomer>> monomerDB;
+	private static final double DEFAULT_NODE_SIZE = 30;
+	private static SimpleElemetFactory instance;
+	private static final Logger log = Logger
+			.getLogger(SimpleElemetFactory.class.toString());
 
-    private SimpleElemetFactory() throws MonomerException, IOException, JDOMException {
-        MonomerFactory monomerFactory = MonomerFactory.getInstance();
-        monomerDB = monomerFactory.getMonomerDB();
-    }
-    private final static Map<String, Byte> SHAPE_MAP = new HashMap<String, Byte>() {
+	private SimpleElemetFactory() throws MonomerException, IOException,
+			JDOMException {
+		MonomerFactory monomerFactory = MonomerFactory.getInstance();
+		// monomerDB = monomerFactory.getMonomerDB();
+	}
 
-        {
-            put("No", null);
-            put("Circle", MonomerNodeRealizer.ELLIPSE);
-            put("Rectangle", MonomerNodeRealizer.ROUND_RECT);
-            put("Rhomb", MonomerNodeRealizer.DIAMOND);
-            put("Hexagon", MonomerNodeRealizer.HEXAGON);
-        }
-    };
+	private final static Map<String, Byte> SHAPE_MAP = new HashMap<String, Byte>() {
 
-    /**
-     * An instance of singeltone class 
-     * @return instance
-     * @throws MonomerException
-     * @throws IOException
-     * @throws JDOMException
-     */
-    public static SimpleElemetFactory getInstance() throws MonomerException, IOException, JDOMException {
-        if (instance == null) {
-            instance = new SimpleElemetFactory();
-        }
+		{
+			put("No", null);
+			put("Circle", MonomerNodeRealizer.ELLIPSE);
+			put("Rectangle", MonomerNodeRealizer.ROUND_RECT);
+			put("Rhomb", MonomerNodeRealizer.DIAMOND);
+			put("Hexagon", MonomerNodeRealizer.HEXAGON);
+		}
+	};
 
-        return instance;
-    }
+	/**
+	 * An instance of singeltone class
+	 * 
+	 * @return instance
+	 * @throws MonomerException
+	 * @throws IOException
+	 * @throws JDOMException
+	 */
+	public static SimpleElemetFactory getInstance() throws MonomerException,
+			IOException, JDOMException {
+		if (instance == null) {
+			instance = new SimpleElemetFactory();
+		}
 
-    /**
-     * Construct node by type, shape and data model
-     * @param <T>
-     * @param type
-     * @param nodeShape
-     * @param element
-     * @return xml element
-     * @throws MonomerException
-     * @throws IOException
-     * @throws JDOMException
-     */
-    public <T extends XmlElement> Graph2D createNode(String type, String nodeShape, T element)
-            throws MonomerException, IOException, JDOMException {
+		return instance;
+	}
 
-        if (element.getNotation() == null) {
-            return createSimpleNode(type, nodeShape, element);
-        }
+	private Map<String, Map<String, Monomer>> getMonomerDB() {
+		return MonomerStoreCache.getInstance().getCombinedMonomerStore()
+				.getMonomerDB();
+	}
 
-        return createComposedNode(type, element);
-    }
+	/**
+	 * Construct node by type, shape and data model
+	 * 
+	 * @param <T>
+	 * @param type
+	 * @param nodeShape
+	 * @param element
+	 * @return xml element
+	 * @throws MonomerException
+	 * @throws IOException
+	 * @throws JDOMException
+	 */
+	public <T extends XmlElement> Graph2D createNode(String type,
+			String nodeShape, T element) throws MonomerException, IOException,
+			JDOMException {
 
-    private <T extends XmlElement> Graph2D createComposedNode(String type, T element)
-            throws MonomerException, IOException, JDOMException {
+		if (element.getNotation() == null) {
+			return createSimpleNode(type, nodeShape, element);
+		}
 
-        Graph2D graph = new Graph2D();
+		return createComposedNode(type, element);
+	}
 
-        Node fn;
-        Graph2D inner;
-        NodeRealizer fnr;
-        HierarchyManager hm = graph.getHierarchyManager();
+	private <T extends XmlElement> Graph2D createComposedNode(String type,
+			T element) throws MonomerException, IOException, JDOMException {
 
-        String notation = element.getNotation();
+		Graph2D graph = new Graph2D();
 
-        String base = notation.substring(notation.indexOf("(") + 1, notation.indexOf(")"));
-        base = base.replaceAll("\\[|\\]", "");
-        Monomer baseMonomer = monomerDB.get(Monomer.NUCLIEC_ACID_POLYMER_TYPE).get(base);
+		Node fn;
+		Graph2D inner;
+		NodeRealizer fnr;
+		HierarchyManager hm = graph.getHierarchyManager();
 
-        if (hm == null) {
-            hm = new HierarchyManager(graph);
-        }
+		String notation = element.getNotation();
 
-        NodeMap notationMap = (NodeMap) graph.getDataProvider(NodeMapKeys.FOLDER_NODE_NOTATION);
-        if (notationMap == null) {
-            notationMap = graph.createNodeMap();
-            graph.addDataProvider(NodeMapKeys.FOLDER_NODE_NOTATION,
-                    notationMap);
-        }
+		String base = notation.substring(notation.indexOf("(") + 1,
+				notation.indexOf(")"));
+		base = base.replaceAll("\\[|\\]", "");
+		Monomer baseMonomer = getMonomerDB().get(
+				Monomer.NUCLIEC_ACID_POLYMER_TYPE).get(base);
 
-        // a folder containing a graph to represent the given nucleotide
-        fn = hm.createFolderNode(graph);
-        inner = (Graph2D) hm.getInnerGraph(fn);
-        GraphCopier copier = SequenceGraphTools.getGraphCopier(inner);
-        copier.copy(NotationParser.createNucleotideGraph(notation), inner);
-        notationMap.set(fn, notation);
+		if (hm == null) {
+			hm = new HierarchyManager(graph);
+		}
 
-        // finally tell the realizer to display the inner graph
-        fnr = graph.getRealizer(fn);
+		NodeMap notationMap = (NodeMap) graph
+				.getDataProvider(NodeMapKeys.FOLDER_NODE_NOTATION);
+		if (notationMap == null) {
+			notationMap = graph.createNodeMap();
+			graph.addDataProvider(NodeMapKeys.FOLDER_NODE_NOTATION, notationMap);
+		}
 
-        String elementName = element.getName();
-        fnr.setLabelText(elementName);
+		// a folder containing a graph to represent the given nucleotide
+		fn = hm.createFolderNode(graph);
+		inner = (Graph2D) hm.getInnerGraph(fn);
+		GraphCopier copier = SequenceGraphTools.getGraphCopier(inner);
+		copier.copy(NotationParser.createNucleotideGraph(notation), inner);
+		notationMap.set(fn, notation);
 
-        fnr.getLabel().setVisible(false);
-        fnr.getLabel().setFontSize(calculateFontSize(elementName));
-        fnr.setTransparent(true);
-        fnr.setFillColor(ColorMap.getNucleotidesColor(baseMonomer.getNaturalAnalog()));
+		// finally tell the realizer to display the inner graph
+		fnr = graph.getRealizer(fn);
 
-        // add monomer info to node
-        MonomerInfo monomerKeys = new MonomerInfo(type, element.getName());
+		String elementName = element.getName();
+		fnr.setLabelText(elementName);
 
-        NodeMap nodeMap = (NodeMap) graph.getDataProvider(NodeMapKeys.MONOMER_REF);
-        if (nodeMap == null) {
-            nodeMap = graph.createNodeMap();
-            nodeMap.set(fn, monomerKeys);
-            graph.addDataProvider(NodeMapKeys.MONOMER_REF, nodeMap);
-        }
+		fnr.getLabel().setVisible(false);
+		fnr.getLabel().setFontSize(calculateFontSize(elementName));
+		fnr.setTransparent(true);
+		fnr.setFillColor(ColorMap.getNucleotidesColor(baseMonomer
+				.getNaturalAnalog()));
 
-        if (fnr instanceof GroupNodeRealizer) {
-            ((GroupNodeRealizer) fnr).setInnerGraphDisplayEnabled(true);
-        }
+		// add monomer info to node
+		MonomerInfo monomerKeys = new MonomerInfo(type, element.getName());
 
-        return graph;
-    }
+		NodeMap nodeMap = (NodeMap) graph
+				.getDataProvider(NodeMapKeys.MONOMER_REF);
+		if (nodeMap == null) {
+			nodeMap = graph.createNodeMap();
+			nodeMap.set(fn, monomerKeys);
+			graph.addDataProvider(NodeMapKeys.MONOMER_REF, nodeMap);
+		}
 
-    private <T extends XmlElement> Graph2D createSimpleNode(String type, String shape, T element)
-            throws MonomerException {
-        String monomerId = element.getName();
-        type = type.toUpperCase();
+		if (fnr instanceof GroupNodeRealizer) {
+			((GroupNodeRealizer) fnr).setInnerGraphDisplayEnabled(true);
+		}
 
-        Monomer monomer = monomerDB.get(type).get(monomerId);
-        MonomerInfo monomerKeys = new MonomerInfo(type, monomerId);
-        if (monomer == null) {
-            log.log(Level.WARNING, "No data found for monomer id " + monomerId);
-            return null;
-        }
+		return graph;
+	}
 
-        byte nodeShape = getNodeShage(shape);
-        MonomerNodeRealizer nodeRealizer = new MonomerNodeRealizer(nodeShape);
+	private <T extends XmlElement> Graph2D createSimpleNode(String type,
+			String shape, T element) throws MonomerException {
+		String monomerId = element.getName();
+		type = type.toUpperCase();
 
-        nodeRealizer.setSize(DEFAULT_NODE_SIZE, DEFAULT_NODE_SIZE);
-        nodeRealizer.setLabelText(monomerId);
-        nodeRealizer.getLabel().setFontSize(calculateFontSize(monomerId));
-        nodeRealizer.setFillColor(element.getBackgroundColor());
+		Monomer monomer = getMonomerDB().get(type).get(monomerId);
+		MonomerInfo monomerKeys = new MonomerInfo(type, monomerId);
+		if (monomer == null) {
+			log.log(Level.WARNING, "No data found for monomer id " + monomerId);
+			return null;
+		}
 
-        Graph2D graph = new Graph2D();
-        Node node = graph.createNode(nodeRealizer);
-        NodeMap nodeMap = graph.createNodeMap();
-        nodeMap.set(node, monomerKeys);
+		byte nodeShape = getNodeShage(shape);
+		MonomerNodeRealizer nodeRealizer = new MonomerNodeRealizer(nodeShape);
 
-        graph.addDataProvider(NodeMapKeys.MONOMER_REF, nodeMap);
-        return graph;
-    }
+		nodeRealizer.setSize(DEFAULT_NODE_SIZE, DEFAULT_NODE_SIZE);
+		nodeRealizer.setLabelText(monomerId);
+		nodeRealizer.getLabel().setFontSize(calculateFontSize(monomerId));
+		nodeRealizer.setFillColor(element.getBackgroundColor());
 
-    private Graph2D createMonomerNode(String polymerType, String monomerId, String shape, Color backgroundColor) throws MonomerException {
-        Monomer monomer = monomerDB.get(polymerType).get(monomerId);
-        if (monomer == null) {
-            log.log(Level.WARNING, "No data found for monomer id " + monomerId + " in " + polymerType);
-            return null;
-        }
+		Graph2D graph = new Graph2D();
+		Node node = graph.createNode(nodeRealizer);
+		NodeMap nodeMap = graph.createNodeMap();
+		nodeMap.set(node, monomerKeys);
 
-        byte nodeShape = getNodeShage(shape);
-        MonomerNodeRealizer nodeRealizer = new MonomerNodeRealizer(nodeShape);
+		graph.addDataProvider(NodeMapKeys.MONOMER_REF, nodeMap);
+		return graph;
+	}
 
+	private Graph2D createMonomerNode(String polymerType, String monomerId,
+			String shape, Color backgroundColor) throws MonomerException {
+		Monomer monomer = getMonomerDB().get(polymerType).get(monomerId);
+		if (monomer == null) {
+			log.log(Level.WARNING, "No data found for monomer id " + monomerId
+					+ " in " + polymerType);
+			return null;
+		}
 
-        nodeRealizer.setSize(DEFAULT_NODE_SIZE, DEFAULT_NODE_SIZE);
-        nodeRealizer.setLabelText(monomerId);
-        nodeRealizer.getLabel().setFontSize(calculateFontSize(monomerId));
-        nodeRealizer.setFillColor(backgroundColor);
+		byte nodeShape = getNodeShage(shape);
+		MonomerNodeRealizer nodeRealizer = new MonomerNodeRealizer(nodeShape);
 
-        MonomerInfo monomerInfo = new MonomerInfo(polymerType, monomerId);
+		nodeRealizer.setSize(DEFAULT_NODE_SIZE, DEFAULT_NODE_SIZE);
+		nodeRealizer.setLabelText(monomerId);
+		nodeRealizer.getLabel().setFontSize(calculateFontSize(monomerId));
+		nodeRealizer.setFillColor(backgroundColor);
 
-        Graph2D graph = new Graph2D();
-        Node node = graph.createNode(nodeRealizer);
-        NodeMap nodeMap = graph.createNodeMap();
-        nodeMap.set(node, monomerInfo);
+		MonomerInfo monomerInfo = new MonomerInfo(polymerType, monomerId);
 
-        graph.addDataProvider(NodeMapKeys.MONOMER_REF, nodeMap);
-        return graph;
-    }
+		Graph2D graph = new Graph2D();
+		Node node = graph.createNode(nodeRealizer);
+		NodeMap nodeMap = graph.createNodeMap();
+		nodeMap.set(node, monomerInfo);
 
-    public Graph2D createMonomerNode(String polymerType, String monomerId) throws MonomerException {
-        Monomer monomer = monomerDB.get(polymerType).get(monomerId);
-        if (monomer == null) {
-            log.log(Level.WARNING, "No data found for monomer id " + monomerId + " in " + polymerType);
-            return null;
-        }
+		graph.addDataProvider(NodeMapKeys.MONOMER_REF, nodeMap);
+		return graph;
+	}
 
-        ShapedXmlFragment shapedXmlFragment = getShapedXmlFragment(polymerType, monomerId);
-        if (shapedXmlFragment == null) {
-            shapedXmlFragment = new ShapedXmlFragment(monomerId, null);
-        }
-        return createMonomerNode(polymerType, monomerId, shapedXmlFragment.getShape(), shapedXmlFragment.getBackgroundColor());
+	public Graph2D createMonomerNode(String polymerType, String monomerId)
+			throws MonomerException {
+		Monomer monomer = getMonomerDB().get(polymerType).get(monomerId);
+		if (monomer == null) {
+			log.log(Level.WARNING, "No data found for monomer id " + monomerId
+					+ " in " + polymerType);
+			return null;
+		}
 
-    }
+		ShapedXmlFragment shapedXmlFragment = getShapedXmlFragment(polymerType,
+				monomerId);
+		if (shapedXmlFragment == null) {
+			shapedXmlFragment = new ShapedXmlFragment(monomerId, null);
+		}
+		return createMonomerNode(polymerType, monomerId,
+				shapedXmlFragment.getShape(),
+				shapedXmlFragment.getBackgroundColor());
 
-    private ShapedXmlFragment getShapedXmlFragment(String polymerType, String monomerId) {
-        UIConstructor uiConstructor = null;
-        try {
-            uiConstructor = UIConstructor.getInstance();
-        } catch (Exception ex) {
-            log.log(Level.WARNING, "Monomer UI not initialized yet");
-            return null;
-        }
-        
-        Iterator<Polymer> it = uiConstructor.getUITemplateManager().getPolymerIntertor();
-        while (it.hasNext()) {
-            Polymer p = it.next();
-            if (p.getName().equalsIgnoreCase(polymerType)) {
-                ShapedXmlFragment result = p.getXmlFragmentByName(monomerId);
-                if (null != result) {
-                    return result;
-                }
-            }
-        }
-        return null;
+	}
 
-    }
+	private ShapedXmlFragment getShapedXmlFragment(String polymerType,
+			String monomerId) {
+		UIConstructor uiConstructor = null;
+		try {
+			uiConstructor = UIConstructor.getInstance();
+		} catch (Exception ex) {
+			log.log(Level.WARNING, "Monomer UI not initialized yet");
+			return null;
+		}
 
-    private byte getNodeShage(String nodeShape) {
-        Byte shape = SHAPE_MAP.get(nodeShape);
+		Iterator<Polymer> it = uiConstructor.getUITemplateManager()
+				.getPolymerIntertor();
+		while (it.hasNext()) {
+			Polymer p = it.next();
+			if (p.getName().equalsIgnoreCase(polymerType)) {
+				ShapedXmlFragment result = p.getXmlFragmentByName(monomerId);
+				if (null != result) {
+					return result;
+				}
+			}
+		}
+		return null;
 
-        if (shape != null) {
-            return shape.byteValue();
-        }
+	}
 
-        return MonomerNodeRealizer.DIAMOND;
-    }
+	private byte getNodeShage(String nodeShape) {
+		Byte shape = SHAPE_MAP.get(nodeShape);
 
-    private static int calculateFontSize(String label) {
-        int textLength = label.length();
-        return (textLength < 4) ? 14 : ((textLength > 5) ? 9 : 10);
-    }
+		if (shape != null) {
+			return shape.byteValue();
+		}
+
+		return MonomerNodeRealizer.DIAMOND;
+	}
+
+	private static int calculateFontSize(String label) {
+		int textLength = label.length();
+		return (textLength < 4) ? 14 : ((textLength > 5) ? 9 : 10);
+	}
 }

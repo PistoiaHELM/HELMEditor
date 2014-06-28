@@ -33,67 +33,76 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 /**
- *
+ * 
  * @author zhangtianhong
  */
-public class HELMApp{
+public class HELMApp {
 
-    public static void main(final String[] args) {
+	public static void main(final String[] args) {
 
-        initializeDataFactories();
+		initializeDataFactories();
 
-        SwingUtilities.invokeLater(new Runnable() {
+		SwingUtilities.invokeLater(new Runnable() {
 
-            public void run() {
-                try {
-                    initLnF();
-                    MacromoleculeEditor editor = new MacromoleculeEditor();
-                    editor.start();
-                } catch (Exception ex) {
-                    Logger.getLogger(MacromoleculeEditor.class.getName()).log(Level.SEVERE, "Unable to launch application GUI", ex);
-                }
-            }
-        });
-    }
+			public void run() {
+				try {
+					initLnF();
+					MacromoleculeEditor editor = new MacromoleculeEditor();
+					editor.start();
+				} catch (Exception ex) {
+					Logger.getLogger(MacromoleculeEditor.class.getName()).log(
+							Level.SEVERE, "Unable to launch application GUI",
+							ex);
+				}
+			}
+		});
+	}
 
-    /**
-     *  initialize monomer DB and nucleteotide templates
-     */
-    private static void initializeDataFactories() {
-        try {
-            MonomerFactory.getInstance();
-            Logger.getLogger(MacromoleculeEditor.class.getName()).log(Level.INFO, "Initializing monomer DB...Done");
+	/**
+	 * initialize monomer DB and nucleteotide templates
+	 */
+	private static void initializeDataFactories() {
+		try {
+			MonomerFactory.getInstance();
+			Logger.getLogger(MacromoleculeEditor.class.getName()).log(
+					Level.INFO, "Initializing monomer DB...Done");
 
-            NucleotideFactory.getInstance();
-            Logger.getLogger(MacromoleculeEditor.class.getName()).log(Level.INFO, "Initializing nuleotide templates...Done");
+			NucleotideFactory.getInstance();
+			Logger.getLogger(MacromoleculeEditor.class.getName()).log(
+					Level.INFO, "Initializing nuleotide templates...Done");
 
-            PropertyManager.getInstance();
-            Logger.getLogger(MacromoleculeEditor.class.getName()).log(Level.INFO, "Initializing monomer UI templates...Done");
+			PropertyManager.getInstance();
+			Logger.getLogger(MacromoleculeEditor.class.getName()).log(
+					Level.INFO, "Initializing monomer UI templates...Done");
 
-        } catch (Exception ex) {
-            Logger.getLogger(MacromoleculeEditor.class.getName()).log(Level.WARNING, "Error initializing data factories", ex);
-        }
-    }
+		} catch (Exception ex) {
+			Logger.getLogger(MacromoleculeEditor.class.getName()).log(
+					Level.WARNING, "Error initializing data factories", ex);
+		}
+	}
 
-    /**
-     * Initializes to a "nice" look and feel.
-     */
-    public static void initLnF() {
-        ResourceBundle resourceBundle = ResourceBundle.getBundle("org.helm.editor.editor.resource.GUIBase");
-        String lnf = resourceBundle.getString("Application.lookAndFeel");
-        if (lnf != null && lnf.equalsIgnoreCase("System")) {
-            try {
-                if (!UIManager.getSystemLookAndFeelClassName().equals(
-                        "com.sun.java.swing.plaf.motif.MotifLookAndFeel")
-                        && !UIManager.getSystemLookAndFeelClassName().equals(
-                        "com.sun.java.swing.plaf.gtk.GTKLookAndFeel")
-                        && !UIManager.getSystemLookAndFeelClassName().equals(
-                        UIManager.getLookAndFeel().getClass().getName())) {
-                    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
+	/**
+	 * Initializes to a "nice" look and feel.
+	 */
+	public static void initLnF() {
+		ResourceBundle resourceBundle = ResourceBundle
+				.getBundle("org.helm.editor.editor.resource.GUIBase");
+		String lnf = resourceBundle.getString("Application.lookAndFeel");
+		if (lnf != null && lnf.equalsIgnoreCase("System")) {
+			try {
+				if (!UIManager.getSystemLookAndFeelClassName().equals(
+						"com.sun.java.swing.plaf.motif.MotifLookAndFeel")
+						&& !UIManager.getSystemLookAndFeelClassName().equals(
+								"com.sun.java.swing.plaf.gtk.GTKLookAndFeel")
+						&& !UIManager.getSystemLookAndFeelClassName()
+								.equals(UIManager.getLookAndFeel().getClass()
+										.getName())) {
+					UIManager.setLookAndFeel(UIManager
+							.getSystemLookAndFeelClassName());
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
 }

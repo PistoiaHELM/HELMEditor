@@ -62,7 +62,7 @@ public interface SequenceViewLayout {
 	void refreshLayout();
 
 	void updateAlignment();
-	
+
 	double getBoundOffset();
 
 	void minimizeGaps();

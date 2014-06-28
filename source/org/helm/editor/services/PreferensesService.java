@@ -25,7 +25,7 @@ import java.io.IOException;
 
 /**
  * @author Alexander Makarov
- *
+ * 
  */
 public interface PreferensesService {
 
@@ -33,11 +33,13 @@ public interface PreferensesService {
 	 * Load user preferences from data storage
 	 */
 	String loadUserPreference(String preferenceName);
-	
+
 	/**
-	 * Saving user preferences in data storage 
-	 * @throws IOException 
+	 * Saving user preferences in data storage
+	 * 
+	 * @throws IOException
 	 */
-	boolean saveUserPreference(String preferenceName, String newValue) throws IOException;
-	
+	boolean saveUserPreference(String preferenceName, String newValue)
+			throws IOException;
+
 }

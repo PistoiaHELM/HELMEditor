@@ -24,54 +24,52 @@ package org.helm.editor.utility.xmlparser.data;
 import java.awt.Color;
 
 /**
- * Representative part of DNA 
+ * Representative part of DNA
+ * 
  * @author Alexander Makarov
- *
+ * 
  */
 public class XmlFragment implements XmlElement {
 
 	/**
-	 * Fragment name in HELM Editor
-	 * Example: A, C nucliotides 
+	 * Fragment name in HELM Editor Example: A, C nucliotides
 	 */
 	String name;
-	
+
 	/**
-	 * Fragment helm notation
-	 * Example: R(A)P, R(T)P 
+	 * Fragment helm notation Example: R(A)P, R(T)P
 	 */
 	private String notation;
-	
+
 	private Color fontColor;
 	private Color backgroundColor;
 
-	
 	public XmlFragment(String name, String notation) {
 		this.name = name;
 		this.notation = notation;
 	}
-	
-	public String getName(){
+
+	public String getName() {
 		return name;
 	}
-	
-	public String getNotation(){
+
+	public String getNotation() {
 		return notation;
 	}
-	
-	public void setFontColor(Color fontColor){
+
+	public void setFontColor(Color fontColor) {
 		this.fontColor = fontColor;
 	}
-	
-	public void setBackgroundColor(Color backgroundColor){
+
+	public void setBackgroundColor(Color backgroundColor) {
 		this.backgroundColor = backgroundColor;
 	}
 
-	public Color getFontColor(){
+	public Color getFontColor() {
 		return fontColor;
 	}
-	
-	public Color getBackgroundColor(){
+
+	public Color getBackgroundColor() {
 		return backgroundColor;
 	}
 }

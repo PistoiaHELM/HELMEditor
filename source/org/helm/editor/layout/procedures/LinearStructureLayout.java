@@ -25,7 +25,7 @@ import y.base.Node;
 import y.layout.LayoutGraph;
 
 public class LinearStructureLayout extends AbstratStructureLayout {
-	
+
 	public LinearStructureLayout() {
 		super();
 	}

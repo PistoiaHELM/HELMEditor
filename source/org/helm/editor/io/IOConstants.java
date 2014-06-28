@@ -22,14 +22,14 @@
 package org.helm.editor.io;
 
 /**
- *
+ * 
  * @author lih25
  */
 public class IOConstants {
 
-    public static final String SOURCE_ATTACHMENT = "SOURCE_ATTACHMENT";
-    public static final String TARGET_ATTACHMENT = "TARGET_ATTACHMENT";
-    public static final String INFO = "INFO";
-    public static final String POLYMER_TYPE = "POLYMER_TYPE";
-    public static final String MONOMER_ID = "MONOMER_ID";
+	public static final String SOURCE_ATTACHMENT = "SOURCE_ATTACHMENT";
+	public static final String TARGET_ATTACHMENT = "TARGET_ATTACHMENT";
+	public static final String INFO = "INFO";
+	public static final String POLYMER_TYPE = "POLYMER_TYPE";
+	public static final String MONOMER_ID = "MONOMER_ID";
 }

@@ -33,23 +33,23 @@ public class LabelInfo {
 	private boolean isFlipped;
 	private String leftLinker;
 	private String rightLinker;
-	
+
 	public int getPositionNumber() {
 		return positionNumber;
 	}
-	
+
 	public void setPositionNumber(int number) {
 		this.positionNumber = number;
 	}
-	
+
 	public String getTerminalLabel() {
 		return terminalLabel;
 	}
-	
+
 	public void setTerminalLabel(String terminalLabel) {
 		this.terminalLabel = terminalLabel;
 	}
-	
+
 	public List<Node> getLinkers() {
 		return linkers;
 	}
@@ -77,6 +77,5 @@ public class LabelInfo {
 	public void setRightLinker(String rightLinker) {
 		this.rightLinker = rightLinker;
 	}
-	
-	
+
 }

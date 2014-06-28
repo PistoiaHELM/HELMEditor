@@ -22,8 +22,8 @@
 package org.helm.editor.utility.xmlparser.data;
 
 public class ShapedXmlFragment extends XmlFragment implements Cloneable {
-    public String shape;
-	
+	public String shape;
+
 	public ShapedXmlFragment(String name, String notation) {
 		super(name, notation);
 	}
@@ -36,11 +36,12 @@ public class ShapedXmlFragment extends XmlFragment implements Cloneable {
 		this.shape = shape;
 	}
 
-//	public ShapedXmlFragment cloneMonomerWithName(String newName) throws CloneNotSupportedException {
-//		ShapedXmlFragment result = (ShapedXmlFragment)super.clone();
-//		result.name = newName;
-//		result.notation = 
-//		return result;
-//	}
-	
+	// public ShapedXmlFragment cloneMonomerWithName(String newName) throws
+	// CloneNotSupportedException {
+	// ShapedXmlFragment result = (ShapedXmlFragment)super.clone();
+	// result.name = newName;
+	// result.notation =
+	// return result;
+	// }
+
 }

@@ -33,46 +33,51 @@ import org.helm.editor.data.GraphManager;
 public class NotationCompositor {
 
 	// order is important
-	private static ArrayList<NotationCreator> _creators = new ArrayList<NotationCreator>(){{
-		add(new NotationCoreCreator()); add(new RegularEdgesCreator());
-		add(new PairEdgesCreator()); add(new HyperNodeCreator());
-	}};
-	
+	private static ArrayList<NotationCreator> _creators = new ArrayList<NotationCreator>() {
+		{
+			add(new NotationCoreCreator());
+			add(new RegularEdgesCreator());
+			add(new PairEdgesCreator());
+			add(new HyperNodeCreator());
+		}
+	};
+
 	public static final String NOTATION_DELIMETER = "|";
-    public static final String NOTATION_BEGINING = "{";
-    public static final String NOTATION_ENDING = "}";    
-    public static final String NOTATION_PART_ENDING = "$";
-    public static final String NOTATION_COMMA = ",";
-    public static final String NOTATION_PAIRABLE_EDGES = "pair";
-    public static final String NOTATION_EMPTY = "$$$$";
-    public static final String EMPTY_STRING = "";
-	
-	public String getExtendedNotation(GraphManager graphManager){
-		
+	public static final String NOTATION_BEGINING = "{";
+	public static final String NOTATION_ENDING = "}";
+	public static final String NOTATION_PART_ENDING = "$";
+	public static final String NOTATION_COMMA = ",";
+	public static final String NOTATION_PAIRABLE_EDGES = "pair";
+	public static final String NOTATION_EMPTY = "$$$$";
+	public static final String EMPTY_STRING = "";
+
+	public String getExtendedNotation(GraphManager graphManager) {
+
 		Graph hyperGraph = graphManager.getHyperGraph();
 		if (hyperGraph.isEmpty()) {
-            return EMPTY_STRING;
-        }
-		
+			return EMPTY_STRING;
+		}
+
 		StringBuilder notation = new StringBuilder();
-		
+
 		Map<Node, String> nameMap = new HashMap<Node, String>();
-		Object[] args = new Object[]{hyperGraph, nameMap};
-								
-		for(NotationCreator currCreator : _creators){
+		Object[] args = new Object[] { hyperGraph, nameMap };
+
+		for (NotationCreator currCreator : _creators) {
 			notation.append(currCreator.createNotationPart(args));
 		}
 		notation.append(NOTATION_PART_ENDING);
-		
+
 		return notation.toString();
 	}
-	
-	public static boolean checkNotation(String notation){
-		if (notation != null && !notation.equals(EMPTY_STRING) && !notation.equals(NOTATION_EMPTY)){
+
+	public static boolean checkNotation(String notation) {
+		if (notation != null && !notation.equals(EMPTY_STRING)
+				&& !notation.equals(NOTATION_EMPTY)) {
 			return true;
 		}
-		
+
 		return false;
 	}
-	
+
 }

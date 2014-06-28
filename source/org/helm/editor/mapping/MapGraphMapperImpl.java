@@ -32,24 +32,26 @@ import org.helm.editor.mapping.GraphMapper;
  * User: dzhelezov
  */
 public class MapGraphMapperImpl implements GraphMapper {
-    private Map<Node, Node> graphMap;
+	private Map<Node, Node> graphMap;
 
-    public MapGraphMapperImpl(Map<Node, Node> graphMap) {
-        this.graphMap = graphMap;
-    }
+	public MapGraphMapperImpl(Map<Node, Node> graphMap) {
+		this.graphMap = graphMap;
+	}
 
-    public Set<Node> getSourceNodes(Node targetNode) {
-        Set<Node> result = new HashSet<Node>();
-        for (Node source : graphMap.keySet()) {
-            if (graphMap.get(source).equals(targetNode)) {
-                result.add(source);
-            }
-        }
-        return result;
-    }
+	public Set<Node> getSourceNodes(Node targetNode) {
+		Set<Node> result = new HashSet<Node>();
+		for (Node source : graphMap.keySet()) {
+			if (graphMap.get(source).equals(targetNode)) {
+				result.add(source);
+			}
+		}
+		return result;
+	}
 
-    public Node getTargetNode(Node sourceNode) {
-        return graphMap.get(sourceNode);  //To change body of implemented methods use File | Settings | File Templates.
-    }
+	public Node getTargetNode(Node sourceNode) {
+		return graphMap.get(sourceNode); // To change body of implemented
+											// methods use File | Settings |
+											// File Templates.
+	}
 
 }

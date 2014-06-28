@@ -29,6 +29,7 @@ public class ComponentViewViewMetrics extends SequenceViewViewMetrics {
 	}
 
 	public int getChemNodeToBackboneNodeDistance() {
-		return baseViewMetrics.getChemNodeSize() + baseViewMetrics.getHDistanceInt();
+		return baseViewMetrics.getChemNodeSize()
+				+ baseViewMetrics.getHDistanceInt();
 	}
 }

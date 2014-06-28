@@ -53,6 +53,6 @@ public interface SequenceViewController {
 	void appendErrorNode();
 
 	void setLayoutMode(boolean mode);
-	
+
 	double getBoundOffset();
 }

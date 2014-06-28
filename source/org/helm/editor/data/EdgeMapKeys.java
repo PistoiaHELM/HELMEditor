@@ -22,12 +22,12 @@
 package org.helm.editor.data;
 
 /**
- *
+ * 
  * @author lih25
  */
 public class EdgeMapKeys {
-    public final static Object EDGE_INFO = "Connection information"; //for 
-    public final static Object DESCRIPTION = "DESCRIPTION";
-    //public static final Object EDGETYPE = "Edge type";
-    
+	public final static Object EDGE_INFO = "Connection information"; // for
+	public final static Object DESCRIPTION = "DESCRIPTION";
+	// public static final Object EDGETYPE = "Edge type";
+
 }

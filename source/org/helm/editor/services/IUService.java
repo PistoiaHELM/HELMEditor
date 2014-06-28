@@ -22,20 +22,21 @@
 package org.helm.editor.services;
 
 /**
- * Interface for communication foreign data storages 
+ * Interface for communication foreign data storages
+ * 
  * @author Alexander Makarov
- *
+ * 
  */
 public interface IUService {
-	
+
 	/**
 	 * Loading all possible xml user interfaces from data storage
 	 */
 	String loadXmlUI();
-	
+
 	/**
-	 * Saving constructed xml user interface in data storage 
+	 * Saving constructed xml user interface in data storage
 	 */
 	boolean saveXmlUI();
-	
+
 }

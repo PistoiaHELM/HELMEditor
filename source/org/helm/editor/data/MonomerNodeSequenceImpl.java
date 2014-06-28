@@ -34,62 +34,63 @@ public abstract class MonomerNodeSequenceImpl implements NodeSequence {
 	private Node startNode;
 	private List<Node> myNodes;
 	private boolean initialized = false;
-    private boolean isFloating = true;
-	
-	public MonomerNodeSequenceImpl (Graph graph, Node startNode) {
+	private boolean isFloating = true;
+
+	public MonomerNodeSequenceImpl(Graph graph, Node startNode) {
 		this.graph = graph;
 		this.startNode = startNode;
 		this.myNodes = new LinkedList<Node>();
-		
+
 	}
 
 	/**
-	 * Lazy initialization is done for lazy walking as it is expensive operation  
-	 *  
+	 * Lazy initialization is done for lazy walking as it is expensive operation
+	 * 
 	 */
 	private void init() {
 		myNodes.clear();
-		//this will walk through sequence and populate all properties
+		// this will walk through sequence and populate all properties
 		for (Node n : this) {
 			myNodes.add(n);
-            if (GraphUtils.getNonChemicalNeiboursCount(n) > 0) {
-                isFloating = false;
-            }
+			if (GraphUtils.getNonChemicalNeiboursCount(n) > 0) {
+				isFloating = false;
+			}
 		}
 		initialized = true;
 	}
-	
+
 	public Node getStartNode() {
 		return startNode;
 	}
-	
+
 	public boolean isFloating() {
 		if (!initialized) {
 			init();
 		}
-		
+
 		return isFloating;
 	}
-	
+
 	public Iterator<Node> iterator() {
 		return new MonomerTypeIterator(graph, startNode) {
 
-    		@Override
+			@Override
 			protected boolean isOk(Node node) {
-				return isNodeRightMonomerType(MonomerNodeSequenceImpl.this.graph, node);
+				return isNodeRightMonomerType(
+						MonomerNodeSequenceImpl.this.graph, node);
 			}
 
 		};
 	}
-	
+
 	public List<Node> getNodes() {
 		if (!initialized) {
 			init();
 		}
-		
+
 		return myNodes;
 	}
-	
+
 	protected abstract boolean isNodeRightMonomerType(Graph graph, Node node);
-	
+
 }

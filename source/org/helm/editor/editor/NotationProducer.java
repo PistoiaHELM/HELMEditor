@@ -24,10 +24,11 @@ package org.helm.editor.editor;
 import javax.swing.JComponent;
 
 /**
- *
+ * 
  * @author zhangtianhong
  */
 public interface NotationProducer {
-    public abstract String getNotation();
-    public abstract JComponent getGraphViewComponent();
+	public abstract String getNotation();
+
+	public abstract JComponent getGraphViewComponent();
 }

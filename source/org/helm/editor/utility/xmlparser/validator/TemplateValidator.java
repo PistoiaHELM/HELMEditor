@@ -22,30 +22,37 @@
 package org.helm.editor.utility.xmlparser.validator;
 
 /**
- * All .xml validators in HELM Editor must inherit this inerface 
+ * All .xml validators in HELM Editor must inherit this inerface
+ * 
  * @author Alexander Makarov
  */
 public interface TemplateValidator {
 
 	/**
-	 * Setting standard schema location 
-	 * @param schemaPath path to .xsd file
+	 * Setting standard schema location
+	 * 
+	 * @param schemaPath
+	 *            path to .xsd file
 	 * @throws ValidationTemplateExcaption
 	 */
 	void setSchema(String schemaPath) throws ValidationTemplateExcaption;
-	
+
 	/**
 	 * Getting current schema location
+	 * 
 	 * @return path to current schema
 	 */
 	String getCurrentSchemaLocation();
-	
+
 	/**
 	 * Validate .xml file by standard schema
-	 * @param xmlPath path to validated .xml
+	 * 
+	 * @param xmlPath
+	 *            path to validated .xml
 	 * @return true validation pass
-	 * @throws ValidationTemplateExcaption validation failed 
+	 * @throws ValidationTemplateExcaption
+	 *             validation failed
 	 */
-	boolean validate(String xmlPath) throws ValidationTemplateExcaption; 
-	
+	boolean validate(String xmlPath) throws ValidationTemplateExcaption;
+
 }

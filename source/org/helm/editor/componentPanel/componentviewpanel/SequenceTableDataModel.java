@@ -21,9 +21,12 @@
  ******************************************************************************/
 package org.helm.editor.componentPanel.componentviewpanel;
 
+import org.helm.editor.data.MonomerStoreCache;
+import org.helm.notation.MonomerStore;
 import org.helm.notation.model.MoleculeInfo;
 import org.helm.notation.tools.ComplexNotationParser;
 import org.helm.notation.tools.ExtinctionCoefficientCalculator;
+
 import java.text.DecimalFormat;
 import java.util.Set;
 import java.util.TreeSet;
@@ -32,138 +35,144 @@ import java.util.regex.Pattern;
 
 public class SequenceTableDataModel {
 
-    private static final String SEQUENCE_TYPE_DELIMETER = ", ";
-    private static final String UNKNOW_VALUE = "N/A";
-    private static final String NOTATION_BEGIN = "$";
-    private static Pattern SEQUENCE_TYPE = Pattern.compile("RNA|PEPTIDE|CHEM");
-    private String annotation;
-    private String sequenceType;
-    private String notation;
-    private String molWt;
-    private String extCoeff;
-    private String molFormula;
+	private static final String SEQUENCE_TYPE_DELIMETER = ", ";
+	private static final String UNKNOW_VALUE = "N/A";
+	private static final String NOTATION_BEGIN = "$";
+	private static Pattern SEQUENCE_TYPE = Pattern.compile("RNA|PEPTIDE|CHEM");
+	private String annotation;
+	private String sequenceType;
+	private String notation;
+	private String molWt;
+	private String extCoeff;
+	private String molFormula;
 
-    private static DecimalFormat decimalFormat = new DecimalFormat("#0.00");
+	private static DecimalFormat decimalFormat = new DecimalFormat("#0.00");
 
-    public String getAnnotation() {
-        return annotation;
-    }
+	public String getAnnotation() {
+		return annotation;
+	}
 
-    public void setAnnotation(String annotation) {
-        this.annotation = annotation;
-    }
+	public void setAnnotation(String annotation) {
+		this.annotation = annotation;
+	}
 
-    public String getSequenceType() {
-        return sequenceType;
-    }
+	public String getSequenceType() {
+		return sequenceType;
+	}
 
-    public void setSequenceType(String sequenceType) {
-        this.sequenceType = sequenceType;
-    }
+	public void setSequenceType(String sequenceType) {
+		this.sequenceType = sequenceType;
+	}
 
-    public String getNotation() {
-        return notation;
-    }
+	public String getNotation() {
+		return notation;
+	}
 
-    public void setNotation(String notation) {
-        this.notation = notation;
-    }
+	public void setNotation(String notation) {
+		this.notation = notation;
+	}
 
-    public String getMolWt() {
-        return molWt;
-    }
+	public String getMolWt() {
+		return molWt;
+	}
 
-    public void setMolWt(String molWt) {
-        this.molWt = molWt;
-    }
+	public void setMolWt(String molWt) {
+		this.molWt = molWt;
+	}
 
-    public String getExtCoeff() {
-        return extCoeff;
-    }
+	public String getExtCoeff() {
+		return extCoeff;
+	}
 
-    public void setExtCoeff(String extCoeff) {
-        this.extCoeff = extCoeff;
-    }
+	public void setExtCoeff(String extCoeff) {
+		this.extCoeff = extCoeff;
+	}
 
-    public String getMolFormula() {
-        return molFormula;
-    }
+	public String getMolFormula() {
+		return molFormula;
+	}
 
-    public void setMolFormula(String molFormula) {
-        this.molFormula = molFormula;
-    }
+	public void setMolFormula(String molFormula) {
+		this.molFormula = molFormula;
+	}
 
-    public static SequenceTableDataModel createSequenceTableDataModel(String notation) {
+	public static SequenceTableDataModel createSequenceTableDataModel(
+			String notation, MonomerStore monomerStore) {
 
-        SequenceTableDataModel dataModel = new SequenceTableDataModel();
-        // ---- sequence ----
-        dataModel.notation = notation;
-        //sequence types
-        dataModel.sequenceType = getSequenceTypes(notation);
+		SequenceTableDataModel dataModel = new SequenceTableDataModel();
+		// ---- sequence ----
+		dataModel.notation = notation;
+		// sequence types
+		dataModel.sequenceType = getSequenceTypes(notation);
 
+		// ---- mol wt and mol formula----
+		try {
+			// String smiles =
+			// ComplexNotationParser.getComplexPolymerSMILES(notation);
+			// MoleculeInfo mi = StructureParser.getMoleculeInfo(smiles);
 
-        // ---- mol wt and mol formula----
-        try {
-//            String smiles = ComplexNotationParser.getComplexPolymerSMILES(notation);
-//            MoleculeInfo mi = StructureParser.getMoleculeInfo(smiles);
-            MoleculeInfo mi = ComplexNotationParser.getMoleculeInfo(notation);
-            dataModel.molWt = decimalFormat.format(mi.getMolecularWeight());
-            dataModel.molFormula = mi.getMolecularFormula();
-        } catch (Exception e) {
-            dataModel.molWt = UNKNOW_VALUE;
-            dataModel.molFormula = UNKNOW_VALUE;
-        }
+			MoleculeInfo mi = ComplexNotationParser.getMoleculeInfo(notation,
+					monomerStore);
+			dataModel.molWt = decimalFormat.format(mi.getMolecularWeight());
+			dataModel.molFormula = mi.getMolecularFormula();
+		} catch (Exception e) {
+			dataModel.molWt = UNKNOW_VALUE;
+			dataModel.molFormula = UNKNOW_VALUE;
+		}
 
-        // -- extinction coefficient
-        try {
-            float result = ExtinctionCoefficientCalculator.getInstance().calculateFromComplexNotation(notation, ExtinctionCoefficientCalculator.RNA_UNIT_TYPE);
-            dataModel.extCoeff = decimalFormat.format(result);
+		// -- extinction coefficient
+		try {
+			float result = ExtinctionCoefficientCalculator.getInstance()
+					.calculateFromComplexNotation(notation,
+							ExtinctionCoefficientCalculator.RNA_UNIT_TYPE,
+							monomerStore);
+			dataModel.extCoeff = decimalFormat.format(result);
 
-        } catch (Exception e) {
-            dataModel.extCoeff = UNKNOW_VALUE;
-        }
+		} catch (Exception e) {
+			dataModel.extCoeff = UNKNOW_VALUE;
+		}
 
-        return dataModel;
-    }
+		return dataModel;
+	}
 
-    public static String getSequenceTypes(String notation) {
-        Set<String> sequenceSet = new TreeSet<String>();
-        Matcher matcher = SEQUENCE_TYPE.matcher(notation.substring(0,
-                notation.indexOf(NOTATION_BEGIN)));
-        while (matcher.find()) {
-            sequenceSet.add(matcher.group());
-        }
+	public static String getSequenceTypes(String notation) {
+		Set<String> sequenceSet = new TreeSet<String>();
+		Matcher matcher = SEQUENCE_TYPE.matcher(notation.substring(0,
+				notation.indexOf(NOTATION_BEGIN)));
+		while (matcher.find()) {
+			sequenceSet.add(matcher.group());
+		}
 
-        StringBuffer sequenceTypes = new StringBuffer();
-        for (String currSeq : sequenceSet) {
-            sequenceTypes.append(currSeq);
-            sequenceTypes.append(SEQUENCE_TYPE_DELIMETER);
-        }
+		StringBuffer sequenceTypes = new StringBuffer();
+		for (String currSeq : sequenceSet) {
+			sequenceTypes.append(currSeq);
+			sequenceTypes.append(SEQUENCE_TYPE_DELIMETER);
+		}
 
-        String resultSequenceType = sequenceTypes.toString();
-        resultSequenceType = resultSequenceType.substring(0,
-                resultSequenceType.length() - 2);
+		String resultSequenceType = sequenceTypes.toString();
+		resultSequenceType = resultSequenceType.substring(0,
+				resultSequenceType.length() - 2);
 
-        return resultSequenceType;
-    }
+		return resultSequenceType;
+	}
 
-    public Object getFiled(int columnIndex) {
-        switch (columnIndex) {
-            case 0:
-                return getAnnotation();
-            case 1:
-                return getSequenceType();
-            case 2:
-                return getNotation();
-            case 3:
-                return getMolWt();
-            case 4:
-                return getMolFormula();
-            case 5:
-                return getExtCoeff();
+	public Object getFiled(int columnIndex) {
+		switch (columnIndex) {
+		case 0:
+			return getAnnotation();
+		case 1:
+			return getSequenceType();
+		case 2:
+			return getNotation();
+		case 3:
+			return getMolWt();
+		case 4:
+			return getMolFormula();
+		case 5:
+			return getExtCoeff();
 
-            default:
-                return "N/A";
-        }
-    }
+		default:
+			return "N/A";
+		}
+	}
 }

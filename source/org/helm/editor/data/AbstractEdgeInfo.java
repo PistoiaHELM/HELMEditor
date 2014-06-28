@@ -28,58 +28,55 @@ public abstract class AbstractEdgeInfo implements EdgeInfo {
 	protected Attachment sourceNodeAttachment;
 	protected Attachment targetNodeAttachment;
 	protected EdgeType type;
-	
-	protected AbstractEdgeInfo(Attachment sourceNodeAtt, Attachment targetNodeAtt){
-        this.sourceNodeAttachment = sourceNodeAtt;
-        this.targetNodeAttachment = targetNodeAtt;
-        
-        this.type = EdgeType.getType(sourceNodeAtt, targetNodeAtt);
-    }
-	
-	protected AbstractEdgeInfo() {
-		
+
+	protected AbstractEdgeInfo(Attachment sourceNodeAtt,
+			Attachment targetNodeAtt) {
+		this.sourceNodeAttachment = sourceNodeAtt;
+		this.targetNodeAttachment = targetNodeAtt;
+
+		this.type = EdgeType.getType(sourceNodeAtt, targetNodeAtt);
 	}
-	
-    public Attachment getSourceNodeAttachment() {
-        return sourceNodeAttachment;
-    }
 
-    public void setSourceNodeAttachment(Attachment sourceNodeAttachment) {
-        this.sourceNodeAttachment = sourceNodeAttachment;
-    }
+	protected AbstractEdgeInfo() {
 
-    public Attachment getTargetNodeAttachment() {
-        return targetNodeAttachment;
-    }
+	}
 
-    public void setTargetNodeAttachment(Attachment targetNodeAttachment) {
-        this.targetNodeAttachment = targetNodeAttachment;
-    }
-	
+	public Attachment getSourceNodeAttachment() {
+		return sourceNodeAttachment;
+	}
+
+	public void setSourceNodeAttachment(Attachment sourceNodeAttachment) {
+		this.sourceNodeAttachment = sourceNodeAttachment;
+	}
+
+	public Attachment getTargetNodeAttachment() {
+		return targetNodeAttachment;
+	}
+
+	public void setTargetNodeAttachment(Attachment targetNodeAttachment) {
+		this.targetNodeAttachment = targetNodeAttachment;
+	}
+
 	public EdgeType getType() {
 		return type;
 	}
 
-
 	public void setType(EdgeType type) {
 		this.type = type;
 	}
-	
 
 	public boolean isPBranchBackbone() {
-	    return EdgeType.BRANCH_BACKBONE.equals(type);
+		return EdgeType.BRANCH_BACKBONE.equals(type);
 	}
-
-
 
 	public boolean isPBranchBranch() {
-	    return EdgeType.BRANCH_BRANCH.equals(type);
+		return EdgeType.BRANCH_BRANCH.equals(type);
 	}
-	
+
 	public boolean isPair() {
-	    return EdgeType.PAIR.equals(type);
+		return EdgeType.PAIR.equals(type);
 	}
-	
+
 	public boolean isRegular() {
 		return !isPair() && !isPBranchBackbone() && !isPBranchBranch();
 	}

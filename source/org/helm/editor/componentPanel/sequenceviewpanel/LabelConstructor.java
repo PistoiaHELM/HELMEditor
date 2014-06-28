@@ -125,30 +125,31 @@ public class LabelConstructor {
 
 		label.setModel(NodeLabel.FREE);
 		double complMulX = 1;
-                double complMulY=1;
+		double complMulY = 1;
 		if (isComplimentary || sourcelabel.getPosition() == NodeLabel.SE) {
 			complMulX = -1.5;
-                        complMulY=-1;
+			complMulY = -1;
 		}
 
 		String labelText = sourcelabel.getText();
 		label.setText(labelText);
-		
+
 		int modStartLabelStep = 0;
-		if (isSenceOrAntiSence(labelText) && isComplimentary==false){
-			modStartLabelStep = _layoutMetrics.getModifiedStartLabelStep();			
+		if (isSenceOrAntiSence(labelText) && isComplimentary == false) {
+			modStartLabelStep = _layoutMetrics.getModifiedStartLabelStep();
 		}
-		
-                label.setOffset(complMulX * ( _layoutMetrics.getXStartLabelOffset() + modStartLabelStep),
-				 complMulY* _layoutMetrics.getYStartLabelOffset());
+
+		label.setOffset(complMulX
+				* (_layoutMetrics.getXStartLabelOffset() + modStartLabelStep),
+				complMulY * _layoutMetrics.getYStartLabelOffset());
 
 		label.setFontSize(_layoutMetrics.getLabelFontSize());
 		label.setBackgroundColor(sourcelabel.getBackgroundColor());
 
 		nr.addLabel(label);
 	}
-	
-	private boolean isSenceOrAntiSence(String text){
+
+	private boolean isSenceOrAntiSence(String text) {
 		return text.equals("5' ss") || text.equals("5' as");
 	}
 
@@ -168,15 +169,16 @@ public class LabelConstructor {
 
 	public void addLabelsToSequence(Node startNode, Node lastNode,
 			Graph2D graph, boolean reverse) {
-		
-		DataProvider nodeMap = graph.getDataProvider(SequenceViewModel.LABELS_MAP);
-		
-		if (nodeMap == null){
+
+		DataProvider nodeMap = graph
+				.getDataProvider(SequenceViewModel.LABELS_MAP);
+
+		if (nodeMap == null) {
 			return;
 		}
-		
+
 		NodeMap labelsMap = (NodeMap) nodeMap;
-		
+
 		// part code for left P label
 		Object commonLabelText = labelsMap.get(startNode);
 		NodeRealizer nodeRealizer = graph.getRealizer(startNode);
@@ -220,19 +222,20 @@ public class LabelConstructor {
 		}
 
 	}
-	
+
 	public void addLabelsToSequenceImproved(Graph2D graph) {
-		
-		DataProvider nodeMap = graph.getDataProvider(NodeMapKeys.LABEL_INFO_MAP);
-		
-		if (nodeMap == null){
+
+		DataProvider nodeMap = graph
+				.getDataProvider(NodeMapKeys.LABEL_INFO_MAP);
+
+		if (nodeMap == null) {
 			return;
 		}
-		
+
 		NodeMap labelsMap = (NodeMap) nodeMap;
-		
+
 		for (Node n : graph.getNodeArray()) {
-			LabelInfo lInfo = (LabelInfo)labelsMap.get(n);
+			LabelInfo lInfo = (LabelInfo) labelsMap.get(n);
 			boolean reverse = lInfo.isFlipped();
 			if (lInfo != null) {
 				NodeRealizer nodeRealizer = graph.getRealizer(n);
@@ -241,7 +244,7 @@ public class LabelConstructor {
 							reverse ? RIGHT_PHOSPHATE_LABEL_POSTION
 									: LEFT_PHOSPHATE_LABEL_POSTION);
 				}
-				
+
 				if (lInfo.getRightLinker() != null) {
 					addLabelPToNode(nodeRealizer, lInfo.getRightLinker(),
 							reverse ? LEFT_PHOSPHATE_LABEL_POSTION
@@ -261,7 +264,7 @@ public class LabelConstructor {
 		}
 
 		String castedString = (String) labelText;
-		
+
 		if (castedString
 				.startsWith(NucleotideSequenceTransformer.P_LEFT_RIGHT_LABEL)) {
 			return LEFT_RIGHT_LABEL;
@@ -285,33 +288,36 @@ public class LabelConstructor {
 	private void addLabelPToNode(NodeRealizer nodeRealizer, String labelText,
 			boolean isLeft) {
 		NodeLabel label = nodeRealizer.createNodeLabel();
-				
+
 		double xOffSet = _layoutMetrics.calculateLabelOffset(isLeft);
-		
+
 		nodeRealizer.setFillColor(Color.RED);
-		
+
 		label.setModel(NodeLabel.FREE);
 		label.setOffset(xOffSet, 0);
 		label.setText(labelText);
 		label.setFontSize(_layoutMetrics.getPhosphateLabelFont());
-		
-		if (labelText.equals(NucleotideSequenceTransformer.P_MODIFIED_LABEL)){
+
+		if (labelText.equals(NucleotideSequenceTransformer.P_MODIFIED_LABEL)) {
 			label.setAutoSizePolicy(NodeLabel.AUTOSIZE_NONE);
-			
+
 			label.setContentHeight(4);
 			label.setContentWidth(6);
-			
-			if (isLeft){
-				label.setContentWidth(_layoutMetrics.getLeftModifiedLabelWidth());
+
+			if (isLeft) {
+				label.setContentWidth(_layoutMetrics
+						.getLeftModifiedLabelWidth());
 				label.setOffset(_layoutMetrics.getLeftModifiedLabelXOffset(), 8);
 			} else {
-				label.setContentWidth(_layoutMetrics.getRightModifiedLabelWidth());
-				label.setOffset(_layoutMetrics.getRightModifiedLabelXOffset(), 8);
+				label.setContentWidth(_layoutMetrics
+						.getRightModifiedLabelWidth());
+				label.setOffset(_layoutMetrics.getRightModifiedLabelXOffset(),
+						8);
 			}
-			
+
 			label.setBackgroundColor(new Color(128, 0, 255));
 		}
-		
+
 		nodeRealizer.addLabel(label);
 	}
 

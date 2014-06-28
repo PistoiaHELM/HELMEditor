@@ -26,21 +26,23 @@ import java.util.Set;
 
 /**
  * Interface that incapsulates mapping between two different graphs.
- *
+ * 
  * User: dzhelezov
  */
 public interface GraphMapper {
 
-    /**
-     * @param targetNode node in the target graph
-     * @return nodes in the source graph that were mapped to the target node
-     */
-    public Set<Node> getSourceNodes(Node targetNode);
+	/**
+	 * @param targetNode
+	 *            node in the target graph
+	 * @return nodes in the source graph that were mapped to the target node
+	 */
+	public Set<Node> getSourceNodes(Node targetNode);
 
-    /**
-     * @param sourceNode node in the source graph
-     * @return mapped node in the target node
-     */
-    public Node getTargetNode(Node sourceNode);
-    
+	/**
+	 * @param sourceNode
+	 *            node in the source graph
+	 * @return mapped node in the target node
+	 */
+	public Node getTargetNode(Node sourceNode);
+
 }

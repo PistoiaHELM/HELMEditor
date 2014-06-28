@@ -25,24 +25,25 @@ import y.view.Graph2D;
 
 /**
  * a graph and graph manager pair
+ * 
  * @author lih25
  */
 public class GraphPair {
-	
-    private Graph2D graph;
-    private GraphManager graphManager;
-    
-    public GraphPair(Graph2D graph, GraphManager graphManager){
-        this.graph = graph;
-        this.graphManager = graphManager;
-    }
 
-    public Graph2D getGraph() {
-        return graph;
-    }
+	private Graph2D graph;
+	private GraphManager graphManager;
 
-    public GraphManager getGraphManager() {
-        return graphManager;
-    }
-        
+	public GraphPair(Graph2D graph, GraphManager graphManager) {
+		this.graph = graph;
+		this.graphManager = graphManager;
+	}
+
+	public Graph2D getGraph() {
+		return graph;
+	}
+
+	public GraphManager getGraphManager() {
+		return graphManager;
+	}
+
 }

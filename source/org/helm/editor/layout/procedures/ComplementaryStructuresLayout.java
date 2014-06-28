@@ -51,16 +51,21 @@ public class ComplementaryStructuresLayout extends AbstratStructureLayout {
 
 	@Override
 	protected void doLayoutCore(LayoutGraph graph) {
-		DataProvider node2Hipernode = graph.getDataProvider(NodeMapKeys.NODE2PARENT_HYPERNODE);
-		Graph hiperGraph = ((Node)node2Hipernode.get(graph.firstNode())).getGraph();
-		DataProvider hipernode2Index = hiperGraph.getDataProvider(NodeMapKeys.HYPERNODE2INDEX);
-		DataProvider hipernode2PolymerType = hiperGraph.getDataProvider(NodeMapKeys.HYPERNODE_POLYMER_TYPE);
+		DataProvider node2Hipernode = graph
+				.getDataProvider(NodeMapKeys.NODE2PARENT_HYPERNODE);
+		Graph hiperGraph = ((Node) node2Hipernode.get(graph.firstNode()))
+				.getGraph();
+		DataProvider hipernode2Index = hiperGraph
+				.getDataProvider(NodeMapKeys.HYPERNODE2INDEX);
+		DataProvider hipernode2PolymerType = hiperGraph
+				.getDataProvider(NodeMapKeys.HYPERNODE_POLYMER_TYPE);
 
-		// hide pair edges and find all sequences 
+		// hide pair edges and find all sequences
 		GraphHider graphHider = new GraphHider(graph);
 		for (Edge edge : graph.getEdgeArray()) {
-			DataProvider edgeTypeMap = graph.getDataProvider(EdgeMapKeys.EDGE_INFO);
-			if (!((EdgeInfo)edgeTypeMap.get(edge)).isRegular()) {
+			DataProvider edgeTypeMap = graph
+					.getDataProvider(EdgeMapKeys.EDGE_INFO);
+			if (!((EdgeInfo) edgeTypeMap.get(edge)).isRegular()) {
 				graphHider.hide(edge);
 			}
 		}
@@ -68,10 +73,13 @@ public class ComplementaryStructuresLayout extends AbstratStructureLayout {
 		graphHider.unhideAll();
 
 		// get the hiper node with the smallest index
-		Node smallestIndexHiperNode = (Node)node2Hipernode.get(components[0].firstNode());
-		int smallestIndexComponentIndex = hipernode2Index.getInt(smallestIndexHiperNode);
+		Node smallestIndexHiperNode = (Node) node2Hipernode.get(components[0]
+				.firstNode());
+		int smallestIndexComponentIndex = hipernode2Index
+				.getInt(smallestIndexHiperNode);
 		for (int i = 1; i < components.length; i++) {
-			Node hiperNode = (Node)node2Hipernode.get(components[i].firstNode());
+			Node hiperNode = (Node) node2Hipernode.get(components[i]
+					.firstNode());
 			int componentIndex = hipernode2Index.getInt(hiperNode);
 			if (smallestIndexComponentIndex > componentIndex) {
 				smallestIndexHiperNode = hiperNode;
@@ -79,14 +87,15 @@ public class ComplementaryStructuresLayout extends AbstratStructureLayout {
 			}
 		}
 
-		// if get(node) == 'true' then sequence is flipped; otherwise - is not 
+		// if get(node) == 'true' then sequence is flipped; otherwise - is not
 		Map<Node, Boolean> flippedHyperNodes = new HashMap<Node, Boolean>();
 		flippedHyperNodes.put(smallestIndexHiperNode, false);
-		// for each sequence this map defines another sequence which the shifting procedure is based on 
+		// for each sequence this map defines another sequence which the
+		// shifting procedure is based on
 		Map<Node, Node> hyperNode2PairedHiperNodeMap = new HashMap<Node, Node>();
 		hyperNode2PairedHiperNodeMap.put(smallestIndexHiperNode, null);
 
-		// hyoerNode -> [startingNode, endNode]. 
+		// hyoerNode -> [startingNode, endNode].
 		// Should be used for intersection definition
 		Map<Node, Node[]> hyperNode2StartAndEndNodes = new LinkedHashMap<Node, Node[]>();
 
@@ -94,16 +103,19 @@ public class ComplementaryStructuresLayout extends AbstratStructureLayout {
 		visitedHiperNodes.offer(smallestIndexHiperNode);
 		while (visitedHiperNodes.size() > 0) {
 			Node currentHiperNode = visitedHiperNodes.poll();
-			boolean isCurrectFlipped = flippedHyperNodes.get(currentHiperNode).booleanValue();
+			boolean isCurrectFlipped = flippedHyperNodes.get(currentHiperNode)
+					.booleanValue();
 
-			// to keep the order of components handled we need to process them in the index increasing order
+			// to keep the order of components handled we need to process them
+			// in the index increasing order
 			NodeList neighboursList = new NodeList(currentHiperNode.neighbors());
 			int neighboursListSize = neighboursList.size();
 			for (int i = 0; i < neighboursListSize; i++) {
 				// select hyper node
 				Node hiperNode = neighboursList.firstNode();
 				int hiperNodeIndex = hipernode2Index.getInt(hiperNode);
-				for (NodeCursor nodeCursor = neighboursList.nodes(); nodeCursor.ok(); nodeCursor.next()) {
+				for (NodeCursor nodeCursor = neighboursList.nodes(); nodeCursor
+						.ok(); nodeCursor.next()) {
 					if (hipernode2Index.getInt(nodeCursor.node()) < hiperNodeIndex) {
 						hiperNode = nodeCursor.node();
 						hiperNodeIndex = hipernode2Index.getInt(hiperNode);
@@ -113,69 +125,82 @@ public class ComplementaryStructuresLayout extends AbstratStructureLayout {
 
 				// Process hyper node
 				// omit chem modifiers hyper nodes
-				if (Monomer.CHEMICAL_POLYMER_TYPE.equals(hipernode2PolymerType.get(hiperNode))) {
+				if (Monomer.CHEMICAL_POLYMER_TYPE.equals(hipernode2PolymerType
+						.get(hiperNode))) {
 					continue;
 				}
 				if (!flippedHyperNodes.containsKey(hiperNode)) {
 					visitedHiperNodes.offer(hiperNode);
 					flippedHyperNodes.put(hiperNode, !isCurrectFlipped);
-					hyperNode2PairedHiperNodeMap.put(hiperNode, currentHiperNode);
+					hyperNode2PairedHiperNodeMap.put(hiperNode,
+							currentHiperNode);
 				}
 			}
 
 			// get corresponding component
 			NodeList component = null;
 			for (NodeList curComponent : components) {
-				Node startingHiperNode = (Node)node2Hipernode.get(curComponent.firstNode());
+				Node startingHiperNode = (Node) node2Hipernode.get(curComponent
+						.firstNode());
 				if (startingHiperNode.equals(currentHiperNode)) {
 					component = curComponent;
 					break;
 				}
 			}
 			// get start and end points
-			Node startingNode = layoutPrimitives.getStartingNode(component.firstNode());
+			Node startingNode = layoutPrimitives.getStartingNode(component
+					.firstNode());
 			Node endNode = layoutPrimitives.getEndNode(component.lastNode());
-			hyperNode2StartAndEndNodes.put(currentHiperNode, new Node[] {startingNode, endNode});
+			hyperNode2StartAndEndNodes.put(currentHiperNode, new Node[] {
+					startingNode, endNode });
 
 			// layout procedure
 			layoutPrimitives.layoutSequence(graph, startingNode, null, true);
-			if (isCurrectFlipped && !layoutPrimitives.isPeptidePolymer(startingNode)) {
+			if (isCurrectFlipped
+					&& !layoutPrimitives.isPeptidePolymer(startingNode)) {
 				layoutPrimitives.rotate180(startingNode, null, graph);
 			}
 			layoutPrimitives.setFlipState(component.nodes(), isCurrectFlipped);
 
-			Node parentHyperNode = hyperNode2PairedHiperNodeMap.get(currentHiperNode);
+			Node parentHyperNode = hyperNode2PairedHiperNodeMap
+					.get(currentHiperNode);
 			if (parentHyperNode != null) {
-				layoutPrimitives.shiftSubgraph(graph, startingNode, null, parentHyperNode, isCurrectFlipped);				
+				layoutPrimitives.shiftSubgraph(graph, startingNode, null,
+						parentHyperNode, isCurrectFlipped);
 			}
 
-			// check intersection and do a shift if needed			
-			handleIntersections(graph, currentHiperNode, flippedHyperNodes, hyperNode2StartAndEndNodes);
+			// check intersection and do a shift if needed
+			handleIntersections(graph, currentHiperNode, flippedHyperNodes,
+					hyperNode2StartAndEndNodes);
 		}
 	}
 
-	private void handleIntersections(
-			LayoutGraph graph,
-			Node currentHiperNode,
+	private void handleIntersections(LayoutGraph graph, Node currentHiperNode,
 			Map<Node, Boolean> flippedHyperNodes,
 			Map<Node, Node[]> hyperNode2StartAndEndNodes) {
 
-		boolean isCurFlipped = flippedHyperNodes.get(currentHiperNode).booleanValue();
-		Node[] curStartEndNodes = hyperNode2StartAndEndNodes.get(currentHiperNode);
+		boolean isCurFlipped = flippedHyperNodes.get(currentHiperNode)
+				.booleanValue();
+		Node[] curStartEndNodes = hyperNode2StartAndEndNodes
+				.get(currentHiperNode);
 
 		boolean ifSequencesIntersect;
 		do {
 			ifSequencesIntersect = false;
 			for (Node hyperNode : hyperNode2StartAndEndNodes.keySet()) {
 				// check the side (flipped or not)
-				boolean isFlipped = flippedHyperNodes.get(hyperNode).booleanValue();
-				// there is no need to check intersection with the same sequence or 
+				boolean isFlipped = flippedHyperNodes.get(hyperNode)
+						.booleanValue();
+				// there is no need to check intersection with the same sequence
+				// or
 				// with sequences from another side
-				if (hyperNode.equals(currentHiperNode) || isFlipped != isCurFlipped) {
+				if (hyperNode.equals(currentHiperNode)
+						|| isFlipped != isCurFlipped) {
 					continue;
 				}
 
-				Node[] startEndNodes = hyperNode2StartAndEndNodes.get(hyperNode);
+				Node[] startEndNodes = hyperNode2StartAndEndNodes
+						.get(hyperNode);
 				ifSequencesIntersect = crosses(graph, isCurFlipped,
 						curStartEndNodes[0], curStartEndNodes[1],
 						startEndNodes[0], startEndNodes[1]);
@@ -185,24 +210,27 @@ public class ComplementaryStructuresLayout extends AbstratStructureLayout {
 			}
 			// do a shift
 			if (ifSequencesIntersect) {
-				layoutPrimitives.verticalShiftSubgraph(graph, curStartEndNodes[0], curStartEndNodes[1], isCurFlipped);
+				layoutPrimitives.verticalShiftSubgraph(graph,
+						curStartEndNodes[0], curStartEndNodes[1], isCurFlipped);
 			}
 		} while (ifSequencesIntersect);
 	}
 
 	private boolean crosses(LayoutGraph graph, boolean isFlipped,
-			Node startNode1, Node endNode1,
-			Node startNode2, Node endNode2) {
+			Node startNode1, Node endNode1, Node startNode2, Node endNode2) {
 
-		if (Math.abs(graph.getCenterY(startNode1) - graph.getCenterY(startNode2)) < AbstractLayoutPrimitives.EPS) {
+		if (Math.abs(graph.getCenterY(startNode1)
+				- graph.getCenterY(startNode2)) < AbstractLayoutPrimitives.EPS) {
 			if (isFlipped && !layoutPrimitives.isPeptidePolymer(startNode1)) {
-				return (graph.getCenterX(startNode1) >= graph.getCenterX(endNode2) &&
-						graph.getCenterX(endNode1) <= graph.getCenterX(startNode2));
+				return (graph.getCenterX(startNode1) >= graph
+						.getCenterX(endNode2) && graph.getCenterX(endNode1) <= graph
+						.getCenterX(startNode2));
 			} else {
-				return (graph.getCenterX(endNode1) >= graph.getCenterX(startNode2) &&
-						graph.getCenterX(startNode1) <= graph.getCenterX(endNode2));
+				return (graph.getCenterX(endNode1) >= graph
+						.getCenterX(startNode2) && graph.getCenterX(startNode1) <= graph
+						.getCenterX(endNode2));
 			}
-		}			
+		}
 		return false;
 	}
 

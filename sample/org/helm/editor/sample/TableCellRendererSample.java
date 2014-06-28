@@ -210,6 +210,7 @@ public class TableCellRendererSample extends javax.swing.JFrame {
 
             final String notation = peptide1 + " " + peptide2 + " " + rna1;
             MonomerFactory.getInstance().getMonomerDB();
+            
             NucleotideFactory.getInstance().getNucleotideTemplates();
             java.awt.EventQueue.invokeLater(new Runnable() {
                 public void run() {

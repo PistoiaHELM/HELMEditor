@@ -42,69 +42,70 @@ import y.view.Graph2DView;
  */
 public class SequenceViewPanes extends JPanel implements DataListener {
 
-    private JTabbedPane tabbedPane;
-    private SequenceViewController sequenceViewController;
-    private ComponentTableView componentTableView;
-    private String _owner;
+	private JTabbedPane tabbedPane;
+	private SequenceViewController sequenceViewController;
+	private ComponentTableView componentTableView;
+	private String _owner;
 
-    public SequenceViewPanes(String owner) {
-        _owner = owner;
+	public SequenceViewPanes(String owner) {
+		_owner = owner;
 
-        this.setLayout(new BorderLayout());
-        this.setPreferredSize(new Dimension(100, 10));
-        tabbedPane = new JTabbedPane();
-        tabbedPane.setPreferredSize(new Dimension(100, 50));
+		this.setLayout(new BorderLayout());
+		this.setPreferredSize(new Dimension(100, 10));
+		tabbedPane = new JTabbedPane();
+		tabbedPane.setPreferredSize(new Dimension(100, 50));
 
-        sequenceViewController = new SequenceViewControllerImpl();
-        JPanel sequenceView = new JPanel();
-        sequenceView.setLayout(new BorderLayout());
-        sequenceView.add(sequenceViewController.getSequenceView(), BorderLayout.CENTER);
-        sequenceView.add(new LegendPanel(), BorderLayout.SOUTH);
-        componentTableView = new ComponentTableView();
+		sequenceViewController = new SequenceViewControllerImpl();
+		JPanel sequenceView = new JPanel();
+		sequenceView.setLayout(new BorderLayout());
+		sequenceView.add(sequenceViewController.getSequenceView(),
+				BorderLayout.CENTER);
+		sequenceView.add(new LegendPanel(), BorderLayout.SOUTH);
+		componentTableView = new ComponentTableView();
 
-        tabbedPane.add("Sequence View", sequenceView);
-        tabbedPane.add("Component View", componentTableView);
+		tabbedPane.add("Sequence View", sequenceView);
+		tabbedPane.add("Component View", componentTableView);
 
-        add(tabbedPane, BorderLayout.CENTER);
-    }
+		add(tabbedPane, BorderLayout.CENTER);
+	}
 
-    public void init(Graph2D graph, GraphManager graphManager) {
-        if (graph == null || graph.isEmpty()) {
-            sequenceViewController.refreshSequenceView();
+	public void init(Graph2D graph, GraphManager graphManager) {
+		if (graph == null || graph.isEmpty()) {
+			sequenceViewController.refreshSequenceView();
 
-            componentTableView.reset();
-            componentTableView.repaint();
+			componentTableView.reset();
+			componentTableView.repaint();
 
-            return;
-        }
-    }
+			return;
+		}
+	}
 
-    public void setNotation(String notation) {
+	public void setNotation(String notation) {
 
-        try {
-            sequenceViewController.setNotation(notation);
-        } catch (Exception ex) {
-            ExceptionHandler.handleException(ex);
-        }
+		try {
+			sequenceViewController.setNotation(notation);
+		} catch (Exception ex) {
+			ExceptionHandler.handleException(ex);
+		}
 
-        try {
-            componentTableView.setNotation(notation);
-        } catch (Exception ex) {
-            ExceptionHandler.handleException(ex);
-        }
-    }
+		try {
+			componentTableView.setNotation(notation);
+		} catch (Exception ex) {
+			ExceptionHandler.handleException(ex);
+		}
+	}
 
-    public Graph2DView getSequenceView() {
-        return sequenceViewController.getView();
-    }
+	public Graph2DView getSequenceView() {
+		return sequenceViewController.getView();
+	}
 
-    public void onUpdate(NotationUpdateEvent event) {
+	public void onUpdate(NotationUpdateEvent event) {
 
-        if (!event.getOwner().equals(_owner)) {
-            return;
-        }
+		if (!event.getOwner().equals(_owner)) {
+			return;
+		}
 
-        String notation = event.getData();
-        setNotation(notation);
-    }
+		String notation = event.getData();
+		setNotation(notation);
+	}
 }

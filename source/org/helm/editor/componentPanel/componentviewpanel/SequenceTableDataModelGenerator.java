@@ -27,80 +27,87 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 import org.jdesktop.swingworker.SwingWorker;
-
-
+import org.helm.editor.data.MonomerStoreCache;
+import org.helm.notation.MonomerStore;
 import org.helm.notation.tools.ComplexNotationParser;
 
 @Deprecated
 public class SequenceTableDataModelGenerator extends SwingWorker<Void, Void> {
 
-    private static final String NOTATION_BEGIN = "$";
-    private static final String SPILT_REGEX = "[|]";
-    private SequenceTableModel _tableModel = null;
-    private String _notation;
-    private final ArrayList<SequenceTableDataModel> list = new ArrayList<SequenceTableDataModel>();
+	private static final String NOTATION_BEGIN = "$";
+	private static final String SPILT_REGEX = "[|]";
+	private SequenceTableModel _tableModel = null;
+	private String _notation;
+	private final ArrayList<SequenceTableDataModel> list = new ArrayList<SequenceTableDataModel>();
 
-    public SequenceTableDataModelGenerator(SequenceTableModel tableModel,
-            String notation) {
+	public SequenceTableDataModelGenerator(SequenceTableModel tableModel,
+			String notation) {
 
-        _tableModel = tableModel;
-        _notation = notation;
-    }
+		_tableModel = tableModel;
+		_notation = notation;
+	}
 
-    @Override
-    protected Void doInBackground() throws Exception {
+	@Override
+	protected Void doInBackground() throws Exception {
 
-        // render the notation, then get the new one before decompose
-//		Graph2DView viewer = new Graph2DView();
-//		GraphPair pair = NotationParser.getGraphPair(_notation);
-//		Graph2D graph = pair.getGraph();
-//		GraphManager manager = pair.getGraphManager();
-//		Graph2NotationTranslator.updateHyperGraph(graph, manager);
-//		viewer.setGraph2D(graph);
+		MonomerStore monomerStore = MonomerStoreCache.getInstance()
+				.getCombinedMonomerStore();
 
-//		SequenceLayout layout = new SequenceLayout(viewer, manager);
-//		layout.doLayout();
+		// render the notation, then get the new one before decompose
+		// Graph2DView viewer = new Graph2DView();
+		// GraphPair pair = NotationParser.getGraphPair(_notation);
+		// Graph2D graph = pair.getGraph();
+		// GraphManager manager = pair.getGraphManager();
+		// Graph2NotationTranslator.updateHyperGraph(graph, manager);
+		// viewer.setGraph2D(graph);
 
-//		viewer.updateView();
-//		Graph2NotationTranslator.updateHyperGraph(graph,manager);
-        String sortedNotation = _notation;
+		// SequenceLayout layout = new SequenceLayout(viewer, manager);
+		// layout.doLayout();
 
-        String cutted = sortedNotation.substring(0, sortedNotation.indexOf(NOTATION_BEGIN));
+		// viewer.updateView();
+		// Graph2NotationTranslator.updateHyperGraph(graph,manager);
+		String sortedNotation = _notation;
 
-        // In this collection we have right list of components
-        ArrayList<String> components = new ArrayList<String>();
+		String cutted = sortedNotation.substring(0,
+				sortedNotation.indexOf(NOTATION_BEGIN));
 
-        Collections.addAll(components, ComplexNotationParser.decompose(sortedNotation));
+		// In this collection we have right list of components
+		ArrayList<String> components = new ArrayList<String>();
 
-        // In this collection we have right order
-        Queue<String> orderedComponents = new LinkedList<String>();
-        Collections.addAll(orderedComponents, cutted.split(SPILT_REGEX));
+		Collections.addAll(components,
+				ComplexNotationParser.decompose(sortedNotation, monomerStore));
 
-        int rowNumber = 1;
+		// In this collection we have right order
+		Queue<String> orderedComponents = new LinkedList<String>();
+		Collections.addAll(orderedComponents, cutted.split(SPILT_REGEX));
 
-        // by all components
-        while (!orderedComponents.isEmpty()) {
-            String currentSplit = orderedComponents.poll();
-            // keep order
-            for (int j = 0; j < components.size(); j++) {
-                if (components.get(j).contains(currentSplit)) {
-                    String component = components.get(j);
+		int rowNumber = 1;
 
-                    SequenceTableDataModel tableModel = SequenceTableDataModel.createSequenceTableDataModel(component);
-                    tableModel.setAnnotation(String.valueOf(rowNumber));
+		// by all components
+		while (!orderedComponents.isEmpty()) {
+			String currentSplit = orderedComponents.poll();
+			// keep order
+			for (int j = 0; j < components.size(); j++) {
+				if (components.get(j).contains(currentSplit)) {
+					String component = components.get(j);
 
-                    rowNumber++;
-                    list.add(tableModel);
-                    components.remove(j);
-                }
-            }
-        }
+					SequenceTableDataModel tableModel = SequenceTableDataModel
+							.createSequenceTableDataModel(component,
+									monomerStore);
+					tableModel.setAnnotation(String.valueOf(rowNumber));
 
-        return null;
-    }
+					rowNumber++;
+					list.add(tableModel);
+					components.remove(j);
+				}
+			}
+		}
 
-    @Override
-    protected void done() {
-        _tableModel.setData(list);
-    }
+		return null;
+	}
+
+	@Override
+	protected void done() {
+		_tableModel.setData(list);
+	}
 }

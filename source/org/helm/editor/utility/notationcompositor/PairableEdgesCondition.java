@@ -21,14 +21,14 @@
  ******************************************************************************/
 package org.helm.editor.utility.notationcompositor;
 
-public class PairableEdgesCondition implements Condition{
-	
+public class PairableEdgesCondition implements Condition {
+
 	private static final int EDGE_DESCRIPTION_DATA = 0;
-	
+
 	public boolean condition(Object[] args) {
-		
-		String edgeDesc = (String)args[EDGE_DESCRIPTION_DATA];
-		
+
+		String edgeDesc = (String) args[EDGE_DESCRIPTION_DATA];
+
 		return edgeDesc.contains(NotationCompositor.NOTATION_PAIRABLE_EDGES);
 	}
 

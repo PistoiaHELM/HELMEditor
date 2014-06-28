@@ -29,23 +29,23 @@ public class XmlParentNode extends DefaultMutableTreeNode {
 
 	private String nodeCaption;
 	private String innerName;
-	
+
 	private Color nodeColor;
-	
+
 	public XmlParentNode(String caption, String name) {
 		nodeCaption = caption;
 		innerName = name;
 	}
-	
-	public void setColor (Color color){
+
+	public void setColor(Color color) {
 		nodeColor = color;
 	}
-	
-	public Color getNodeColor(){
+
+	public Color getNodeColor() {
 		return nodeColor;
 	}
-	
-	public String getInnerName(){
+
+	public String getInnerName() {
 		return innerName;
 	}
 
@@ -53,5 +53,5 @@ public class XmlParentNode extends DefaultMutableTreeNode {
 	public String toString() {
 		return nodeCaption;
 	}
-		
+
 }

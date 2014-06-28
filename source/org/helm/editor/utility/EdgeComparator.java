@@ -29,50 +29,48 @@ import y.base.Graph;
 import y.base.Node;
 
 /**
- * Compare two edges
- * 1. compare source node
- * 2. compare the target node
- * 3. compare description
+ * Compare two edges 1. compare source node 2. compare the target node 3.
+ * compare description
  * 
  * @author LIH25
  */
 public class EdgeComparator implements Comparator<Edge> {
 
-    
-    public int compare(Edge e1, Edge e2) {
-        int order = 0;
-        final Graph graph = e1.getGraph();
-        final EdgeMap edgeMap = (EdgeMap) graph.getDataProvider(EdgeMapKeys.DESCRIPTION);
-        String s1 = (String) edgeMap.get(e1);
-        String s2 = (String) edgeMap.get(e2);
+	public int compare(Edge e1, Edge e2) {
+		int order = 0;
+		final Graph graph = e1.getGraph();
+		final EdgeMap edgeMap = (EdgeMap) graph
+				.getDataProvider(EdgeMapKeys.DESCRIPTION);
+		String s1 = (String) edgeMap.get(e1);
+		String s2 = (String) edgeMap.get(e2);
 
-        Node source1 = e1.source();
-        Node source2 = e2.source();
-        
-        Node target1 = e1.target();
-        Node target2 = e2.target();
+		Node source1 = e1.source();
+		Node source2 = e2.source();
 
-        if (!source1.equals(source2)) {
-            NodeComparator nodeComparator = new NodeComparator(null);
-            order = nodeComparator.compare(source1, source2);
-            if (order == 0) {
-                //compare target
-                order = nodeComparator.compare(target1, target2);
-               
-                //compare description
-                if(order == 0 ){
-                  order = s1.compareToIgnoreCase(s2);  
-                }
-            }
+		Node target1 = e1.target();
+		Node target2 = e2.target();
 
-        } else { //same source
-            NodeComparator nodeComparator = new NodeComparator(e1.source());
-            order = nodeComparator.compare(target1, target2);
-            if (order == 0) {
-                order = s1.compareToIgnoreCase(s2);
-            } 
-        }
-        
-        return order;
-    }
+		if (!source1.equals(source2)) {
+			NodeComparator nodeComparator = new NodeComparator(null);
+			order = nodeComparator.compare(source1, source2);
+			if (order == 0) {
+				// compare target
+				order = nodeComparator.compare(target1, target2);
+
+				// compare description
+				if (order == 0) {
+					order = s1.compareToIgnoreCase(s2);
+				}
+			}
+
+		} else { // same source
+			NodeComparator nodeComparator = new NodeComparator(e1.source());
+			order = nodeComparator.compare(target1, target2);
+			if (order == 0) {
+				order = s1.compareToIgnoreCase(s2);
+			}
+		}
+
+		return order;
+	}
 }

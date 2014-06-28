@@ -34,98 +34,99 @@ import y.base.Node;
 import y.base.NodeCursor;
 import y.base.YCursor;
 
+import org.helm.editor.data.MonomerStoreCache;
 import org.helm.notation.MonomerException;
 import org.helm.notation.MonomerFactory;
 import org.helm.notation.model.Monomer;
 
 public class GraphUtils {
 
-    public static Set<Node> getNeighbours(Node node) {
-        Set<Node> result = new HashSet<Node>();
-        if (null != node) {
-            NodeCursor neighbors = node.neighbors();
-            if (null != neighbors) {
-                for (; neighbors.ok(); neighbors.next()) {
-                    result.add(neighbors.node());
-                }
-            }
-        }
-        return result;
-    }
-    
-    public static Set<Node> getSuccessors(Node node) {
-        Set<Node> result = new HashSet<Node>();
-        if (null != node) {
-            NodeCursor successors = node.successors();
-            if (null != successors) {
-                for (; successors.ok(); successors.next()) {
-                    result.add(successors.node());
-                }
-            }
-        }
-        return result;
-    }
+	public static Set<Node> getNeighbours(Node node) {
+		Set<Node> result = new HashSet<Node>();
+		if (null != node) {
+			NodeCursor neighbors = node.neighbors();
+			if (null != neighbors) {
+				for (; neighbors.ok(); neighbors.next()) {
+					result.add(neighbors.node());
+				}
+			}
+		}
+		return result;
+	}
 
+	public static Set<Node> getSuccessors(Node node) {
+		Set<Node> result = new HashSet<Node>();
+		if (null != node) {
+			NodeCursor successors = node.successors();
+			if (null != successors) {
+				for (; successors.ok(); successors.next()) {
+					result.add(successors.node());
+				}
+			}
+		}
+		return result;
+	}
 
-    public static int getChemicalNeighborsCount(Node node) {
-        int chemNeighbours = 0;
-        NodeCursor neighbors = node.neighbors();
-        if (neighbors == null) {
-            return 0;
-        }
-        for (; neighbors.ok(); neighbors.next()) {
-            if (MonomerInfoUtils.isChemicalModifierPolymer(neighbors.node())) {
-                chemNeighbours++;
-            }
-        }
-        return chemNeighbours;
-    }
+	public static int getChemicalNeighborsCount(Node node) {
+		int chemNeighbours = 0;
+		NodeCursor neighbors = node.neighbors();
+		if (neighbors == null) {
+			return 0;
+		}
+		for (; neighbors.ok(); neighbors.next()) {
+			if (MonomerInfoUtils.isChemicalModifierPolymer(neighbors.node())) {
+				chemNeighbours++;
+			}
+		}
+		return chemNeighbours;
+	}
 
-    public static Node getBranchNeighbor(Node node) {
+	public static Node getBranchNeighbor(Node node) {
 
-        Set<Node> neighbors = getNeighbours(node);
+		Set<Node> neighbors = getNeighbours(node);
 
-        for (Node n : neighbors) {
-            if (MonomerInfoUtils.isBranchMonomer(n)) {
-                return n;
-            }
-        }
-        return null;
-    }
+		for (Node n : neighbors) {
+			if (MonomerInfoUtils.isBranchMonomer(n)) {
+				return n;
+			}
+		}
+		return null;
+	}
 
-    public static int getNonChemicalNeiboursCount(Node node) {
-        return node.neighbors().size() - getChemicalNeighborsCount(node);
-    }
+	public static int getNonChemicalNeiboursCount(Node node) {
+		return node.neighbors().size() - getChemicalNeighborsCount(node);
+	}
 
-    public static boolean isChemEdge(Edge edge) {
-        Node target = edge.target();
-        Node source = edge.source();
-        return MonomerInfoUtils.isChemicalModifierPolymer(target)
-                || MonomerInfoUtils.isChemicalModifierPolymer(source);
-    }
+	public static boolean isChemEdge(Edge edge) {
+		Node target = edge.target();
+		Node source = edge.source();
+		return MonomerInfoUtils.isChemicalModifierPolymer(target)
+				|| MonomerInfoUtils.isChemicalModifierPolymer(source);
+	}
 
-    public static Map<String, Map<String, Monomer>> getMonomerDB()
-            throws MonomerException, IOException, JDOMException {
-        return MonomerFactory.getInstance().getMonomerDB();
-    }
-    
-    
-    public static NodeCursor oneTimeVisitNodeCursor(NodeCursor cursor) {
-    	return new OneTimeVisitNodeCursor(cursor);
-    }
-    
-    public static EdgeCursor oneTimeVisitNodeCursor(EdgeCursor cursor) {
-    	return new OneTimeVisitEdgeCursor(cursor);
-    }
-    
-    private static class OneTimeVisitCursor implements YCursor {
-    	protected Set<Object> visited = new HashSet<Object>();
-    	protected YCursor cursor;
-    	
-    	public OneTimeVisitCursor(YCursor cursor) {
-    		this.cursor = cursor; 
-    	}
-    	
+	public static Map<String, Map<String, Monomer>> getMonomerDB()
+			throws MonomerException, IOException, JDOMException {
+		return MonomerStoreCache.getInstance().getCombinedMonomerStore()
+				.getMonomerDB();
+		// return MonomerFactory.getInstance().getMonomerDB();
+	}
+
+	public static NodeCursor oneTimeVisitNodeCursor(NodeCursor cursor) {
+		return new OneTimeVisitNodeCursor(cursor);
+	}
+
+	public static EdgeCursor oneTimeVisitNodeCursor(EdgeCursor cursor) {
+		return new OneTimeVisitEdgeCursor(cursor);
+	}
+
+	private static class OneTimeVisitCursor implements YCursor {
+		protected Set<Object> visited = new HashSet<Object>();
+		protected YCursor cursor;
+
+		public OneTimeVisitCursor(YCursor cursor) {
+			this.cursor = cursor;
+		}
+
 		public Object current() {
 			return cursor.current();
 		}
@@ -155,51 +156,51 @@ public class GraphUtils {
 		public void toLast() {
 			cursor.toLast();
 		}
-    	
-    }
-    
-    private static class OneTimeVisitNodeCursor extends OneTimeVisitCursor implements NodeCursor {
+
+	}
+
+	private static class OneTimeVisitNodeCursor extends OneTimeVisitCursor
+			implements NodeCursor {
 
 		public OneTimeVisitNodeCursor(YCursor cursor) {
 			super(cursor);
 		}
 
 		public void cyclicNext() {
-			((NodeCursor)cursor).cyclicNext();
+			((NodeCursor) cursor).cyclicNext();
 		}
 
 		public void cyclicPrev() {
-			((NodeCursor)cursor).cyclicPrev();
+			((NodeCursor) cursor).cyclicPrev();
 		}
 
 		public Node node() {
-			return ((NodeCursor)cursor).node();
+			return ((NodeCursor) cursor).node();
 		}
-    	
-    }
-    
-    private static class OneTimeVisitEdgeCursor extends OneTimeVisitCursor implements EdgeCursor {
+
+	}
+
+	private static class OneTimeVisitEdgeCursor extends OneTimeVisitCursor
+			implements EdgeCursor {
 
 		public OneTimeVisitEdgeCursor(YCursor cursor) {
 			super(cursor);
 		}
 
 		public void cyclicNext() {
-			((EdgeCursor)cursor).cyclicNext();
+			((EdgeCursor) cursor).cyclicNext();
 			visited.add(cursor.current());
 		}
 
 		public void cyclicPrev() {
-			((EdgeCursor)cursor).cyclicPrev();
+			((EdgeCursor) cursor).cyclicPrev();
 			visited.add(cursor.current());
-				
+
 		}
 
 		public Edge edge() {
-			return ((EdgeCursor)cursor).edge();
+			return ((EdgeCursor) cursor).edge();
 		}
 
-		
-    	
-    }
+	}
 }

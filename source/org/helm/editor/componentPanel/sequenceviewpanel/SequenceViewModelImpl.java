@@ -47,14 +47,13 @@ public class SequenceViewModelImpl implements SequenceViewModel {
 	private Graph2D viewGraph;
 
 	// TODO : put transformers for all polymer types
-	private static Map<String, Class<? extends SequenceTransformer>> TRANSFORMERS = 
-		new HashMap<String, Class<? extends SequenceTransformer>>() {
+	private static Map<String, Class<? extends SequenceTransformer>> TRANSFORMERS = new HashMap<String, Class<? extends SequenceTransformer>>() {
 		{
 			put(Monomer.NUCLIEC_ACID_POLYMER_TYPE,
 					NucleotideSequenceTransformer.class);
 			put(Monomer.PEPTIDE_POLYMER_TYPE, PeptideSequenceTransformer.class);
 			put(Monomer.CHEMICAL_POLYMER_TYPE, ChemSequenceTransformer.class);
-			
+
 		}
 	};
 

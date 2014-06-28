@@ -22,45 +22,42 @@
 package org.helm.editor.data;
 
 /**
- *
+ * 
  * @author lih25
  */
 public class NodeMapKeys {
 
-    public static final Object MONOMER_REF = "Monomer Reference"; 
+	public static final Object MONOMER_REF = "Monomer Reference";
 
-    public static final Object MONOMER_POSITION = "Monomer position";
-    
-    public static final Object NODE2PAIR_NODE = "node to pair node";
-    public static final Object NODE2STARTING_NODE = "node to starting node";
-    
-    /**
-     * if the node is the starting node
-     */
-//    public static final Object IS_STARTING = "Is Starting Node";
-   
-    public static final Object HYPERNODE_POLYMER_TYPE = "NODE TYPE";
-    public static final Object HYPERNODE_POLYMER_NOTATION = "HyperNode Polymer Notation";
-    public static final Object HYPERNODE = "Hyper Node";
-    public static final Object EXSMIELS= "EXSMIELS";
-    //RNA1, PEPTIDE1
-    public static final Object HYPERNODE_NAME = "Hyper Node name";
-    
-    public static final Object NODE2PARENT_HYPERNODE = "Parent hyperNode";
-    public static final Object HYPERNODE2STARTING_NODE = "map from hypernode to starting node";
-    public static final Object HYPERNODE2INDEX = "hypernode index";
-    
-    
-    public static final Object POSITION = "Monomer Notation";
-    /**
-     * indicate anotations. for a RNA sequence, this could be sense or antisense
-     */
-    public static final Object HYPERNODE_ANOTATION = "ANOTATION";
-    
-    public static final Object FOLDER_NODE_NOTATION = "Folder node notation";
+	public static final Object MONOMER_POSITION = "Monomer position";
+
+	public static final Object NODE2PAIR_NODE = "node to pair node";
+	public static final Object NODE2STARTING_NODE = "node to starting node";
+
+	/**
+	 * if the node is the starting node
+	 */
+	// public static final Object IS_STARTING = "Is Starting Node";
+
+	public static final Object HYPERNODE_POLYMER_TYPE = "NODE TYPE";
+	public static final Object HYPERNODE_POLYMER_NOTATION = "HyperNode Polymer Notation";
+	public static final Object HYPERNODE = "Hyper Node";
+	public static final Object EXSMIELS = "EXSMIELS";
+	// RNA1, PEPTIDE1
+	public static final Object HYPERNODE_NAME = "Hyper Node name";
+
+	public static final Object NODE2PARENT_HYPERNODE = "Parent hyperNode";
+	public static final Object HYPERNODE2STARTING_NODE = "map from hypernode to starting node";
+	public static final Object HYPERNODE2INDEX = "hypernode index";
+
+	public static final Object POSITION = "Monomer Notation";
+	/**
+	 * indicate anotations. for a RNA sequence, this could be sense or antisense
+	 */
+	public static final Object HYPERNODE_ANOTATION = "ANOTATION";
+
+	public static final Object FOLDER_NODE_NOTATION = "Folder node notation";
 
 	public static final String LABEL_INFO_MAP = "map for node labels";
 
-
-    
 }

@@ -22,73 +22,74 @@
 package org.helm.editor.protein.edit;
 
 /**
- *
+ * 
  * @author ZHANGTIANHONG
  */
 public class PeptideConnection {
 
-    public static final String DISULFIDE_BOND = "Disulfide";
-    public static final String AMIDE_BOND = "Amide";
-    public static final String[] VALID_BOND_TYPES = {DISULFIDE_BOND, AMIDE_BOND};
-    private String bondType;
-    private int sourceSequenceIndex;
-    private int sourceAminoAcidIndex;
-    private int targetSequenceIndex;
-    private int targetAminoAcidIndex;
+	public static final String DISULFIDE_BOND = "Disulfide";
+	public static final String AMIDE_BOND = "Amide";
+	public static final String[] VALID_BOND_TYPES = { DISULFIDE_BOND,
+			AMIDE_BOND };
+	private String bondType;
+	private int sourceSequenceIndex;
+	private int sourceAminoAcidIndex;
+	private int targetSequenceIndex;
+	private int targetAminoAcidIndex;
 
-    public String getBondType() {
-        return bondType;
-    }
+	public String getBondType() {
+		return bondType;
+	}
 
-    public void setBondType(String bondType) {
-        this.bondType = bondType;
-    }
+	public void setBondType(String bondType) {
+		this.bondType = bondType;
+	}
 
-    public int getSourceSequenceIndex() {
-        return sourceSequenceIndex;
-    }
+	public int getSourceSequenceIndex() {
+		return sourceSequenceIndex;
+	}
 
-    public void setSourceSequenceIndex(int sourceSequenceIndex) {
-        this.sourceSequenceIndex = sourceSequenceIndex;
-    }
+	public void setSourceSequenceIndex(int sourceSequenceIndex) {
+		this.sourceSequenceIndex = sourceSequenceIndex;
+	}
 
-    public int getSourceAminoAcidIndex() {
-        return sourceAminoAcidIndex;
-    }
+	public int getSourceAminoAcidIndex() {
+		return sourceAminoAcidIndex;
+	}
 
-    public void setSourceAminoAcidIndex(int sourceAminoAcidIndex) {
-        this.sourceAminoAcidIndex = sourceAminoAcidIndex;
-    }
+	public void setSourceAminoAcidIndex(int sourceAminoAcidIndex) {
+		this.sourceAminoAcidIndex = sourceAminoAcidIndex;
+	}
 
+	public int getTargetAminoAcidIndex() {
+		return targetAminoAcidIndex;
+	}
 
-    public int getTargetAminoAcidIndex() {
-        return targetAminoAcidIndex;
-    }
+	public void setTargetAminoAcidIndex(int targetAminoAcidIndex) {
+		this.targetAminoAcidIndex = targetAminoAcidIndex;
+	}
 
-    public void setTargetAminoAcidIndex(int targetAminoAcidIndex) {
-        this.targetAminoAcidIndex = targetAminoAcidIndex;
-    }
+	public int getTargetSequenceIndex() {
+		return targetSequenceIndex;
+	}
 
-    public int getTargetSequenceIndex() {
-        return targetSequenceIndex;
-    }
+	public void setTargetSequenceIndex(int targetSequenceIndex) {
+		this.targetSequenceIndex = targetSequenceIndex;
+	}
 
-    public void setTargetSequenceIndex(int targetSequenceIndex) {
-        this.targetSequenceIndex = targetSequenceIndex;
-    }
+	public boolean isValidBondType(String bondType) {
+		for (String type : VALID_BOND_TYPES) {
+			if (type.equalsIgnoreCase(bondType)) {
+				return true;
+			}
+		}
+		return false;
+	}
 
-
-    public boolean isValidBondType(String bondType) {
-        for (String type : VALID_BOND_TYPES) {
-            if (type.equalsIgnoreCase(bondType)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    @Override
-    public String toString() {
-        return bondType+"="+sourceSequenceIndex+":"+sourceAminoAcidIndex+"-"+targetSequenceIndex+":"+targetAminoAcidIndex;
-    }
+	@Override
+	public String toString() {
+		return bondType + "=" + sourceSequenceIndex + ":"
+				+ sourceAminoAcidIndex + "-" + targetSequenceIndex + ":"
+				+ targetAminoAcidIndex;
+	}
 }

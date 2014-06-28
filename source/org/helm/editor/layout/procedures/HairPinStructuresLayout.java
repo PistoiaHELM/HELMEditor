@@ -34,21 +34,26 @@ public class HairPinStructuresLayout extends AbstratStructureLayout {
 	@Override
 	protected void doLayoutCore(LayoutGraph graph) {
 		Node startingNode = layoutPrimitives.getStartingNode(graph.firstNode());
-		
-		Node[] loopStartAndLoopEnd = layoutPrimitives.getLoopBounds(startingNode, graph); 
 
-  		// get the R startingNode that pBaseNode is connecting to
+		Node[] loopStartAndLoopEnd = layoutPrimitives.getLoopBounds(
+				startingNode, graph);
+
+		// get the R startingNode that pBaseNode is connecting to
 		Node loopStart = layoutPrimitives.getRNode(loopStartAndLoopEnd[0]);
 		Node loopEnd = layoutPrimitives.getRNode(loopStartAndLoopEnd[1]);
 
 		layoutPrimitives.layoutSequence(graph, startingNode, loopStart, true);
-		layoutPrimitives.setFlipState(layoutPrimitives.getSequenceNodes(startingNode, loopStart, graph, true).nodes(), false);
-		
+		layoutPrimitives.setFlipState(
+				layoutPrimitives.getSequenceNodes(startingNode, loopStart,
+						graph, true).nodes(), false);
+
 		layoutPrimitives.layoutSequence(graph, loopEnd, null, true);
 		layoutPrimitives.rotate180(loopEnd, null, graph);
 		layoutPrimitives.shiftSubgraph(graph, loopEnd, null, null, true);
-		layoutPrimitives.setFlipState(layoutPrimitives.getSequenceNodes(loopEnd, null, graph, true).nodes(), true);
-		
+		layoutPrimitives.setFlipState(
+				layoutPrimitives.getSequenceNodes(loopEnd, null, graph, true)
+						.nodes(), true);
+
 		layoutPrimitives.layoutLoop(graph, loopStart, loopEnd, false);
 	}
 

@@ -29,15 +29,17 @@ import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 
 /**
- *
+ * 
  * @author zhangtianhong
  */
 public class XMLConverter {
 
-    public static Element getElementFromString(String xmlString) throws JDOMException, IOException {
-        ByteArrayInputStream bais = new ByteArrayInputStream(xmlString.getBytes());
-        SAXBuilder builder = new SAXBuilder();
-        Document doc = builder.build(bais);
-        return doc.getRootElement();
-    }
+	public static Element getElementFromString(String xmlString)
+			throws JDOMException, IOException {
+		ByteArrayInputStream bais = new ByteArrayInputStream(
+				xmlString.getBytes());
+		SAXBuilder builder = new SAXBuilder();
+		Document doc = builder.build(bais);
+		return doc.getRootElement();
+	}
 }

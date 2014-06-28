@@ -33,82 +33,90 @@ import y.base.Graph;
 import yext.graphml.reader.AbstractDOMInputHandler;
 
 /**
- *
+ * 
  * @author lih25
  */
 public class EdgeInputHandler extends AbstractDOMInputHandler {
 
-    // Assume (parsing) responsibility only for those <data> elements that refer 
-    // to GraphML attribute declarations with specific additional XML attribute. 
-    public boolean acceptKey(NamedNodeMap map, int scopeType) {
-        if (scopeType != GraphMLConstants.SCOPE_EDGE) {
-            return false;
-        }
-        // 'map' holds the XML attributes of a <key> element. 
-        Node sourceAttNode = map.getNamedItem(IOConstants.SOURCE_ATTACHMENT);
-        Node targetAttNode = map.getNamedItem(IOConstants.TARGET_ATTACHMENT);
+	// Assume (parsing) responsibility only for those <data> elements that refer
+	// to GraphML attribute declarations with specific additional XML attribute.
+	public boolean acceptKey(NamedNodeMap map, int scopeType) {
+		if (scopeType != GraphMLConstants.SCOPE_EDGE) {
+			return false;
+		}
+		// 'map' holds the XML attributes of a <key> element.
+		Node sourceAttNode = map.getNamedItem(IOConstants.SOURCE_ATTACHMENT);
+		Node targetAttNode = map.getNamedItem(IOConstants.TARGET_ATTACHMENT);
 
-        if (sourceAttNode != null) {
-            return "true".equals(sourceAttNode.getNodeValue());
-        } else if (targetAttNode != null) {
-            return "true".equals(targetAttNode.getNodeValue());
-        } else {
-            return false;
-        }
+		if (sourceAttNode != null) {
+			return "true".equals(sourceAttNode.getNodeValue());
+		} else if (targetAttNode != null) {
+			return "true".equals(targetAttNode.getNodeValue());
+		} else {
+			return false;
+		}
 
-//        return ((node == null) ? false : "true".equals(node.getNodeValue()));
-    }
-    // Parse the <data> element. 
-    protected void parseData(DOMGraphMLParseContext context, Graph graph,
-            Object edge, boolean defaultMode,
-            org.w3c.dom.Node domNode) {
-        // Default mode is not supported. 
-        if (defaultMode) {
-            return;
-        }
+		// return ((node == null) ? false : "true".equals(node.getNodeValue()));
+	}
 
-        String source = "";
-        String target = "";
-        int index = -1;
-        Attachment sourceAttachment = null;
-        Attachment targetAttachment = null;
-        EdgeMap edgeMap = (EdgeMap) graph.getDataProvider(EdgeMapKeys.EDGE_INFO);
+	// Parse the <data> element.
+	protected void parseData(DOMGraphMLParseContext context, Graph graph,
+			Object edge, boolean defaultMode, org.w3c.dom.Node domNode) {
+		// Default mode is not supported.
+		if (defaultMode) {
+			return;
+		}
 
-        // 'domNode' holds the <data> element, its XML attributes, and all XML 
-        // elements nested within. 
-        org.w3c.dom.NodeList children = domNode.getChildNodes();
-        if (children != null) {
-            for (int i = 0; i < children.getLength(); i++) {
-                org.w3c.dom.Node n = children.item(i);
-                if (n.getNodeType() == org.w3c.dom.Node.ELEMENT_NODE) {
+		String source = "";
+		String target = "";
+		int index = -1;
+		Attachment sourceAttachment = null;
+		Attachment targetAttachment = null;
+		EdgeMap edgeMap = (EdgeMap) graph
+				.getDataProvider(EdgeMapKeys.EDGE_INFO);
 
-                    if (IOConstants.SOURCE_ATTACHMENT.equals(n.getLocalName())) {
-                        source = parseMyDataElement(n);
-                    }
+		// 'domNode' holds the <data> element, its XML attributes, and all XML
+		// elements nested within.
+		org.w3c.dom.NodeList children = domNode.getChildNodes();
+		if (children != null) {
+			for (int i = 0; i < children.getLength(); i++) {
+				org.w3c.dom.Node n = children.item(i);
+				if (n.getNodeType() == org.w3c.dom.Node.ELEMENT_NODE) {
 
-                    if (IOConstants.TARGET_ATTACHMENT.equals(n.getLocalName())) {
-                        target = parseMyDataElement(n);
-                    }
-                }
+					if (IOConstants.SOURCE_ATTACHMENT.equals(n.getLocalName())) {
+						source = parseMyDataElement(n);
+					}
 
-            }
-            index = source.indexOf(":");
-            sourceAttachment = new Attachment(source.substring(0, index), source.substring(index + 1));
-            index = target.indexOf(":");
-            targetAttachment = new Attachment(target.substring(0, index), source.substring(index + 1));
-            edgeMap.set(edge, new EditorEdgeInfoData(sourceAttachment, targetAttachment));
-        }
-    }
-//        ((Graph2D) graph).getRealizer((y.base.Node) nodeedge).setLabelText(label);
-    // Parse the attribute of <myData> element. 
-    String parseMyDataElement(org.w3c.dom.Node domNode) {
-        NamedNodeMap nm = domNode.getAttributes();
-        org.w3c.dom.Node a = nm.getNamedItem("value");
-//        String txt = "Node's area is ";
-//        txt += ((a == null) ? "n/a." : "" + a.getNodeValue() + " square pixels.");
-        return a.getNodeValue();
-    }
-    // Not supported yet. 
-    protected void applyDefault(DOMGraphMLParseContext c, Graph g, Object edge) {
-    }
+					if (IOConstants.TARGET_ATTACHMENT.equals(n.getLocalName())) {
+						target = parseMyDataElement(n);
+					}
+				}
+
+			}
+			index = source.indexOf(":");
+			sourceAttachment = new Attachment(source.substring(0, index),
+					source.substring(index + 1));
+			index = target.indexOf(":");
+			targetAttachment = new Attachment(target.substring(0, index),
+					source.substring(index + 1));
+			edgeMap.set(edge, new EditorEdgeInfoData(sourceAttachment,
+					targetAttachment));
+		}
+	}
+
+	// ((Graph2D) graph).getRealizer((y.base.Node)
+	// nodeedge).setLabelText(label);
+	// Parse the attribute of <myData> element.
+	String parseMyDataElement(org.w3c.dom.Node domNode) {
+		NamedNodeMap nm = domNode.getAttributes();
+		org.w3c.dom.Node a = nm.getNamedItem("value");
+		// String txt = "Node's area is ";
+		// txt += ((a == null) ? "n/a." : "" + a.getNodeValue() +
+		// " square pixels.");
+		return a.getNodeValue();
+	}
+
+	// Not supported yet.
+	protected void applyDefault(DOMGraphMLParseContext c, Graph g, Object edge) {
+	}
 }

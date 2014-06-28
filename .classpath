@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="source"/>
+	<classpathentry kind="src" path="resources"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="lib/aloe.jar"/>
+	<classpathentry kind="lib" path="lib/forms-1.1.0.jar"/>
+	<classpathentry kind="lib" path="lib/jdom-1.1.jar"/>
+	<classpathentry kind="lib" path="lib/MarvinBeans-5.0.jar"/>
+	<classpathentry kind="lib" path="lib/openbabel-2.3.1.jar"/>
+	<classpathentry kind="lib" path="lib/sdlib.jar"/>
+	<classpathentry kind="lib" path="lib/swing-layout-1.0.3.jar"/>
+	<classpathentry kind="lib" path="lib/swing-worker-1.1.jar"/>
+	<classpathentry kind="lib" path="lib/swingx-0.9.4.jar"/>
+	<classpathentry kind="lib" path="lib/swingx-beaninfo-0.9.4.jar"/>
+	<classpathentry kind="lib" path="lib/xerces.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/yWorks"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/HELMNotationToolkit"/>
+	<classpathentry kind="output" path="build"/>
+</classpath>

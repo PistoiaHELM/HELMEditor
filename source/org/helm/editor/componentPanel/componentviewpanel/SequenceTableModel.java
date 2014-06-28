@@ -21,93 +21,107 @@
  ******************************************************************************/
 package org.helm.editor.componentPanel.componentviewpanel;
 
+import org.helm.editor.data.MonomerStoreCache;
 import org.helm.editor.utility.ExceptionHandler;
+import org.helm.notation.MonomerStore;
 import org.helm.notation.tools.ComplexNotationParser;
 import org.helm.notation.tools.ExtinctionCoefficientCalculator;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.swing.table.AbstractTableModel;
 
 public class SequenceTableModel extends AbstractTableModel {
 
-    private static String ecColumn = "Ext. Coefficient";
+	private static String ecColumn = "Ext. Coefficient";
 
-    static {
-        try {
-            ecColumn = "Ext. Coefficient (" + ExtinctionCoefficientCalculator.getInstance().getUnit(ExtinctionCoefficientCalculator.RNA_UNIT_TYPE) + ")";
-        } catch (Exception ex) {
-        }
-    }
-    
-    private String[] columnNames = {"Component", "Component Type", "Component Structure",
-        "Molecular Weight", "Molecular Formula", ecColumn};
-    private final List<SequenceTableDataModel> data = new ArrayList<SequenceTableDataModel>();
+	static {
+		try {
+			ecColumn = "Ext. Coefficient ("
+					+ ExtinctionCoefficientCalculator.getInstance().getUnit(
+							ExtinctionCoefficientCalculator.RNA_UNIT_TYPE)
+					+ ")";
+		} catch (Exception ex) {
+		}
+	}
 
-    public SequenceTableModel(String notation) {
-        init(notation);
-    }
+	private String[] columnNames = { "Component", "Component Type",
+			"Component Structure", "Molecular Weight", "Molecular Formula",
+			ecColumn };
+	private final List<SequenceTableDataModel> data = new ArrayList<SequenceTableDataModel>();
 
-    public SequenceTableModel() {
-    }
+	public SequenceTableModel(String notation) {
+		init(notation);
+	}
 
-    public void init(String notation) {
-        try {
-            String[] compNotations = ComplexNotationParser.decompose(notation);
-            List<SequenceTableDataModel> list = new ArrayList<SequenceTableDataModel>();
-            for (int rowNumber = 1; rowNumber<=compNotations.length; rowNumber++) {
-                SequenceTableDataModel dataModel = SequenceTableDataModel.createSequenceTableDataModel(compNotations[rowNumber-1]);
-                dataModel.setAnnotation(String.valueOf(rowNumber));
-                list.add(dataModel);
-            }
-            setData(list);
+	public SequenceTableModel() {
+	}
 
-        } catch (Exception ex) {
-            ExceptionHandler.handleException(ex);
-            Logger.getLogger(SequenceTableModel.class.getName()).log(Level.SEVERE, null, ex);
-        } 
-    }
+	public void init(String notation) {
+		try {
+			MonomerStore monomerStore = MonomerStoreCache.getInstance()
+					.getCombinedMonomerStore();
+			String[] compNotations = ComplexNotationParser.decompose(notation,
+					monomerStore);
+			List<SequenceTableDataModel> list = new ArrayList<SequenceTableDataModel>();
+			for (int rowNumber = 1; rowNumber <= compNotations.length; rowNumber++) {
+				SequenceTableDataModel dataModel = SequenceTableDataModel
+						.createSequenceTableDataModel(
+								compNotations[rowNumber - 1], monomerStore);
+				dataModel.setAnnotation(String.valueOf(rowNumber));
+				list.add(dataModel);
+			}
+			setData(list);
 
-    @Override
-    public String getColumnName(int col) {
-        return columnNames[col];
-    }
+		} catch (Exception ex) {
+			ExceptionHandler.handleException(ex);
+			Logger.getLogger(SequenceTableModel.class.getName()).log(
+					Level.SEVERE, null, ex);
+		}
+	}
 
-    public int getRowCount() {
-        return data.size();
-    }
+	@Override
+	public String getColumnName(int col) {
+		return columnNames[col];
+	}
 
-    public int getColumnCount() {
-        return columnNames.length;
-    }
+	public int getRowCount() {
+		return data.size();
+	}
 
-    public Object getValueAt(int rowIndex, int columnIndex) {
-        SequenceTableDataModel dataModel = data.get(rowIndex);
-        return dataModel.getFiled(columnIndex);
-    }
+	public int getColumnCount() {
+		return columnNames.length;
+	}
 
-    public synchronized void setData(List<SequenceTableDataModel> newData) {
-        synchronized (data) {
-            data.clear();
-            for (int i = 0; i < newData.size(); i++) {
-                data.add(newData.get(i));
-            }
-        }
+	public Object getValueAt(int rowIndex, int columnIndex) {
+		SequenceTableDataModel dataModel = data.get(rowIndex);
+		return dataModel.getFiled(columnIndex);
+	}
 
-        fireTableDataChanged();
-    }
+	public synchronized void setData(List<SequenceTableDataModel> newData) {
+		synchronized (data) {
+			data.clear();
+			for (int i = 0; i < newData.size(); i++) {
+				data.add(newData.get(i));
+			}
+		}
 
-    public void clear() {
-        synchronized (data) {
-            data.clear();
-        }
+		fireTableDataChanged();
+	}
 
-        fireTableDataChanged();
-    }
+	public void clear() {
+		synchronized (data) {
+			data.clear();
+		}
 
-    @Override
-    public Class<?> getColumnClass(int c) {
-        return getValueAt(0, c).getClass();
-    }
+		fireTableDataChanged();
+	}
+
+	@Override
+	public Class<?> getColumnClass(int c) {
+		return getValueAt(0, c).getClass();
+	}
 }

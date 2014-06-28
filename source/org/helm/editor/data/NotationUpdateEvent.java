@@ -22,29 +22,29 @@
 package org.helm.editor.data;
 
 public class NotationUpdateEvent {
-	
+
 	private String _notataion;
 	private String _owner;
-		
+
 	public NotationUpdateEvent(String data) {
 		_notataion = data;
 	}
-	
+
 	public NotationUpdateEvent(String data, String owner) {
 		_notataion = data;
 		_owner = owner;
 	}
-	
-	public String getOwner(){
+
+	public String getOwner() {
 		return _owner;
 	}
-			
+
 	public void setNotation(String notataion) {
 		_notataion = notataion;
 	}
-	
+
 	public String getData() {
 		return _notataion;
 	}
-	
+
 }

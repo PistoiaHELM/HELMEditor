@@ -32,47 +32,50 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 /**
- *
+ * 
  * @author lih25
  */
 public class ViewNotationAction extends AbstractAction {
 
-    private NotationProducer producer;
+	private NotationProducer producer;
 
+	public ViewNotationAction(NotationProducer producer, String actionName) {
+		super(actionName);
+		this.producer = producer;
+	}
 
-    public ViewNotationAction(NotationProducer producer, String actionName) {
-        super(actionName);
-        this.producer = producer;
-    }
+	public void actionPerformed(ActionEvent e) {
+		producer.getGraphViewComponent().setCursor(
+				Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+		java.awt.EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				JComponent message = createDisplay();
+				JOptionPane.showMessageDialog(producer.getGraphViewComponent(),
+						message, "Polymer Notation",
+						JOptionPane.INFORMATION_MESSAGE);
+			}
+		});
+		producer.getGraphViewComponent().setCursor(
+				Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 
-    public void actionPerformed(ActionEvent e) {
-        producer.getGraphViewComponent().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                JComponent message = createDisplay();
-                JOptionPane.showMessageDialog(producer.getGraphViewComponent(), message, "Polymer Notation", JOptionPane.INFORMATION_MESSAGE);
-            }
-        });
-        producer.getGraphViewComponent().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+	}
 
-    }
+	private JComponent createDisplay() {
 
-    private JComponent createDisplay() {
+		String notation = producer.getNotation();
+		if (null == notation || notation.trim().length() == 0) {
+			return new JLabel("There is no structure to show notation");
+		}
 
-        String notation = producer.getNotation();
-        if (null == notation || notation.trim().length() == 0) {
-            return new JLabel("There is no structure to show notation");
-        }
+		JScrollPane jScrollPane = new JScrollPane();
+		JTextArea notationTextArea = new JTextArea();
+		notationTextArea.setColumns(60);
+		notationTextArea.setEditable(false);
+		notationTextArea.setLineWrap(true);
+		notationTextArea.setRows(8);
+		jScrollPane.setViewportView(notationTextArea);
+		notationTextArea.setText(notation);
 
-        JScrollPane   jScrollPane = new JScrollPane();
-        JTextArea notationTextArea = new JTextArea();
-        notationTextArea.setColumns(60);
-        notationTextArea.setEditable(false);
-        notationTextArea.setLineWrap(true);
-        notationTextArea.setRows(8);
-        jScrollPane.setViewportView(notationTextArea);
-        notationTextArea.setText(notation);
-
-        return jScrollPane;
-    }
+		return jScrollPane;
+	}
 }

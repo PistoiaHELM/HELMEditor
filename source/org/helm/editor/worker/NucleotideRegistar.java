@@ -36,47 +36,56 @@ import org.jdesktop.swingworker.SwingWorker;
 import org.jdom.Element;
 
 /**
- *
+ * 
  * @author zhangtianhong
  */
 public class NucleotideRegistar extends SwingWorker<Void, Void> {
 
-    private NucleotideManager manager;
+	private NucleotideManager manager;
 
-    public NucleotideRegistar(NucleotideManager manager) {
-        this.manager = manager;
-    }
+	public NucleotideRegistar(NucleotideManager manager) {
+		this.manager = manager;
+	}
 
-    @Override
-    protected Void doInBackground() throws Exception {
-        String xmlString = manager.getNewNucleotideXMLString();
-        Element element = XMLConverter.getElementFromString(xmlString);
-        Map<String, Map<String, String>> map = NucleotideFactory.getInstance().getNucleotideTemplates();
+	@Override
+	protected Void doInBackground() throws Exception {
+		String xmlString = manager.getNewNucleotideXMLString();
+		Element element = XMLConverter.getElementFromString(xmlString);
+		Map<String, Map<String, String>> map = NucleotideFactory.getInstance()
+				.getNucleotideTemplates();
 
-        Nucleotide nucleotide = NucleotideSequenceParser.getNucleotide(element);
-        map.get(NotationConstant.NOTATION_SOURCE).put(nucleotide.getSymbol(), nucleotide.getNotation());
-        NucleotideFactory.getInstance().setNucleotideTemplates(map);
+		Nucleotide nucleotide = NucleotideSequenceParser.getNucleotide(element);
+		map.get(NotationConstant.NOTATION_SOURCE).put(nucleotide.getSymbol(),
+				nucleotide.getNotation());
+		NucleotideFactory.getInstance().setNucleotideTemplates(map);
 
-        //save nucleotide templates to local file after successful update
-        try {
-            NucleotideFactory.getInstance().saveNucleotideTemplates();
-        } catch (Exception ignore) {
-        }
+		// save nucleotide templates to local file after successful update
+		try {
+			NucleotideFactory.getInstance().saveNucleotideTemplates();
+		} catch (Exception ignore) {
+		}
 
-        return null;
-    }
+		return null;
+	}
 
-    @Override
-    protected void done() {
-        try {
-            manager.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-            get();
-            manager.refreshContent();
-            manager.getEditor().updatePolymerPanels();
-            JOptionPane.showMessageDialog(manager, "Successfully registered nucleotide into local file", "Register Success", JOptionPane.INFORMATION_MESSAGE);
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(manager, "Error registering nucleotide into local file\n" + ex.getMessage(), "Register Failure", JOptionPane.ERROR_MESSAGE);
-            Logger.getLogger(NucleotideRegistar.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
+	@Override
+	protected void done() {
+		try {
+			manager.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+			get();
+			manager.refreshContent();
+			manager.getEditor().updatePolymerPanels();
+			JOptionPane.showMessageDialog(manager,
+					"Successfully registered nucleotide into local file",
+					"Register Success", JOptionPane.INFORMATION_MESSAGE);
+		} catch (Exception ex) {
+			JOptionPane.showMessageDialog(
+					manager,
+					"Error registering nucleotide into local file\n"
+							+ ex.getMessage(), "Register Failure",
+					JOptionPane.ERROR_MESSAGE);
+			Logger.getLogger(NucleotideRegistar.class.getName()).log(
+					Level.SEVERE, null, ex);
+		}
+	}
 }

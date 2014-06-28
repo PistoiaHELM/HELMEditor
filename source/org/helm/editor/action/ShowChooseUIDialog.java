@@ -31,12 +31,12 @@ import org.helm.editor.monomerui.UIChooserController;
 
 /**
  * @author Alexander Makarov
- *
+ * 
  */
-public class ShowChooseUIDialog extends AbstractAction{
+public class ShowChooseUIDialog extends AbstractAction {
 
 	private UIChooserController chooserController;
-	
+
 	public ShowChooseUIDialog(MacromoleculeEditor editor) {
 		super("Preference ...");
 		try {
@@ -45,7 +45,7 @@ public class ShowChooseUIDialog extends AbstractAction{
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void actionPerformed(ActionEvent e) {
 		if (chooserController != null) {
 			chooserController.getFrame().setVisible(true);

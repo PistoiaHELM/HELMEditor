@@ -37,56 +37,57 @@ import javax.swing.Box;
 
 public class ChemicalStructureViewer extends JFrame {
 
-    private MViewPane mviewer;
-    private JFrame parent;
-    private JButton okButton;
-    private static ChemicalStructureViewer viewer;
-    private static Dimension MIN_SIZE = new Dimension(600, 400);
+	private MViewPane mviewer;
+	private JFrame parent;
+	private JButton okButton;
+	private static ChemicalStructureViewer viewer;
+	private static Dimension MIN_SIZE = new Dimension(600, 400);
 
-    public static ChemicalStructureViewer getInstance(JFrame parent) {
-        if (viewer == null) {
-            viewer = new ChemicalStructureViewer(parent);
-        }
-        return viewer;
-    }
+	public static ChemicalStructureViewer getInstance(JFrame parent) {
+		if (viewer == null) {
+			viewer = new ChemicalStructureViewer(parent);
+		}
+		return viewer;
+	}
 
-    private ChemicalStructureViewer(JFrame parent) {
-        this.parent = parent;
-        initComponents();
-    }
+	private ChemicalStructureViewer(JFrame parent) {
+		this.parent = parent;
+		initComponents();
+	}
 
-    private void initComponents() {
-        JPanel mainPanel = new JPanel();
+	private void initComponents() {
+		JPanel mainPanel = new JPanel();
 
-        mviewer = new MViewPane();
+		mviewer = new MViewPane();
 
-        okButton = new JButton("Ok");
-        okButton.addActionListener(new ActionListener() {
+		okButton = new JButton("Ok");
+		okButton.addActionListener(new ActionListener() {
 
-            public void actionPerformed(ActionEvent e) {
-                setVisible(false);
-            }
-        });
-        Box buttonBox = Box.createHorizontalBox();
-        buttonBox.add(Box.createHorizontalGlue());
-        buttonBox.add(okButton);
-        buttonBox.add(Box.createHorizontalGlue());
+			public void actionPerformed(ActionEvent e) {
+				setVisible(false);
+			}
+		});
+		Box buttonBox = Box.createHorizontalBox();
+		buttonBox.add(Box.createHorizontalGlue());
+		buttonBox.add(okButton);
+		buttonBox.add(Box.createHorizontalGlue());
 
-        mainPanel.setLayout(new BorderLayout());
-        mainPanel.add(mviewer, BorderLayout.CENTER);
-        mainPanel.add(buttonBox, BorderLayout.SOUTH);
+		mainPanel.setLayout(new BorderLayout());
+		mainPanel.add(mviewer, BorderLayout.CENTER);
+		mainPanel.add(buttonBox, BorderLayout.SOUTH);
 
-        setDefaultCloseOperation(HIDE_ON_CLOSE);
-        setTitle("Chemical Structure");
-        setIconImage(IconGenerator.getImage(IconGenerator.HELM_APP_ICON_RESOURCE_URL));
-        setContentPane(mainPanel);
-        setPreferredSize(MIN_SIZE);
-        pack();
-        setLocationRelativeTo(parent);
-    }
+		setDefaultCloseOperation(HIDE_ON_CLOSE);
+		setTitle("Chemical Structure");
+		setIconImage(IconGenerator
+				.getImage(IconGenerator.HELM_APP_ICON_RESOURCE_URL));
+		setContentPane(mainPanel);
+		setPreferredSize(MIN_SIZE);
+		pack();
+		setLocationRelativeTo(parent);
+	}
 
-    public void setStructure(Molecule mol) {
-        mviewer.setM(0, mol);
-        setVisible(true);
-    }
+	public void setStructure(Molecule mol) {
+		mviewer.setM(0, mol);
+		setVisible(true);
+	}
 }

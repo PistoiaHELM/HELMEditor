@@ -27,9 +27,9 @@ import y.view.Graph2D;
 public class GraphData {
 
 	private Graph2D _graph;
-	
+
 	private MonomerInfo _monomerInfo;
-	
+
 	private NodeMap _newMonomerInfoMap;
 
 	public Graph2D getGraph() {
@@ -55,7 +55,5 @@ public class GraphData {
 	public void setNewMonomerInfoMap(NodeMap monomerInfoMap) {
 		_newMonomerInfoMap = monomerInfoMap;
 	}
-	
-	
-	
+
 }

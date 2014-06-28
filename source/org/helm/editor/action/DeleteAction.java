@@ -54,233 +54,255 @@ import org.helm.editor.utility.Graph2NotationTranslator;
 import org.helm.editor.utility.MonomerInfoUtils;
 
 /**
- *
+ * 
  * @author lih25
  */
 public class DeleteAction extends AbstractAction {
 
-    private GUIBase editor;
+	private GUIBase editor;
 
-    private String _ownerCode;
-    
-    public DeleteAction(GUIBase editor, String ownerCode) {
-        super("Delete Selection");
-        
-        _ownerCode = ownerCode;
-        
-        URL imageURL = GUIBase.class.getResource("resource/Delete16.gif");
-        if (imageURL != null) {
-            this.putValue(Action.SMALL_ICON, new ImageIcon(imageURL));
-        }
-        this.putValue(Action.SHORT_DESCRIPTION, "Delete Selection");
+	private String _ownerCode;
 
-        this.editor = editor;
-    }
+	public DeleteAction(GUIBase editor, String ownerCode) {
+		super("Delete Selection");
 
-    public void actionPerformed(ActionEvent e) {
+		_ownerCode = ownerCode;
 
-        try {
-            Graph2D graph = editor.getView().getGraph2D();
-            GraphManager graphManager = editor.getGraphManager();
-            EdgeCursor edgeCursor = graph.selectedEdges();
-            NodeCursor nodeCursor = graph.selectedNodes();
-            
-            EdgeMap edgeMap = (EdgeMap) graph.getDataProvider(EdgeMapKeys.EDGE_INFO);
+		URL imageURL = GUIBase.class.getResource("resource/Delete16.gif");
+		if (imageURL != null) {
+			this.putValue(Action.SMALL_ICON, new ImageIcon(imageURL));
+		}
+		this.putValue(Action.SHORT_DESCRIPTION, "Delete Selection");
 
-            //Edge edge = null;
+		this.editor = editor;
+	}
 
-            NodeMap nodeMap = (NodeMap) graph.getDataProvider(NodeMapKeys.MONOMER_REF);
-            NodeMap hyperNodeMap = (NodeMap) graph.getDataProvider(NodeMapKeys.NODE2PARENT_HYPERNODE);
-            NodeMap startingNodeMap = (NodeMap) graph.getDataProvider(NodeMapKeys.NODE2STARTING_NODE);
-            
-            
-            //MonomerInfo sourceMonomerInfo = null;
-            //MonomerInfo targetMonomerInfo = null;
-            String annotation = null;
-            if (edgeCursor.size() > 0) {
-                edgeCursor.toFirst();
-                for (; edgeCursor.ok(); edgeCursor.next()) {
-                    Edge edge = edgeCursor.edge();
-                    //free up the connections
-                    releaseConnection(edge);
-                    
-                    Node source = edge.source();
-                    Node sourceStarting = (Node)startingNodeMap.get(source);
-                    
-                    edgeMap = (EdgeMap) graph.getDataProvider(EdgeMapKeys.EDGE_INFO);
-                    EditorEdgeInfoData edgeInfoData = (EditorEdgeInfoData) edgeMap.get(edge);
+	public void actionPerformed(ActionEvent e) {
 
-                    
-                    if (sourceStarting != null && isInSimpleLoop(sourceStarting) && !edgeInfoData.isPair()) {
-                    	graphManager.removeStartingNode(sourceStarting);
-                    }
-                    
-                    
-                    if (!edgeInfoData.isPair() && breaksComponent(edge)) {
-                        Node starting = edge.target();
-                        NodeMap startingMap = (NodeMap)graph.getDataProvider(NodeMapKeys.NODE2STARTING_NODE);
-                    	Node s = (Node)startingMap.get(edge.source());
-                    	int startIndex = graphManager.getIndex(s);	
-                        graphManager.addStartingNode(startIndex + 1, starting); 
-                    }
-                    
-                    graph.removeEdge(edge);
+		try {
+			Graph2D graph = editor.getView().getGraph2D();
+			GraphManager graphManager = editor.getGraphManager();
+			EdgeCursor edgeCursor = graph.selectedEdges();
+			NodeCursor nodeCursor = graph.selectedNodes();
 
-                }
-            }
+			EdgeMap edgeMap = (EdgeMap) graph
+					.getDataProvider(EdgeMapKeys.EDGE_INFO);
 
-            // if R node is selected for deletion then its base should be deleted as well. So just add unselected
-            // branch nodes which are neighbours to selected R nodes
-            for (; nodeCursor.ok(); nodeCursor.next()) {
-            	if (MonomerInfoUtils.isRMonomer(nodeCursor.node())) {
-            		for (NodeCursor neighbours = nodeCursor.node().neighbors(); neighbours.ok(); neighbours.next()) {
-                    	if (MonomerInfoUtils.isBranchMonomer(neighbours.node())) {
-                    		graph.setSelected(neighbours.node(), true);
-                    	}
-            		}
-            	}
-            }
-            nodeCursor = graph.selectedNodes();
-            
-            //if a node is being removed, we need to add all its successors to the starting node list
-            Node node = null;
-            NodeCursor successors = null;
-            
-            Node hyperNode1 = null;
-            Node hyperNode2 = null;
-            int index = - 1;
-            
-            if (nodeCursor.size() > 0) {
-                for (; nodeCursor.ok(); nodeCursor.next()) {
-                    node = (Node) nodeCursor.node();
-                    releaseConnections(node);
+			// Edge edge = null;
 
-                    if (graphManager.isStartingNode(node)) {
-                        annotation = graphManager.getAnnotation(node);
-                        index = graphManager.getIndex(node);
-                        graphManager.removeStartingNode(node);
-                    } else {
-                    	Node s = (Node)startingNodeMap.get(node);
-                    	index = graphManager.getIndex(s) + 1;
-                    }
+			NodeMap nodeMap = (NodeMap) graph
+					.getDataProvider(NodeMapKeys.MONOMER_REF);
+			NodeMap hyperNodeMap = (NodeMap) graph
+					.getDataProvider(NodeMapKeys.NODE2PARENT_HYPERNODE);
+			NodeMap startingNodeMap = (NodeMap) graph
+					.getDataProvider(NodeMapKeys.NODE2STARTING_NODE);
 
-                    successors = node.successors();
-                    hyperNode1 = (Node) hyperNodeMap.get(node);
-                    for (; successors.ok(); successors.next()) {
-                        hyperNode2 = (Node) hyperNodeMap.get(successors.node());
-                        if (hyperNode1 == hyperNode2) {
-                           	graphManager.addStartingNode(index, successors.node());
-                            graphManager.annotate(successors.node(), annotation);
-                        }
-                    }
-                    annotation = null;
-                    
-                    Node starting = (Node)startingNodeMap.get(node);
-                    if (starting != null && isInSimpleLoop(starting)) {
-                     	graphManager.removeStartingNode(starting);
-                    }
-                    
-                    //remove the node after update the starting node list
-                    graph.removeNode(node);
-                    index = -1;
-                }
-            }
-            
-            
-            Graph2NotationTranslator.updateHyperGraph(graph, graphManager);
-            String notation = Graph2NotationTranslator.getNewNotation(graphManager);
-            ModelController.notationUpdated(notation, _ownerCode);                   
-        } catch (Exception ex) {
-        	ExceptionHandler.handleException(ex);
-        }
+			// MonomerInfo sourceMonomerInfo = null;
+			// MonomerInfo targetMonomerInfo = null;
+			String annotation = null;
+			if (edgeCursor.size() > 0) {
+				edgeCursor.toFirst();
+				for (; edgeCursor.ok(); edgeCursor.next()) {
+					Edge edge = edgeCursor.edge();
+					// free up the connections
+					releaseConnection(edge);
 
-    }
+					Node source = edge.source();
+					Node sourceStarting = (Node) startingNodeMap.get(source);
+
+					edgeMap = (EdgeMap) graph
+							.getDataProvider(EdgeMapKeys.EDGE_INFO);
+					EditorEdgeInfoData edgeInfoData = (EditorEdgeInfoData) edgeMap
+							.get(edge);
+
+					if (sourceStarting != null
+							&& isInSimpleLoop(sourceStarting)
+							&& !edgeInfoData.isPair()) {
+						graphManager.removeStartingNode(sourceStarting);
+					}
+
+					if (!edgeInfoData.isPair() && breaksComponent(edge)) {
+						Node starting = edge.target();
+						NodeMap startingMap = (NodeMap) graph
+								.getDataProvider(NodeMapKeys.NODE2STARTING_NODE);
+						Node s = (Node) startingMap.get(edge.source());
+						int startIndex = graphManager.getIndex(s);
+						graphManager.addStartingNode(startIndex + 1, starting);
+					}
+
+					graph.removeEdge(edge);
+
+				}
+			}
+
+			// if R node is selected for deletion then its base should be
+			// deleted as well. So just add unselected
+			// branch nodes which are neighbours to selected R nodes
+			for (; nodeCursor.ok(); nodeCursor.next()) {
+				if (MonomerInfoUtils.isRMonomer(nodeCursor.node())) {
+					for (NodeCursor neighbours = nodeCursor.node().neighbors(); neighbours
+							.ok(); neighbours.next()) {
+						if (MonomerInfoUtils.isBranchMonomer(neighbours.node())) {
+							graph.setSelected(neighbours.node(), true);
+						}
+					}
+				}
+			}
+			nodeCursor = graph.selectedNodes();
+
+			// if a node is being removed, we need to add all its successors to
+			// the starting node list
+			Node node = null;
+			NodeCursor successors = null;
+
+			Node hyperNode1 = null;
+			Node hyperNode2 = null;
+			int index = -1;
+
+			if (nodeCursor.size() > 0) {
+				for (; nodeCursor.ok(); nodeCursor.next()) {
+					node = (Node) nodeCursor.node();
+					releaseConnections(node);
+
+					if (graphManager.isStartingNode(node)) {
+						annotation = graphManager.getAnnotation(node);
+						index = graphManager.getIndex(node);
+						graphManager.removeStartingNode(node);
+					} else {
+						Node s = (Node) startingNodeMap.get(node);
+						index = graphManager.getIndex(s) + 1;
+					}
+
+					successors = node.successors();
+					hyperNode1 = (Node) hyperNodeMap.get(node);
+					for (; successors.ok(); successors.next()) {
+						hyperNode2 = (Node) hyperNodeMap.get(successors.node());
+						if (hyperNode1 == hyperNode2) {
+							graphManager.addStartingNode(index,
+									successors.node());
+							graphManager
+									.annotate(successors.node(), annotation);
+						}
+					}
+					annotation = null;
+
+					Node starting = (Node) startingNodeMap.get(node);
+					if (starting != null && isInSimpleLoop(starting)) {
+						graphManager.removeStartingNode(starting);
+					}
+
+					// remove the node after update the starting node list
+					graph.removeNode(node);
+					index = -1;
+				}
+			}
+
+			Graph2NotationTranslator.updateHyperGraph(graph, graphManager);
+			String notation = Graph2NotationTranslator
+					.getNewNotation(graphManager);
+			ModelController.notationUpdated(notation, _ownerCode);
+		} catch (Exception ex) {
+			ExceptionHandler.handleException(ex);
+		}
+
+	}
 
 	private void releaseConnections(Node node) {
 		Graph graph = node.getGraph();
 		EdgeCursor edgeCursor = node.edges();
-		
-		//release connections
+
+		// release connections
 		for (; edgeCursor.ok(); edgeCursor.next()) {
-		    Edge edge = edgeCursor.edge();
-		    releaseConnection(edge);
+			Edge edge = edgeCursor.edge();
+			releaseConnection(edge);
 		}
 	}
 
 	private void releaseConnection(Edge edge) {
 		Graph graph = edge.getGraph();
-		EdgeMap edgeMap = (EdgeMap) graph.getDataProvider(EdgeMapKeys.EDGE_INFO);
-        NodeMap nodeMap = (NodeMap) graph.getDataProvider(NodeMapKeys.MONOMER_REF);
+		EdgeMap edgeMap = (EdgeMap) graph
+				.getDataProvider(EdgeMapKeys.EDGE_INFO);
+		NodeMap nodeMap = (NodeMap) graph
+				.getDataProvider(NodeMapKeys.MONOMER_REF);
 
-		EditorEdgeInfoData edgeInfoData = (EditorEdgeInfoData) edgeMap.get(edge);
+		EditorEdgeInfoData edgeInfoData = (EditorEdgeInfoData) edgeMap
+				.get(edge);
 		if (edgeInfoData == null) {
 			return;
 		}
-		
-		MonomerInfo sourceMonomerInfo = (MonomerInfo) nodeMap.get(edge.source());
-		MonomerInfo targetMonomerInfo = (MonomerInfo) nodeMap.get(edge.target());
 
-		sourceMonomerInfo.setConnection(edgeInfoData.getSourceNodeAttachment(), false);
-		targetMonomerInfo.setConnection(edgeInfoData.getTargetNodeAttachment(), false);
+		MonomerInfo sourceMonomerInfo = (MonomerInfo) nodeMap
+				.get(edge.source());
+		MonomerInfo targetMonomerInfo = (MonomerInfo) nodeMap
+				.get(edge.target());
+
+		sourceMonomerInfo.setConnection(edgeInfoData.getSourceNodeAttachment(),
+				false);
+		targetMonomerInfo.setConnection(edgeInfoData.getTargetNodeAttachment(),
+				false);
 	}
-    
-    
-    private boolean breaksComponent(Edge e) {
-    	Graph g = e.getGraph();
-    	NodeMap hyper = (NodeMap)g.getDataProvider(NodeMapKeys.NODE2PARENT_HYPERNODE);
-    	NodeMap starting = (NodeMap)g.getDataProvider(NodeMapKeys.NODE2STARTING_NODE);
-    	if (hyper.get(e.source()) != hyper.get(e.target())) {
-    		// edge connects two different components,
-    		// so need to add another one
-    		return false;
-    	}
-    
-    	GraphHider gh = new GraphHider(g);
-    	gh.hide(e);
-    	
-    	Node s = (Node)starting.get(e.source());
-    	NodeList accessibleNodes = GraphConnectivity.getSuccessors(g, new NodeList(s), g.N());
-    	// check if we still can access target node
-    	gh.unhideAll();
-    	return !accessibleNodes.contains(e.target());
-    }
-    
-    private boolean isInSimpleLoop(Node n) {
-    	if (n.inDegree() == 0) {
-    		return false;
-    	}
-    	
-    	NodeList myList = new NodeList(n);
-    	Graph g = n.getGraph();
-    	GraphHider gh = new GraphHider(g);
-    	
-    	// hide branch nodes for RNA to make all cycles simple
-    	for (Node node : g.getNodeArray()) {
-    		if (MonomerInfoUtils.isBranchMonomer(node) && MonomerInfoUtils.isNucleicAcidPolymer(node)) {
-    			gh.hide(node);
-    		}
-    	}
-    	
-    	for (Edge e : g.getEdgeArray()) {
-    		if (MonomerInfoUtils.isPBranchEdge(e)) {
-    			gh.hide(e);
-    		}
-    	}
-    	
-    	NodeList neighbours = GraphConnectivity.getNeighbors(n.getGraph(), myList, g.N());
-    	
-    	for (Object neigh : neighbours) {
-    		Node neighN = (Node)neigh;
-    		if (MonomerInfoUtils.isBackbone(neighN)) {
-    			if (neighN.degree() != 2) {
-    				gh.unhideAll();
-    				return false;
-    			}
-    		}
-    	}
-    	
-    	gh.unhideAll();
-    	return true;
-    	
-    }
+
+	private boolean breaksComponent(Edge e) {
+		Graph g = e.getGraph();
+		NodeMap hyper = (NodeMap) g
+				.getDataProvider(NodeMapKeys.NODE2PARENT_HYPERNODE);
+		NodeMap starting = (NodeMap) g
+				.getDataProvider(NodeMapKeys.NODE2STARTING_NODE);
+		if (hyper.get(e.source()) != hyper.get(e.target())) {
+			// edge connects two different components,
+			// so need to add another one
+			return false;
+		}
+
+		GraphHider gh = new GraphHider(g);
+		gh.hide(e);
+
+		Node s = (Node) starting.get(e.source());
+		NodeList accessibleNodes = GraphConnectivity.getSuccessors(g,
+				new NodeList(s), g.N());
+		// check if we still can access target node
+		gh.unhideAll();
+		return !accessibleNodes.contains(e.target());
+	}
+
+	private boolean isInSimpleLoop(Node n) {
+		if (n.inDegree() == 0) {
+			return false;
+		}
+
+		NodeList myList = new NodeList(n);
+		Graph g = n.getGraph();
+		GraphHider gh = new GraphHider(g);
+
+		// hide branch nodes for RNA to make all cycles simple
+		for (Node node : g.getNodeArray()) {
+			if (MonomerInfoUtils.isBranchMonomer(node)
+					&& MonomerInfoUtils.isNucleicAcidPolymer(node)) {
+				gh.hide(node);
+			}
+		}
+
+		for (Edge e : g.getEdgeArray()) {
+			if (MonomerInfoUtils.isPBranchEdge(e)) {
+				gh.hide(e);
+			}
+		}
+
+		NodeList neighbours = GraphConnectivity.getNeighbors(n.getGraph(),
+				myList, g.N());
+
+		for (Object neigh : neighbours) {
+			Node neighN = (Node) neigh;
+			if (MonomerInfoUtils.isBackbone(neighN)) {
+				if (neighN.degree() != 2) {
+					gh.unhideAll();
+					return false;
+				}
+			}
+		}
+
+		gh.unhideAll();
+		return true;
+
+	}
 }

@@ -30,13 +30,13 @@ import java.util.Set;
  * User: dzhelezov
  */
 public interface ChemSequenceHolder {
-    List<Node> getPendantNodes();
+	List<Node> getPendantNodes();
 
-    Set<NodeSequence> getSequences();
+	Set<NodeSequence> getSequences();
 
-    List<NodeSequence> getConnectedSequences(Node dockNode);
+	List<NodeSequence> getConnectedSequences(Node dockNode);
 
-    List<Node> getDockedNodes();
+	List<Node> getDockedNodes();
 
-    Set<NodeSequence> getDockedSequences();
+	Set<NodeSequence> getDockedSequences();
 }

@@ -26,121 +26,141 @@ import chemaxon.formats.MolImporter;
 import chemaxon.struc.Molecule;
 
 import org.helm.notation.MonomerFactory;
+import org.helm.editor.data.MonomerStoreCache;
 import org.helm.editor.data.MonomerInfo;
 import org.helm.editor.data.NodeMapKeys;
 import org.helm.notation.model.Monomer;
+
 import java.awt.Image;
 import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import y.base.Node;
 import y.base.NodeMap;
 
 /**
- *
+ * 
  * @author ZHANGTIANHONG
  */
 public class MonomerNodeHelper {
 
-//    public static final String NOTATION_DIRECTORY = System.getProperty("user.home") + System.getProperty("file.separator") + ".notation";
-    public static final String IMAGE_DIRECTORY = MonomerFactory.NOTATION_DIRECTORY + System.getProperty("file.separator") + "images";
-    public static final long MAX_HOURS_BETWEEN_IMAGE_REFRESH = 48;
+	// public static final String NOTATION_DIRECTORY =
+	// System.getProperty("user.home") + System.getProperty("file.separator") +
+	// ".notation";
+	public static final String IMAGE_DIRECTORY = MonomerFactory.NOTATION_DIRECTORY
+			+ System.getProperty("file.separator") + "images";
+	public static final long MAX_HOURS_BETWEEN_IMAGE_REFRESH = 48;
 
-    public static String getTooltip(Monomer monomer) {
-        String tooltip = "";
-        String imageFilePath = getStructureImageFile(monomer);
-        File imageFile = new File(imageFilePath);
+	public static String getTooltip(Monomer monomer) {
+		String tooltip = "";
+		String imageFilePath = getStructureImageFile(monomer);
+		File imageFile = new File(imageFilePath);
 
-        generateImageFile(monomer, false);
-        
-        if (imageFile.exists()) {
-            String title = monomer.getAlternateId()+":"+monomer.getNaturalAnalog()+ ":"+monomer.getName();
-            tooltip = "<html><body>" + title + "<br><img src = \"file:" + imageFilePath+ "\"></body></html>";
-        }
-        return tooltip;
-    }
+		generateImageFile(monomer, false);
 
-    public static String getTooltip(Node node) {
-        return getTooltip(node2monomer(node));
-    }
+		if (imageFile.exists()) {
+			String title = monomer.getAlternateId() + ":"
+					+ monomer.getNaturalAnalog() + ":" + monomer.getName();
+			tooltip = "<html><body>" + title + "<br><img src = \"file:"
+					+ imageFilePath + "\"></body></html>";
+		}
+		return tooltip;
+	}
 
-    public static Monomer node2monomer(Node node) {
-        try {
-            NodeMap nodeMap = (NodeMap) node.getGraph().getDataProvider(NodeMapKeys.MONOMER_REF);
-            MonomerInfo monomerInfo = (MonomerInfo) nodeMap.get(node);
-            Monomer monomer = MonomerFactory.getInstance().getMonomerDB().get(monomerInfo.getPolymerType()).get(monomerInfo.getMonomerID());
-            return monomer;
-        } catch (Exception ex) {
-            Logger.getLogger(MonomerNodeHelper.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return null;
-    }
+	public static String getTooltip(Node node) {
+		return getTooltip(node2monomer(node));
+	}
 
-    public static String getStructureImageDirectory(Monomer monomer) {
-        return IMAGE_DIRECTORY + System.getProperty("file.separator") + monomer.getPolymerType();
-    }
+	public static Monomer node2monomer(Node node) {
+		try {
+			NodeMap nodeMap = (NodeMap) node.getGraph().getDataProvider(
+					NodeMapKeys.MONOMER_REF);
+			MonomerInfo monomerInfo = (MonomerInfo) nodeMap.get(node);
+			Monomer monomer = MonomerStoreCache.getInstance()
+					.getCombinedMonomerStore().getMonomerDB()
+					.get(monomerInfo.getPolymerType())
+					.get(monomerInfo.getMonomerID());
+			// Monomer monomer =
+			// MonomerFactory.getInstance().getMonomerDB().get(monomerInfo.getPolymerType()).get(monomerInfo.getMonomerID());
+			return monomer;
+		} catch (Exception ex) {
+			Logger.getLogger(MonomerNodeHelper.class.getName()).log(
+					Level.SEVERE, null, ex);
+		}
+		return null;
+	}
 
-    public static String getStructureImageFile(Monomer monomer) {
-        String fileName = monomer.getAlternateId();
-        if (null != monomer.getName()) {
-            fileName = fileName + "-" + monomer.getName();
-        }
+	public static String getStructureImageDirectory(Monomer monomer) {
+		return IMAGE_DIRECTORY + System.getProperty("file.separator")
+				+ monomer.getPolymerType();
+	}
 
-        // tooltip html is not happy with #
-        fileName = fileName.replace("#", "_") + ".png";
-        return getStructureImageDirectory(monomer) + System.getProperty("file.separator") + fileName;
-    }
+	public static String getStructureImageFile(Monomer monomer) {
+		String fileName = monomer.getAlternateId();
+		if (null != monomer.getName()) {
+			fileName = fileName + "-" + monomer.getName();
+		}
 
-    public static void generateImageFile(Monomer monomer, boolean forceregenerate) {
-        try {
-            File notationDir = new File(MonomerFactory.NOTATION_DIRECTORY);
-            if (!notationDir.exists()) {
-                notationDir.mkdir();
-            }
+		// tooltip html is not happy with #
+		fileName = fileName.replace("#", "_") + ".png";
+		return getStructureImageDirectory(monomer)
+				+ System.getProperty("file.separator") + fileName;
+	}
 
-            File imageDir = new File(IMAGE_DIRECTORY);
-            if (!imageDir.exists()) {
-                imageDir.mkdir();
-            }
+	public static void generateImageFile(Monomer monomer,
+			boolean forceregenerate) {
+		try {
+			File notationDir = new File(MonomerFactory.NOTATION_DIRECTORY);
+			if (!notationDir.exists()) {
+				notationDir.mkdir();
+			}
 
-            if (monomer != null) {
-                String structureImageDirectoryString = getStructureImageDirectory(monomer);
-                File structureImageDir = new File(structureImageDirectoryString);
-                if (!structureImageDir.exists()) {
-                    structureImageDir.mkdir();
-                }
+			File imageDir = new File(IMAGE_DIRECTORY);
+			if (!imageDir.exists()) {
+				imageDir.mkdir();
+			}
 
-                String structureImageFileString = getStructureImageFile(monomer);
-                File structureImageFile = new File(structureImageFileString);
-                if (!structureImageFile.exists() || forceregenerate) {
-                    saveImage(monomer, structureImageFileString);
-                } else {
-                    long lastTime = structureImageFile.lastModified();
-                    long currentTime = System.currentTimeMillis();
-                    long elapsedTime = currentTime - lastTime;
-                    if (elapsedTime > MAX_HOURS_BETWEEN_IMAGE_REFRESH * 60 * 60 * 1000) {
-                        saveImage(monomer, structureImageFileString);
-                    }
-                }
+			if (monomer != null) {
+				String structureImageDirectoryString = getStructureImageDirectory(monomer);
+				File structureImageDir = new File(structureImageDirectoryString);
+				if (!structureImageDir.exists()) {
+					structureImageDir.mkdir();
+				}
 
-            }
+				String structureImageFileString = getStructureImageFile(monomer);
+				File structureImageFile = new File(structureImageFileString);
+				if (!structureImageFile.exists() || forceregenerate) {
+					saveImage(monomer, structureImageFileString);
+				} else {
+					long lastTime = structureImageFile.lastModified();
+					long currentTime = System.currentTimeMillis();
+					long elapsedTime = currentTime - lastTime;
+					if (elapsedTime > MAX_HOURS_BETWEEN_IMAGE_REFRESH * 60 * 60 * 1000) {
+						saveImage(monomer, structureImageFileString);
+					}
+				}
 
-        } catch (Exception ex) {
-            Logger.getLogger(MonomerNodeHelper.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
+			}
 
-    private static void saveImage(Monomer monomer, String filePath) throws MolFormatException {
-        Molecule mol = null;
-        if (monomer.getMolfile() != null) {
-            mol = MolImporter.importMol(monomer.getMolfile());
-        } else if (monomer.getCanSMILES() != null) {
-            mol = MolImporter.importMol(monomer.getCanSMILES());
-        }
+		} catch (Exception ex) {
+			Logger.getLogger(MonomerNodeHelper.class.getName()).log(
+					Level.SEVERE, null, ex);
+		}
+	}
 
-        if (mol != null) {
-            Image image = (Image) mol.toObject("image");
-            new SaveAsPNG(image, filePath);
-        }
-    }
+	private static void saveImage(Monomer monomer, String filePath)
+			throws MolFormatException {
+		Molecule mol = null;
+		if (monomer.getMolfile() != null) {
+			mol = MolImporter.importMol(monomer.getMolfile());
+		} else if (monomer.getCanSMILES() != null) {
+			mol = MolImporter.importMol(monomer.getCanSMILES());
+		}
+
+		if (mol != null) {
+			Image image = (Image) mol.toObject("image");
+			new SaveAsPNG(image, filePath);
+		}
+	}
 }
