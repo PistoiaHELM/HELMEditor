@@ -40,8 +40,8 @@
         <filter token="verbose" value="true"/>
         <property name="jar.file.name" value="${name}-${version}.jar"/>
         <property name="jar.file" value="${dist.dir}/${jar.file.name}"/>
-        <property name="toolkit.jar.file.name" value="HELMNotationToolkit-1.0.2.jar"/>
-        <property name="toolkit.jar.file" value="${lib.dir}/${toolkit.jar.file.name}"/>
+        <property name="toolkit.dir" value="../HELMNotationToolkit/publish/jar/"/>
+        <property name="toolkit.jar.name" value="HELMNotationToolkit-1.1.jar"/>
         <property name="applet.helm.jar.name" value="HELM"/>
         <property name="applet.lib.jar.name" value="AppletLibs"/>
         <property name="applet.lib.dir" value="${dist.dir}/appletlib"/>
@@ -63,10 +63,15 @@
         <path id="compile.class.path">
             <fileset dir="${lib.dir}">
                 <include name="*.jar"/>
-                <exclude name="${marvin.jar.name}"/>
+                <exclude name="MarvinBeans*.jar"/>
+                <exclude name="HELMNotationToolkit*.jar"/>
             </fileset>
             <fileset dir="${marvin.dir}">
                 <include name="${marvin.jar.name}"/>
+            </fileset>
+            
+            <fileset dir="${toolkit.dir}">
+                <include name="${toolkit.jar.name}"/>
             </fileset>
             <fileset dir="${yfiles.dir}">
                 <include name="${yfiles.jar.name}"/>
@@ -186,7 +191,7 @@
           
             <externalclasses>
                 <pathelement location="${marvin.dir}/${marvin.jar.name}" />
-                <pathelement location="${toolkit.jar.file}" />
+                <pathelement location="${toolkit.dir}/${toolkit.jar.name}" />
                 <pathelement location="${lib.dir}/openbabel-2.3.1.jar"/>
                 <pathelement location="${lib.dir}/jdom-1.1.jar" />
                 <pathelement location="${lib.dir}/sdlib.jar" />
@@ -269,7 +274,7 @@
         <unjar dest="${applet.lib.dir}" src="${obf.dir}/${obf.yfiles.jar.name}" />
         <unjar dest="${applet.lib.dir}" src="${obf.dir}/${obf.graphml.jar.name}" />
         <unjar dest="${applet.lib.dir}" src="${marvin.dir}/${marvin.jar.name}" />
-        <unjar dest="${applet.lib.dir}" src="${toolkit.jar.file}" />
+        <unjar dest="${applet.lib.dir}" src="${toolkit.dir}/${toolkit.jar.name}" />
         <unjar dest="${applet.lib.dir}" src="${lib.dir}/openbabel-2.3.1.jar" />
         <unjar dest="${applet.lib.dir}" src="${lib.dir}/jdom-1.1.jar" />
         <unjar dest="${applet.lib.dir}" src="${lib.dir}/sdlib.jar" />
