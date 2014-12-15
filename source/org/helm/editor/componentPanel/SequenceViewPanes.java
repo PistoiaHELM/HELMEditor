@@ -21,18 +21,20 @@
  ******************************************************************************/
 package org.helm.editor.componentPanel;
 
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+
 import org.helm.editor.componentPanel.componentviewpanel.ComponentTableView;
 import org.helm.editor.componentPanel.sequenceviewpanel.SequenceViewController;
 import org.helm.editor.componentPanel.sequenceviewpanel.SequenceViewControllerImpl;
-import org.helm.editor.data.NotationUpdateEvent;
 import org.helm.editor.data.DataListener;
 import org.helm.editor.data.GraphManager;
+import org.helm.editor.data.NotationUpdateEvent;
 import org.helm.editor.utility.ExceptionHandler;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
 import y.view.Graph2D;
 import y.view.Graph2DView;
 
@@ -107,5 +109,14 @@ public class SequenceViewPanes extends JPanel implements DataListener {
 
 		String notation = event.getData();
 		setNotation(notation);
+	}
+
+	/**
+	 * Added by Roche in order to extend the lower tab pane
+	 * 
+	 * @return
+	 */
+	public JTabbedPane getTabbedPane() {
+		return this.tabbedPane;
 	}
 }
