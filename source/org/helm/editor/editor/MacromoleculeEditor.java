@@ -2620,8 +2620,9 @@ public class MacromoleculeEditor extends GUIBase implements DataListener,
 	}
 
 	public void reset() {
+    uiConstructor.updatePanels();
 		super.reset();
-		updatePolymerPanels();
+// updatePolymerPanels();
 		}
 
 	/**

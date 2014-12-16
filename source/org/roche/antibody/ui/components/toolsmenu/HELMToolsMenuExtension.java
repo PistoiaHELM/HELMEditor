@@ -51,9 +51,9 @@ public class HELMToolsMenuExtension extends JMenu {
     add(new AntibodyEditorAction(editor));
     add(new AntibodyLoadXmlAction(editor));
     add(new AntibodyDomainsLibraryEditorAction(editor));
-    add(new JSeparator(JSeparator.HORIZONTAL));
-    add(new RegisterAntibodyAction(editor));
-    add(new LoadAntibodyAction(editor));
+//    add(new JSeparator(JSeparator.HORIZONTAL));
+//    add(new RegisterAntibodyAction(editor));
+//    add(new LoadAntibodyAction(editor));
     add(new JSeparator(JSeparator.HORIZONTAL));
     add(new AntibodyEditorSettings(editor));
 
