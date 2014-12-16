@@ -1,329 +1,165 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="HELM Editor" default="jar" basedir=".">
-    <description>Builds, tests, and runs, and deploys the project HELM Editor.</description>
-    <target name="init">
-        <tstamp/>
-        <!--  Give user a chance to override without editing this file  and without using -D arguments each time they build using build.properties files).  -->
-        <property file="${basedir}/build.properties" />
-        <property file="${basedir}/source/org/helm/editor/editor/resource/GUIBase.properties" />
-        <property name="name" value="HELMEditor"/>
-        <property name="version" value="1.0"/>
-        <property name="version.impl" value="${version}"/>
-        <property name="version.spec" value="1.0"/>
-        <property name="year" value="2012"/>
-        <property name="compile.debug"       value="true" />
-        <property name="compile.optimize"    value="true" />
-        <property name="compile.target"      value="1.6" />
-        <property name="compile.source"      value="1.6" />
-        <property name="compile.deprecation" value="true" />
-        <property name="src.dir" value="${basedir}/source"/>
-        <property name="resources.dir" value="${basedir}/resources"/>
-        <property name="marvin.dir" value="${basedir}/lib"/>
-        <property name="marvin.jar.name" value="MarvinBeans-5.0.jar"/>
-        <property name="yfiles.dir" value="${basedir}/local/yWorks"/>
-        <property name="lib.dir" value="${basedir}/lib"/>
-        <property name="packages" value="org.helm.*"/>
-        <property name="build.dir" value="${basedir}/build"/>
-        <property name="build.src" value="${basedir}/build/src"/>
-        <property name="build.dest" value="${basedir}/build/classes"/>
-        <property name="build.javadoc" value="${basedir}/build/javadoc"/>
-        <property name="dist.dir" value="${basedir}/dist"/>
-        <property name="obf.dir" value="${basedir}/obf"/>
-        <property name="publish.dir" value="${basedir}/publish"/>
-        <property name="publish.jar.dir" value="${publish.dir}/jar"/>
-        <property name="publish.obf.dir" value="${publish.dir}/obf"/>
-        <property name="publish.javadoc.dir" value="${publish.dir}/javadoc"/>
-        <filter token="year" value="${year}"/>
-        <filter token="version" value="${version}"/>
-        <filter token="date" value="${TODAY}"/>
-        <filter token="log" value="true"/>
-        <filter token="verbose" value="true"/>
-        <property name="jar.file.name" value="${name}-${version}.jar"/>
-        <property name="jar.file" value="${dist.dir}/${jar.file.name}"/>
-        <property name="toolkit.dir" value="../HELMNotationToolkit/publish/jar/"/>
-        <property name="toolkit.jar.name" value="HELMNotationToolkit-1.1.jar"/>
-        <property name="applet.helm.jar.name" value="HELM"/>
-        <property name="applet.lib.jar.name" value="AppletLibs"/>
-        <property name="applet.lib.dir" value="${dist.dir}/appletlib"/>
-        <property name="applet.dist.dir" value="${dist.dir}/applet"/>
-        <property name="applet.dir" value="${basedir}/applet"/>
+<project name="HELMAntibodyEditor" default="dist" basedir=".">
+	<description>Roche internal extension to the Pistoia HELM Editor</description>
 
-        <!-- Obfuscated jars -->
-        <property name="helm.name" value="${name}-${version}"/>
-        <property name="obf.helm.name" value="obf_${helm.name}"/>
-        <property name="helm.jar.name" value="${helm.name}.jar"/>
-        <property name="obf.helm.jar.name" value="obf_${helm.jar.name}"/>
-        <property name="yfiles.jar.name" value="yfiles-2.6.0.1.jar"/>
-        <property name="obf.yfiles.jar.name" value="${obf.helm.name}_${yfiles.jar.name}"/>
-        <property name="graphml.jar.name" value="graphml.jar"/>
-        <property name="obf.graphml.jar.name" value="${obf.helm.name}_${graphml.jar.name}"/>
+	<!-- global properties -->
+	<property name="src" location="source" />
+	<property name="build" location="build" />
+	<property name="dist" location="dist" />
+	<property name="temp" location="temp" />
+	<property name="lib" location="lib" />
+	<property name="yFiles" location="local/yWorks" />
+	<property name="jar" value="HELMAntibodyEditor.jar" />
 
+	<!-- compile time classpath -->
+	<path id="classpath">
+		<fileset dir="${lib}">
+			<include name="*.jar" />
+		</fileset>
+		<fileset dir="${yFiles}">
+			<include name="*.jar" />
+		</fileset>
+	</path>
 
-        <!-- Compilation class path, include every jar file in lib.dir, plus the marvin and yfiles jars -->
-        <path id="compile.class.path">
-            <fileset dir="${lib.dir}">
-                <include name="*.jar"/>
-                <exclude name="MarvinBeans*.jar"/>
-                <exclude name="HELMNotationToolkit*.jar"/>
-            </fileset>
-            <fileset dir="${marvin.dir}">
-                <include name="${marvin.jar.name}"/>
-            </fileset>
-            
-            <fileset dir="${toolkit.dir}">
-                <include name="${toolkit.jar.name}"/>
-            </fileset>
-            <fileset dir="${yfiles.dir}">
-                <include name="${yfiles.jar.name}"/>
-                <include name="${graphml.jar.name}"/>
-            </fileset>
-        </path>
+	<!-- runtime class path -->
+	<path id="runtime.classpath">
+		<fileset dir="${lib}">
+			<include name="*.jar" />
+			<exclude name="junit-4.11.jar" />
+			<exclude name="hamcrest-core-1.3.jar" />
+		</fileset>
 
-        <!-- Obfuscated jars -->
-        <path id="obfuscate.class.path">
-            <fileset dir="${obf.dir}">
-                <include name="*.jar"/>
-            </fileset>
-        </path>
+		<pathelement location="lib/y.jar" />
+		<pathelement location="lib/yguard.jar" />
+		<pathelement location="lib/graphml.jar" />
+		<pathelement location="lib/ObfuscationAnnotation.jar" />
+	</path>
 
+	<!-- convert classpath to a property for the MANIFEST file             -->
+	<!-- transform the path from (semi-)colon separated to space separated -->
+	<manifestclasspath property="manifest.classpath" jarfile="${jar}">
+		<classpath refid="runtime.classpath" />
+	</manifestclasspath>
 
-        <!-- Run class path-->
-        <path id="run.class.path">
-            <path refid="compile.class.path"/>
-            <pathelement location="${build.dest}"/>
-        </path>
+	<!-- ANT targets -->
+	<target name="init">
+		<tstamp />
+		<!-- create the build directory structure used by compile -->
+		<mkdir dir="${build}" />
+	</target>
 
-        <echo message="----------- ${name} ${version} ------------"/>
-    </target>
+	<target name="compile" depends="init">
+		<!-- copy non-Java files -->
+		<copy todir="${build}">
+			<fileset dir="${src}">
+				<exclude name="**/*.java" />
+			</fileset>
+			<fileset dir="resources">
+				<include name="**/*.*" />
+			</fileset>
+		</copy>
 
-    <!-- Help on usage -->
-    <target name="usage">
-        <echo message=""/>
-        <echo message=""/>
-        <echo message="HELM Editor Build file"/>
-        <echo message="-------------------------------------------------------------"/>
-        <echo message=""/>
-        <echo message=" available targets are:"/>
-        <echo message=""/>
-        <echo message="   run    --> run the editor"/>
-        <echo message="   jar    --> compile the source code, and generate jar file from the toolkit and the editor"/>
-        <echo message="   javadoc    --> generate the API documentation"/>
-        <echo message="   publish    --> publish jar and javadoc"/>
-        <echo message="   clean   --> clean up the build and dist directories"/>
-        <echo message=""/>
-        <echo message=" See the comments inside the build.xml file for more details."/>
-        <echo message="-------------------------------------------------------------"/>
-        <echo message=""/>
-        <echo message=""/>
-    </target>
+		<!-- compile the java code from ${src} into ${build} -->
+		<javac srcdir="${src}" destdir="${build}" source="1.6" target="1.6" debug="on" debuglevel="lines,vars,source" optimize="off" includeantruntime="false">
+			<classpath>
+				<path refid="classpath" />
+			</classpath>
+		</javac>
+	</target>
 
-    <!-- Clean build and dist folder -->
-    <target name="clean" depends="init"  description="Removes all build and dist files">
-        <delete dir="${dist.dir}"/>
-        <delete dir="${build.dir}"/>
-    </target>
+	<target name="dist" depends="compile">
+		<mkdir dir="${temp}" />
+		<mkdir dir="${dist}" />
+		<mkdir dir="${dist}/lib" />
+		<mkdir dir="${dist}/config" />
 
-    <!-- Prepares the source code -->
-    <target name="prepare" depends="clean">
-        <!-- create directories -->
-        <mkdir dir="${build.dir}"/>
-        <mkdir dir="${build.src}"/>
-        <mkdir dir="${build.dest}"/>
-                                 
-        <!-- copy src files -->
-        <copy todir="${build.src}" >
-            <fileset dir="${src.dir}"/>
-        </copy>
-    </target>
+		<!-- Put everything in ${build} into the HELMextension.jar file -->
+		<jar jarfile="${temp}/${jar}" basedir="${build}" index="false">
+			<manifest>
+				<attribute name="Main-Class" value="org.helm.editor.HELMApp" />
+				<attribute name="Class-Path" value="${manifest.classpath}" />
+			</manifest>
+		</jar>
 
-    <!-- Compiles the source directory  -->
-    <target name="compile" depends="prepare" description="Compiles the source code">
-        <javac srcdir="${build.src}"
-               destdir="${build.dest}"
-               debug="${compile.debug}"
-               optimize="${compile.optimize}"
-               target="${compile.target}"
-               source="${compile.source}"
-               deprecation="${compile.deprecation}">
-            <classpath refid="compile.class.path"/>
-        </javac>
-    </target>
-
-    <!-- Creates the class package -->
-    <target name="jar" depends="compile" description="Creates the class package, include xml and xsd files">
-        <delete dir = "${dist.dir}" />
-        <mkdir dir = "${dist.dir}" />
-
-        <copy todir="${build.dest}">
-            <fileset dir="${build.src}">
-                <exclude name="**/*.java"/>
-                <exclude name="**/*.form"/>
-            </fileset>
-        </copy>
-
-        <copy todir="${build.dest}">
-            <fileset dir="${resources.dir}"/>
-        </copy>
-
-        <jar jarfile="${jar.file}" update="true">
-            <fileset dir="${build.dest}"/>
-            <manifest> 
-                <attribute name="Permissions" value="all-permissions"/>
-                <attribute name="Codebase" value="*.pfizer.com pistoiahelm.github.io"/>
-                <attribute name="Application-Name" value="HELM Editor"/>
-                <attribute name="Trusted-Library" value="true"/> 
-            </manifest> 
-        </jar>
-    </target>
-    
-    <target name="obfuscate" depends="jar" >
-        <delete dir = "${obf.dir}" />
-        <mkdir dir = "${obf.dir}" />
-
-        <taskdef name="yguard" classname="com.yworks.yguard.YGuardTask" classpath="${yfiles.dir}/yguard.jar"/>
-        <property name="shrink.log" value="${obf.dir}/shrink.log"/>
-        <property name="rename.log" value="${obf.dir}/rename.log"/>
-
-        <yguard>
-            <inoutpair in="${dist.dir}/${helm.jar.name}" out="${obf.dir}/${obf.helm.jar.name}"/>
-            <inoutpair in="${yfiles.dir}/${yfiles.jar.name}" out="${obf.dir}/${obf.yfiles.jar.name}"/>
-            <inoutpair in="${yfiles.dir}/${graphml.jar.name}" out="${obf.dir}/${obf.graphml.jar.name}"/>
-          
-            <externalclasses>
-                <pathelement location="${marvin.dir}/${marvin.jar.name}" />
-                <pathelement location="${toolkit.dir}/${toolkit.jar.name}" />
-                <pathelement location="${lib.dir}/openbabel-2.3.1.jar"/>
-                <pathelement location="${lib.dir}/jdom-1.1.jar" />
-                <pathelement location="${lib.dir}/sdlib.jar" />
-                <pathelement location="${lib.dir}/xerces.jar" />
-                <pathelement location="${lib.dir}/swing-worker-1.1.jar" />
-                <pathelement location="${lib.dir}/swingx-0.9.4.jar" />
-                <pathelement location="${lib.dir}/swingx-beaninfo-0.9.4.jar" />
-                <pathelement location="${lib.dir}/aloe.jar" />
-                <pathelement location="${lib.dir}/forms-1.1.0.jar" />
-                <pathelement location="${lib.dir}/swing-layout-1.0.3.jar" />
-            </externalclasses>
-            
-            <!-- [OPTIONALLY] Keep the line number table and the source file attributes of the public part of the "application" -->
-            <attribute name="LineNumberTable,SourceFile">
-                <patternset>
-                    <include name="org.helm.**"/>
-                </patternset>
-            </attribute>
-
-            <rename logfile="${rename.log}" replaceClassNameStrings="true">
-
-                <!-- use some unique package prefix for obfuscated classes to avoid name clashes -->
-                <property name="obfuscation-prefix" value="yguard"/>
-
-                <!-- make sure not rely on cases to differentiate names -->
-                <property name="language-conformity" value="compatible" />
+		<!-- Copy runtime libraries -->
+		<copy todir="${dist}/lib">
+			<fileset dir="${lib}">
+				<include name="*.jar" />
+				<exclude name="junit-4.11.jar" />
+				<exclude name="hamcrest-core-1.3.jar" />
+			</fileset>
+			<fileset dir="${yFiles}">
+				<include name="yguard.jar" />
+				<include name="ObfuscationAnnotation.jar" />
+			</fileset>
+		</copy>
 
 
-                <keep>
-                    <class classes="private" methods="private" fields="private">
-                        <patternset>
-                            <include name="org.helm.**"/>
-                        </patternset>
-                    </class>
-                </keep>
+		<!-- Copy additional externa files and directories -->
+		<copy todir="${dist}/config">
+			<fileset dir="config">
+				<include name="*.*" />
+			</fileset>
+		</copy>
 
-                <!-- make sure that the .properties files are renamed according to their               -->
-                <!-- corresponding class files, yFiles needs this to function properly when obfuscated -->
-                <adjust replaceName="true">
-                    <include name="y/**/*.properties"/>
-                </adjust>
-            </rename>
+		<copy todir="${dist}">
+			<fileset dir=".">
+				<include name="*.exe" />
+			</fileset>
+		</copy>
 
-        </yguard>
-    </target>
+		<!-- Create obfuscated Jars -->
+		<taskdef name="yguard" classname="com.yworks.yguard.YGuardTask" classpath="${yFiles}/yguard.jar" />
 
-    <!-- Publish jar and javadoc -->
-    <target name="publish" depends="obfuscate, javadoc" description="Move jar and javadoc into publish folder">
-        <copy todir="${publish.jar.dir}" >
-            <fileset dir="${dist.dir}">
-            </fileset>
-        </copy>
-        
-        <copy todir="${publish.obf.dir}" >
-            <fileset dir="${obf.dir}">
-                <include name="*.jar" />
-            </fileset>
-        </copy>
-   
-        <jar jarfile="${dist.dir}/${name}-${version}-javadoc.zip"   basedir="${build.javadoc}" />
-                
-        <copy todir="${publish.javadoc.dir}" >
-            <fileset dir="${dist.dir}">
-                <include name="*.zip" />
-            </fileset>
-        </copy>
-    </target>
+		<yguard>
+			<inoutpair in="${temp}/${jar}" out="${dist}/${jar}" />
+			<inoutpair in="${yFiles}/y.jar" out="${dist}/lib/y.jar" />
+			<inoutpair in="${yFiles}//graphml.jar" out="${dist}/lib/graphml.jar" />
 
-    <!-- Run application -->
-    <target name="run" depends="jar" description="Run HELM Editor" >
-        <java classname="org.helm.editor.HELMApp" fork="true">
-            <classpath refid="run.class.path"/>
-        </java>
-    </target>
+			<!-- [OPTIONALLY] Keep the line number table and the source file attributes of the public part of the "application" -->
+			<attribute name="LineNumberTable,SourceFile">
+				<patternset>
+					<include name="org.helm.**" />
+				</patternset>
+			</attribute>
 
-    <!-- Create the applet jars -->
-    <target name="applet" depends="obfuscate" description="Create an applet from the HELM Editor" >
-        <delete dir="${applet.lib.dir}" />
-        <mkdir dir="${applet.lib.dir}" />
-        <unjar dest="${applet.lib.dir}" src="${obf.dir}/${obf.yfiles.jar.name}" />
-        <unjar dest="${applet.lib.dir}" src="${obf.dir}/${obf.graphml.jar.name}" />
-        <unjar dest="${applet.lib.dir}" src="${marvin.dir}/${marvin.jar.name}" />
-        <unjar dest="${applet.lib.dir}" src="${toolkit.dir}/${toolkit.jar.name}" />
-        <unjar dest="${applet.lib.dir}" src="${lib.dir}/openbabel-2.3.1.jar" />
-        <unjar dest="${applet.lib.dir}" src="${lib.dir}/jdom-1.1.jar" />
-        <unjar dest="${applet.lib.dir}" src="${lib.dir}/sdlib.jar" />
-        <unjar dest="${applet.lib.dir}" src="${lib.dir}/xerces.jar" />
-        <unjar dest="${applet.lib.dir}" src="${lib.dir}/swing-worker-1.1.jar" />
-        <unjar dest="${applet.lib.dir}" src="${lib.dir}/swingx-0.9.4.jar" />
-        <unjar dest="${applet.lib.dir}" src="${lib.dir}/swingx-beaninfo-0.9.4.jar" />
-        <unjar dest="${applet.lib.dir}" src="${lib.dir}/aloe.jar" />
-        <unjar dest="${applet.lib.dir}" src="${lib.dir}/forms-1.1.0.jar" />
-        <unjar dest="${applet.lib.dir}" src="${lib.dir}/swing-layout-1.0.3.jar" />
-        
-        <delete dir = "${applet.lib.dir}" >
-            <include name="**/*.SF"/>
-            <include name="**/*.RSA"/>
-        </delete>
+			<rename replaceClassNameStrings="true">
+				<!-- use some unique package prefix for obfuscated classes to avoid name clashes -->
+				<property name="obfuscation-prefix" value="yguard" />
 
-        <delete dir="${applet.dist.dir}" />
-        <mkdir dir="${applet.dist.dir}" />
-        <jar jarfile="${applet.dist.dir}/${applet.lib.jar.name}.jar" basedir="${applet.lib.dir}" update="true">
-            <manifest> 
-                <attribute name="Permissions" value="all-permissions"/>
-                <attribute name="Codebase" value="*.pfizer.com pistoiahelm.github.io"/>
-                <attribute name="Application-Name" value="HELM Editor"/>
-                <attribute name="Trusted-Library" value="true"/> 
-            </manifest> 
-        </jar>
-        
-        <copy file="${obf.dir}/${obf.helm.jar.name}" tofile="${applet.dist.dir}/${applet.helm.jar.name}.jar" />
-        <delete dir="${applet.lib.dir}" />
-        
-        <jar jarfile="${applet.dir}/HELMApplet-${version}.zip" basedir="${applet.dist.dir}" />       
-    </target>
+				<!-- make sure not rely on cases to differentiate names -->
+				<property name="language-conformity" value="compatible" />
 
-    <!-- Creates the API documentation  -->
-    <target name="javadoc" depends="prepare"   description="Creates the API documentation">
-        <mkdir dir="${build.javadoc}"/>
-        <javadoc packagenames="${packages}"
-                 sourcepath="${build.src}"
-                 destdir="${build.javadoc}"
-                 author="true"
-                 version="true"
-                 use="true"
-                 splitindex="true"
-                 noindex="false"
-                 windowtitle="${name} v${version}"
-                 doctitle="${name} v${version}&lt;br&gt;API Specification"
-                 header="&lt;b&gt;${name}&lt;br&gt;&lt;font size='-1'&gt;${version}&lt;/font&gt;&lt;/b&gt;"
-                 bottom="Copyright &#169; ${year}, The Pistoia Alliance">
-            <classpath refid="compile.class.path"/>
-        </javadoc>
-    </target>
+				<keep>
+					<class classes="private" methods="private" fields="private">
+						<patternset>
+							<include name="**.*" />
+							<exclude name="y.**.*" />
+							<exclude name="yext.**.*" />
+						</patternset>
+					</class>
+				</keep>
+
+				<!-- make sure that the .properties files are renamed according to their               -->
+				<!-- corresponding class files, yFiles needs this to function properly when obfuscated -->
+				<adjust replaceName="true">
+					<include name="y/**/*.properties" />
+				</adjust>
+			</rename>
+		</yguard>
+
+		<!-- Now zip together the contents of the dist directory -->
+		<zip destfile="HELMAntibodyEditor-${DSTAMP}${TSTAMP}.zip" basedir="${dist}" />
+	</target>
+
+	<!-- clean up -->
+	<target name="clean">
+		<!-- Delete the ${build} and ${dist} directory trees -->		
+		<delete dir="${build}" failonerror="false" />
+		<delete dir="${dist}" failonerror="false" />
+		<delete dir="${temp}" failonerror="false" />
+	</target>
 </project>
+
+
+
