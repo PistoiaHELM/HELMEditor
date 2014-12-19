@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="HELMAntibodyEditor" default="dist" basedir=".">
-	<description>Roche internal extension to the Pistoia HELM Editor</description>
+	<description>HELM Editor containing Antibody extension</description>
 
 	<!-- global properties -->
 	<property name="src" location="source" />

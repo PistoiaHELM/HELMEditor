@@ -2620,10 +2620,11 @@ public class MacromoleculeEditor extends GUIBase implements DataListener,
 	}
 
 	public void reset() {
-    uiConstructor.updatePanels();
-		super.reset();
-// updatePolymerPanels();
-		}
+		// ML: Fixed a refreshing bug, that shrinked the window when resetting the editors
+        uiConstructor.updatePanels();
+	    super.reset();
+        // updatePolymerPanels();
+	}
 
 	/**
 	 * Added by Roche in order to load a HELM Notation automatically

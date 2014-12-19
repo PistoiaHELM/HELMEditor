@@ -173,3 +173,4 @@ obf/*.*
 
 # publish jar artifacts
 publish/jar
+/build
