@@ -222,7 +222,6 @@
                 <Monomer name="Har" backgroundColor="Light_Cyan" fontColor="Black"/>
                 <Monomer name="Hcy" backgroundColor="Light_Cyan" fontColor="Black"/>
                 <Monomer name="Hhs" backgroundColor="Light_Cyan" fontColor="Black"/>
-                <Monomer name="Hiv" backgroundColor="Light_Cyan" fontColor="Black"/>
                 <Monomer name="Hse" backgroundColor="Light_Cyan" fontColor="Black"/>
                 <Monomer name="Hyl" backgroundColor="Light_Cyan" fontColor="Black"/>
                 <Monomer name="Hyp" backgroundColor="Light_Cyan" fontColor="Black"/>
@@ -311,11 +310,12 @@
         </MonomerGroup>
 
         <MonomerGroup name="N-Terminal" shape="Rhomb">
-            <Monomer name="ac" backgroundColor="Light_Cyan" fontColor="Black"/>
+            <Monomer name="ac" backgroundColor="Light_Cyan" fontColor="Black"/>           
             <Monomer name="Bua" backgroundColor="Light_Cyan" fontColor="Black"/>
             <Monomer name="fmoc" backgroundColor="Light_Cyan" fontColor="Black"/>
             <Monomer name="Glc" backgroundColor="Light_Cyan" fontColor="Black"/>
             <Monomer name="Glp" backgroundColor="Light_Cyan" fontColor="Black"/>
+            <Monomer name="Hiv" backgroundColor="Light_Cyan" fontColor="Black"/>
             <Monomer name="Hva" backgroundColor="Light_Cyan" fontColor="Black"/>
             <Monomer name="Lac" backgroundColor="Light_Cyan" fontColor="Black"/>
             <Monomer name="Maa" backgroundColor="Light_Cyan" fontColor="Black"/>
