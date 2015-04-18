@@ -35,6 +35,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.jdom.JDOMException;
+import org.roche.antibody.ui.components.toolsmenu.HELMToolsMenuExtension;
 
 import y.base.DataProvider;
 import y.io.IOHandler;
@@ -470,6 +471,7 @@ public abstract class GUIBase {
 
 	public void addContentTo(final JRootPane rootPane) {
 		rootPane.setJMenuBar(createMenuBar());
+		new HELMToolsMenuExtension((MacromoleculeEditor) this);
 		rootPane.setContentPane(contentPane);
 	}
 
@@ -501,7 +503,7 @@ public abstract class GUIBase {
 
 		// create new clipboard.
 		SequenceGraph2DClipboard clipboard = new SequenceGraph2DClipboard(view);
-		clipboard.setGraphFactory(new GraphDeepCopyFactory());
+		clipboard.setCopyFactory(new GraphDeepCopyFactory());
 
 		// get Cut action from clipboard
 		cutAction = clipboard.getCutAction();
@@ -1155,5 +1157,14 @@ public abstract class GUIBase {
 				new SaveAsPNG(image, name + ".png");
 			}
 		}
+	}
+
+	/**
+	 * Added by Roche in order to extend the lower tab pane
+	 * 
+	 * @return
+	 */
+	public SequenceViewPanes getTabbedSequenceViewPanel() {
+		return this.tabbedSequenceViewPanel;
 	}
 }

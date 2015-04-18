@@ -153,6 +153,9 @@ public class MacromoleculeEditor extends GUIBase implements DataListener,
 	private JToggleButton regularConnectionButton;
 	private JToggleButton pairConnectionButton;
 	private double zoom = 0.7;
+
+	// MODIFIED by Roche: defined loadPanel as instance variable
+	private LoadPanel loadPanel;
 	private Point2D zoomingAreaCenter;
 	public static String SENSE = "ss";
 	public static String ANTISENSE = "as";
@@ -2280,7 +2283,8 @@ public class MacromoleculeEditor extends GUIBase implements DataListener,
 		});
 		toolBar.add(hybridizeButton);
 
-		LoadPanel loadPanel = new LoadPanel(this, _ownerCode);
+		// MODIFIED by Roche: defined as instance variable
+		loadPanel = new LoadPanel(this, _ownerCode);
 		toolBar.add(loadPanel);
 
 		return toolBar;
@@ -2616,8 +2620,27 @@ public class MacromoleculeEditor extends GUIBase implements DataListener,
 	}
 
 	public void reset() {
-		super.reset();
-		updatePolymerPanels();
+		// ML: Fixed a refreshing bug, that shrinked the window when resetting the editors
+        uiConstructor.updatePanels();
+	    super.reset();
+        // updatePolymerPanels();
+	}
 
+	/**
+	 * Added by Roche in order to load a HELM Notation automatically
+	 * 
+	 * @return
+	 */
+	public LoadPanel getLoadPanel() {
+		return this.loadPanel;
+	}
+
+	/**
+	 * MODIFIED by Roche in order to extend the PopupMenu if required
+	 * 
+	 * @return
+	 */
+	public JPopupMenu getPopup() {
+		return this.popup;
 	}
 }
