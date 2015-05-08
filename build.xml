@@ -20,7 +20,7 @@
         <property name="resources.dir" value="${basedir}/resources"/>
         <property name="marvin.dir" value="${basedir}/lib"/>
         <property name="marvin.jar.name" value="MarvinBeans-5.0.jar"/>
-        <property name="yfiles.dir" value="${basedir}/local/yWorks"/>
+        <property name="yfiles.dir" value="${basedir}/local/yworks"/>
         <property name="lib.dir" value="${basedir}/lib"/>
         <property name="packages" value="org.helm.*"/>
         <property name="build.dir" value="${basedir}/build"/>
@@ -53,10 +53,8 @@
         <property name="obf.helm.name" value="obf_${helm.name}"/>
         <property name="helm.jar.name" value="${helm.name}.jar"/>
         <property name="obf.helm.jar.name" value="obf_${helm.jar.name}"/>
-        <property name="yfiles.jar.name" value="yfiles-2.6.0.1.jar"/>
+        <property name="yfiles.jar.name" value="yfiles-2.12.jar"/>
         <property name="obf.yfiles.jar.name" value="${obf.helm.name}_${yfiles.jar.name}"/>
-        <property name="graphml.jar.name" value="graphml.jar"/>
-        <property name="obf.graphml.jar.name" value="${obf.helm.name}_${graphml.jar.name}"/>
 
 
         <!-- Compilation class path, include every jar file in lib.dir, plus the marvin and yfiles jars -->
@@ -75,7 +73,6 @@
             </fileset>
             <fileset dir="${yfiles.dir}">
                 <include name="${yfiles.jar.name}"/>
-                <include name="${graphml.jar.name}"/>
             </fileset>
         </path>
 
@@ -187,7 +184,6 @@
         <yguard>
             <inoutpair in="${dist.dir}/${helm.jar.name}" out="${obf.dir}/${obf.helm.jar.name}"/>
             <inoutpair in="${yfiles.dir}/${yfiles.jar.name}" out="${obf.dir}/${obf.yfiles.jar.name}"/>
-            <inoutpair in="${yfiles.dir}/${graphml.jar.name}" out="${obf.dir}/${obf.graphml.jar.name}"/>
           
             <externalclasses>
                 <pathelement location="${marvin.dir}/${marvin.jar.name}" />
@@ -272,7 +268,6 @@
         <delete dir="${applet.lib.dir}" />
         <mkdir dir="${applet.lib.dir}" />
         <unjar dest="${applet.lib.dir}" src="${obf.dir}/${obf.yfiles.jar.name}" />
-        <unjar dest="${applet.lib.dir}" src="${obf.dir}/${obf.graphml.jar.name}" />
         <unjar dest="${applet.lib.dir}" src="${marvin.dir}/${marvin.jar.name}" />
         <unjar dest="${applet.lib.dir}" src="${toolkit.dir}/${toolkit.jar.name}" />
         <unjar dest="${applet.lib.dir}" src="${lib.dir}/openbabel-2.3.1.jar" />

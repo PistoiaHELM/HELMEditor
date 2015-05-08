@@ -23,26 +23,39 @@ package org.helm.editor.io;
 
 import org.helm.editor.data.MonomerInfo;
 import org.helm.editor.data.NodeMapKeys;
-import org.graphdrawing.graphml.GraphMLConstants;
-import org.graphdrawing.graphml.reader.dom.DOMGraphMLParseContext;
+import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
-import y.base.Graph;
 import y.base.NodeMap;
-import yext.graphml.reader.AbstractDOMInputHandler;
+import y.io.graphml.input.AbstractInputHandler;
+import y.io.graphml.input.GraphMLParseContext;
+import y.io.graphml.input.GraphMLParseException;
+import y.io.graphml.input.InputHandlerProvider;
+import y.io.graphml.input.QueryInputHandlersEvent;
 
 /**
  * 
  * @author lih25
  */
-public class NodeInputHandler extends AbstractDOMInputHandler {
+public class NodeInputHandler extends AbstractInputHandler implements InputHandlerProvider {
+	public void onQueryInputHandler(
+					final QueryInputHandlersEvent event
+	) throws GraphMLParseException {
+		if (!event.isHandled() && acceptKey(event.getKeyDefinition())) {
+			event.addInputHandler(this);
+		}
+	}
 
 	// Assume (parsing) responsibility only for those <data> elements that refer
 	// to GraphML attribute declarations with specific additional XML attribute.
-	public boolean acceptKey(NamedNodeMap map, int scopeType) {
-		if (scopeType != GraphMLConstants.SCOPE_NODE) {
+	public boolean acceptKey(Element keyDefinition) {
+		final NamedNodeMap map = keyDefinition.getAttributes();
+
+		final Node scope = map.getNamedItem("for");
+		if (scope == null || !"node".equals(scope.getNodeValue())) {
 			return false;
 		}
+
 		// 'map' holds the XML attributes of a <key> element.
 		Node monomerID = map.getNamedItem(IOConstants.MONOMER_ID);
 		Node polymerType = map.getNamedItem(IOConstants.POLYMER_TYPE);
@@ -59,18 +72,12 @@ public class NodeInputHandler extends AbstractDOMInputHandler {
 	}
 
 	// Parse the <data> element.
-	protected void parseData(DOMGraphMLParseContext context, Graph graph,
-			Object node, boolean defaultMode, org.w3c.dom.Node domNode) {
-		// Default mode is not supported.
-		if (defaultMode) {
-			return;
-		}
-
+	@Override
+	protected Object parseDataCore(
+					final GraphMLParseContext context, final Node domNode
+	) throws GraphMLParseException {
 		String monomerID = "";
 		String polymerType = "";
-
-		NodeMap nodeMap = (NodeMap) graph
-				.getDataProvider(NodeMapKeys.MONOMER_REF);
 
 		// 'domNode' holds the <data> element, its XML attributes, and all XML
 		// elements nested within.
@@ -88,11 +95,18 @@ public class NodeInputHandler extends AbstractDOMInputHandler {
 						polymerType = parseMyDataElement(n);
 					}
 				}
-
 			}
-
-			nodeMap.set(node, new MonomerInfo(polymerType, monomerID));
 		}
+		return new MonomerInfo(polymerType, monomerID);
+	}
+
+	@Override
+	protected void setValue(
+					final GraphMLParseContext context, final Object node, final Object data
+	) throws GraphMLParseException {
+		NodeMap nodeMap = (NodeMap) context.getGraph()
+						.getDataProvider(NodeMapKeys.MONOMER_REF);
+		nodeMap.set(node, data);
 	}
 
 	// ((Graph2D) graph).getRealizer((y.base.Node)
@@ -105,9 +119,5 @@ public class NodeInputHandler extends AbstractDOMInputHandler {
 		// txt += ((a == null) ? "n/a." : "" + a.getNodeValue() +
 		// " square pixels.");
 		return a.getNodeValue();
-	}
-
-	// Not supported yet.
-	protected void applyDefault(DOMGraphMLParseContext c, Graph g, Object edge) {
 	}
 }
