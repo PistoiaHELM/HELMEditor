@@ -285,14 +285,7 @@ public class NotationParser {
 		 * notation.substring(p2); } p = notation.indexOf("{", p + 1); }
 		 */
 
-		// Match and remove smiles code inside annotation part coming from
-		// editor.getSelectedNotation() XHELM-28/XHELM-76
-		Pattern p = Pattern.compile("\\$\\$(.+\\$.+)\\$$");
-		Matcher m = p.matcher(notation);
-		while (m.find()) {
-			// System.out.println(m.group(1));
-			notation = notation.replace(m.group(1), "");
-		}
+
 
 		return notation;
 	}
