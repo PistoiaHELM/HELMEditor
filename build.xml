@@ -13,14 +13,15 @@
         <property name="year" value="2012"/>
         <property name="compile.debug"       value="true" />
         <property name="compile.optimize"    value="true" />
-        <property name="compile.target"      value="1.6" />
-        <property name="compile.source"      value="1.6" />
+        <property name="compile.target"      value="1.7" />
+        <property name="compile.source"      value="1.7" />
         <property name="compile.deprecation" value="true" />
         <property name="src.dir" value="${basedir}/source"/>
         <property name="resources.dir" value="${basedir}/resources"/>
         <property name="marvin.dir" value="${basedir}/lib"/>
         <property name="marvin.jar.name" value="MarvinBeans-5.0.jar"/>
         <property name="yfiles.dir" value="${basedir}/local/yworks"/>
+        <property name="yguard.jar.name" value="yguard-2.5.3.jar"/>
         <property name="lib.dir" value="${basedir}/lib"/>
         <property name="packages" value="org.helm.*"/>
         <property name="build.dir" value="${basedir}/build"/>
@@ -177,7 +178,7 @@
         <delete dir = "${obf.dir}" />
         <mkdir dir = "${obf.dir}" />
 
-        <taskdef name="yguard" classname="com.yworks.yguard.YGuardTask" classpath="${yfiles.dir}/yguard.jar"/>
+        <taskdef name="yguard" classname="com.yworks.yguard.YGuardTask" classpath="${yfiles.dir}/${yguard.jar.name}"/>
         <property name="shrink.log" value="${obf.dir}/shrink.log"/>
         <property name="rename.log" value="${obf.dir}/rename.log"/>
 
