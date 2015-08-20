@@ -37,8 +37,10 @@ import java.util.logging.Logger;
 import org.jdom.JDOMException;
 
 import y.base.DataProvider;
+import y.io.GraphMLIOHandler;
 import y.io.IOHandler;
 import y.io.YGFIOHandler;
+import y.io.graphml.GraphMLHandler;
 import y.option.OptionHandler;
 import y.util.D;
 import y.view.AreaZoomMode;
@@ -90,8 +92,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JSplitPane;
 import javax.swing.JToggleButton;
 
-import org.graphdrawing.graphml.GraphMLConstants;
-
 import y.anim.AnimationPlayer;
 import y.base.Edge;
 import y.base.EdgeMap;
@@ -104,7 +104,6 @@ import y.view.Graph2DClipboard;
 import y.view.Graph2DCopyFactory;
 import y.view.Graph2DUndoManager;
 import y.view.MagnifierViewMode;
-import yext.graphml.graph2D.GraphMLIOHandler;
 
 /**
  * Abstract base class for GUI- and <code>Graph2DView</code>-based demos.
@@ -256,12 +255,11 @@ public abstract class GUIBase {
 	protected void initializeIOHandler() {
 		// set up io handlers
 		graphMLIOHandler = new GraphMLIOHandler();
-		graphMLIOHandler.getOutputHandlers(GraphMLConstants.SCOPE_NODE).add(
-				new NodeOutputHandler());
-		graphMLIOHandler.getOutputHandlers(GraphMLConstants.SCOPE_EDGE).add(
-				new EdgeOutputHandler());
-		graphMLIOHandler.getInputHandlers().add(new EdgeInputHandler());
-		graphMLIOHandler.getInputHandlers().add(new NodeInputHandler());
+		final GraphMLHandler handler = graphMLIOHandler.getGraphMLHandler();
+		handler.addOutputHandlerProvider(new NodeOutputHandler());
+		handler.addOutputHandlerProvider(new EdgeOutputHandler());
+		handler.addInputHandlerProvider(new EdgeInputHandler());
+		handler.addInputHandlerProvider(new NodeInputHandler());
 
 		ygfIOHandler = new YGFIOHandler();
 	}
@@ -343,8 +341,9 @@ public abstract class GUIBase {
 		File outputFile = new File(name);
 		// write graph to a temp file
 		GraphMLIOHandler ioh = new GraphMLIOHandler();
-		ioh.getInputHandlers().add(new NodeInputHandler());
-		ioh.getInputHandlers().add(new EdgeInputHandler());
+		final GraphMLHandler handler = ioh.getGraphMLHandler();
+		handler.addInputHandlerProvider(new NodeInputHandler());
+		handler.addInputHandlerProvider(new EdgeInputHandler());
 		try {
 			ioh.write(graph, name);
 
@@ -501,7 +500,7 @@ public abstract class GUIBase {
 
 		// create new clipboard.
 		SequenceGraph2DClipboard clipboard = new SequenceGraph2DClipboard(view);
-		clipboard.setGraphFactory(new GraphDeepCopyFactory());
+		clipboard.setCopyFactory(new GraphDeepCopyFactory());
 
 		// get Cut action from clipboard
 		cutAction = clipboard.getCutAction();
@@ -909,10 +908,26 @@ public abstract class GUIBase {
 		}
 
 		@Override
+		public Node copyNode( final Graph graph, final Node node ) {
+			final Node newNode = super.copyNode(graph, node);
+			copyNodeData(node, newNode);
+			return newNode;
+		}
+
+		@Override
 		public Edge createEdge(final Graph graph, final Node source,
 				final Node target, final Object edge) {
 			final Edge newEdge = super.createEdge(graph, source, target, edge);
 			copyEdgeData((Edge) edge, newEdge);
+			return newEdge;
+		}
+
+		@Override
+		public Edge copyEdge(
+						final Graph graph, final Node newSource, final Node newTarget, final Edge edge
+		) {
+			final Edge newEdge = super.copyEdge(graph, newSource, newTarget, edge);
+			copyEdgeData(edge, newEdge);
 			return newEdge;
 		}
 

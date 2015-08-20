@@ -24,26 +24,39 @@ package org.helm.editor.io;
 import org.helm.editor.data.EditorEdgeInfoData;
 import org.helm.editor.data.EdgeMapKeys;
 import org.helm.notation.model.Attachment;
-import org.graphdrawing.graphml.GraphMLConstants;
-import org.graphdrawing.graphml.reader.dom.DOMGraphMLParseContext;
+import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import y.base.EdgeMap;
-import y.base.Graph;
-import yext.graphml.reader.AbstractDOMInputHandler;
+import y.io.graphml.input.AbstractInputHandler;
+import y.io.graphml.input.GraphMLParseContext;
+import y.io.graphml.input.GraphMLParseException;
+import y.io.graphml.input.InputHandlerProvider;
+import y.io.graphml.input.QueryInputHandlersEvent;
 
 /**
  * 
  * @author lih25
  */
-public class EdgeInputHandler extends AbstractDOMInputHandler {
+public class EdgeInputHandler extends AbstractInputHandler implements InputHandlerProvider {
+	public void onQueryInputHandler(
+					final QueryInputHandlersEvent event
+	) throws GraphMLParseException {
+		if (!event.isHandled() && acceptKey(event.getKeyDefinition())) {
+			event.addInputHandler(this);
+		}
+	}
 
 	// Assume (parsing) responsibility only for those <data> elements that refer
 	// to GraphML attribute declarations with specific additional XML attribute.
-	public boolean acceptKey(NamedNodeMap map, int scopeType) {
-		if (scopeType != GraphMLConstants.SCOPE_EDGE) {
+	public boolean acceptKey(Element keyDefinition) {
+		final NamedNodeMap map = keyDefinition.getAttributes();
+
+		final Node scope = map.getNamedItem("for");
+		if (scope == null || !"edge".equals(scope.getNodeValue())) {
 			return false;
 		}
+
 		// 'map' holds the XML attributes of a <key> element.
 		Node sourceAttNode = map.getNamedItem(IOConstants.SOURCE_ATTACHMENT);
 		Node targetAttNode = map.getNamedItem(IOConstants.TARGET_ATTACHMENT);
@@ -60,20 +73,15 @@ public class EdgeInputHandler extends AbstractDOMInputHandler {
 	}
 
 	// Parse the <data> element.
-	protected void parseData(DOMGraphMLParseContext context, Graph graph,
-			Object edge, boolean defaultMode, org.w3c.dom.Node domNode) {
-		// Default mode is not supported.
-		if (defaultMode) {
-			return;
-		}
-
+	@Override
+	protected Object parseDataCore(
+					final GraphMLParseContext context, final Node domNode
+	) throws GraphMLParseException {
 		String source = "";
 		String target = "";
 		int index = -1;
 		Attachment sourceAttachment = null;
 		Attachment targetAttachment = null;
-		EdgeMap edgeMap = (EdgeMap) graph
-				.getDataProvider(EdgeMapKeys.EDGE_INFO);
 
 		// 'domNode' holds the <data> element, its XML attributes, and all XML
 		// elements nested within.
@@ -95,13 +103,21 @@ public class EdgeInputHandler extends AbstractDOMInputHandler {
 			}
 			index = source.indexOf(":");
 			sourceAttachment = new Attachment(source.substring(0, index),
-					source.substring(index + 1));
+																				source.substring(index + 1));
 			index = target.indexOf(":");
 			targetAttachment = new Attachment(target.substring(0, index),
-					source.substring(index + 1));
-			edgeMap.set(edge, new EditorEdgeInfoData(sourceAttachment,
-					targetAttachment));
+																				target.substring(index + 1));
 		}
+
+		return new EditorEdgeInfoData(sourceAttachment, targetAttachment);
+	}
+
+	@Override
+	protected void setValue( final GraphMLParseContext context, final Object edge, final Object data
+	) throws GraphMLParseException {
+		EdgeMap edgeMap = (EdgeMap) context.getGraph()
+						.getDataProvider(EdgeMapKeys.EDGE_INFO);
+		edgeMap.set(edge, data);
 	}
 
 	// ((Graph2D) graph).getRealizer((y.base.Node)
@@ -114,9 +130,5 @@ public class EdgeInputHandler extends AbstractDOMInputHandler {
 		// txt += ((a == null) ? "n/a." : "" + a.getNodeValue() +
 		// " square pixels.");
 		return a.getNodeValue();
-	}
-
-	// Not supported yet.
-	protected void applyDefault(DOMGraphMLParseContext c, Graph g, Object edge) {
 	}
 }

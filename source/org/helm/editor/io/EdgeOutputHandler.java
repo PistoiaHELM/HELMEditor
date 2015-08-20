@@ -23,44 +23,52 @@ package org.helm.editor.io;
 
 import org.helm.editor.data.EditorEdgeInfoData;
 import org.helm.editor.data.EdgeMapKeys;
-import org.graphdrawing.graphml.writer.GraphMLWriteContext;
-import org.graphdrawing.graphml.writer.XmlWriter;
-import y.base.EdgeMap;
-import y.base.Graph;
-import yext.graphml.writer.AbstractOutputHandler;
+import y.base.DataProvider;
+import y.io.graphml.KeyScope;
+import y.io.graphml.output.AbstractOutputHandler;
+import y.io.graphml.output.GraphMLWriteContext;
+import y.io.graphml.output.GraphMLWriteException;
+import y.io.graphml.output.GraphMLXmlAttribute;
+import y.io.graphml.output.XmlWriter;
+
+import java.util.Collection;
 
 /**
  * 
  * @author lih25
  */
 public class EdgeOutputHandler extends AbstractOutputHandler {
+	public EdgeOutputHandler() {
+		setScope(KeyScope.EDGE);
+		final Collection attrs = getKeyDefinitionAttributes();
+		attrs.add(new GraphMLXmlAttribute(IOConstants.SOURCE_ATTACHMENT, null, "true"));
+		attrs.add(new GraphMLXmlAttribute(IOConstants.TARGET_ATTACHMENT, null, "true"));
+	}
 
 	@Override
-	public void printDataOutput(GraphMLWriteContext arg0, Graph graph,
-			Object edge, XmlWriter writer) {
-		final EdgeMap edgeMap = (EdgeMap) graph
-				.getDataProvider(EdgeMapKeys.EDGE_INFO);
+	protected void writeValueCore(
+					final GraphMLWriteContext context, final Object data
+	) throws GraphMLWriteException {
+		final XmlWriter writer = context.getWriter();
 
-		EditorEdgeInfoData edgeInfoData = (EditorEdgeInfoData) edgeMap
-				.get(edge);
+		EditorEdgeInfoData edgeInfoData = (EditorEdgeInfoData) data;
 		writer.writeStartElement(IOConstants.SOURCE_ATTACHMENT, null);
 		writer.writeAttribute("value", edgeInfoData.getSourceNodeAttachment()
-				.toString());
+						.toString());
 		writer.writeEndElement();
 
 		writer.writeStartElement(IOConstants.TARGET_ATTACHMENT, null);
 		writer.writeAttribute("value", edgeInfoData.getTargetNodeAttachment()
-				.toString());
+						.toString());
 		writer.writeEndElement();
-
 	}
 
-	public void printKeyAttributes(GraphMLWriteContext arg0, XmlWriter writer) {
-		writer.writeAttribute(IOConstants.TARGET_ATTACHMENT, true);
-		writer.writeAttribute(IOConstants.SOURCE_ATTACHMENT, true);
-	}
-
-	public void printKeyOutput(GraphMLWriteContext arg0, XmlWriter writer) {
-		// throw new UnsupportedOperationException("Not supported yet.");
+	@Override
+	protected Object getValue(
+					final GraphMLWriteContext context, final Object edge
+	) throws GraphMLWriteException {
+		final DataProvider dp = context.getGraph()
+						.getDataProvider(EdgeMapKeys.EDGE_INFO);
+		return dp.get(edge);
 	}
 }
