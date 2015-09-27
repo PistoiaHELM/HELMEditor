@@ -55,10 +55,11 @@ public class HELMApp {
                     MacromoleculeEditor editor = new MacromoleculeEditor();
                     editor.start();
 
-                    if (args.length == 1) {
-                        logger.log(Level.INFO, "Input: " + args[0]);
+                    String helmNotation = getHelmNotationFromInputs(args);
+                    if (null != helmNotation) {
+                        logger.log(Level.INFO, "Input HELM: " + helmNotation);
                         try {
-                            editor.setNotation(args[0]);
+                            editor.setNotation(helmNotation);
                         } catch (Exception ne) {
                             logger.log(Level.WARNING, "Invalid input HELM string: " + args[0]);
                         }
@@ -107,5 +108,23 @@ public class HELMApp {
                 logger.log(Level.WARNING, "Error initializing look and feel", ex);
             }
         }
+    }
+
+    // input as -helm HELM_NOTATION
+    private static String getHelmNotationFromInputs(String[] args) {
+        int pos = -1;
+        for (int i = 0; i < args.length; i++) {
+            String arg = args[i];
+            if (arg.equalsIgnoreCase("-HELM")) {
+                pos = i;
+                break;
+            }
+        }
+
+        if (pos >= 0 && args.length > pos + 1) {
+            return args[pos + 1];
+        }
+
+        return null;
     }
 }

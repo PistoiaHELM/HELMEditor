@@ -322,4 +322,68 @@
             <classpath refid="compile.class.path"/>
         </javadoc>
     </target>
+    
+    <!-- Create the binary files -->
+    <target name="binary" depends="obfuscate" description="Create binary files from the HELM Editor" >
+
+        <property name="binary.dir" value="${basedir}/binary"/>
+        <property name="binary.build.dir" value="${binary.dir}/build"/>   
+        <property name="binary.lib.dir" value="${binary.build.dir}/lib"/>
+        <property name="binary.jar.dir" value="${binary.build.dir}/jar"/>
+        
+        <!-- create binary directories -->
+        <delete dir="${binary.build.dir}" />
+        <mkdir dir="${binary.build.dir}" />     
+
+        <mkdir dir="${binary.lib.dir}" />
+        <mkdir dir="${binary.jar.dir}" />
+            
+        <!-- copy readme.txt file -->
+        <copy file="${binary.dir}/readme.txt" tofile="${binary.build.dir}/readme.txt" />
+              
+        <!-- copy jar files to binary directories -->
+        <copy file="${obf.dir}/${obf.helm.jar.name}" tofile="${binary.build.dir}/${jar.file.name}" />
+        <copy file="${obf.dir}/${obf.yfiles.jar.name}" tofile="${binary.lib.dir}/${obf.yfiles.jar.name}" />              
+        <copy file="${marvin.dir}/${marvin.jar.name}" tofile="${binary.lib.dir}/${marvin.jar.name}" />
+        <copy file="${toolkit.dir}/${toolkit.jar.name}" tofile="${binary.lib.dir}/${toolkit.jar.name}" />      
+        <copy todir="${binary.lib.dir}" >
+            <fileset dir="${lib.dir}">
+                <include name="*.jar"/>
+            </fileset>
+        </copy>
+        
+        <!-- define jars in classpath -->      
+        <path id="binary.class.path">
+            <fileset dir="${binary.build.dir}">
+                <include name="${jar.file.name}"/>
+                <include name="lib/*.jar"/>
+            </fileset>        
+        </path>
+        
+        <!-- convert runtime classpath to manifest classpath -->      
+        <manifestclasspath property="manifest.class.path" jarfile="${binary.build.dir}/${jar.file.name}">
+            <classpath refid="binary.class.path" />
+        </manifestclasspath>
+        
+        <echo message="Manifest Class Path:"/>
+        <echo message="${manifest.class.path}"/>
+
+        <!-- unzip main jar file for update -->
+        <unzip src="${binary.build.dir}/${jar.file.name}" dest="${binary.jar.dir}" />
+
+        <!-- update manifest file -->
+        <manifest file="${binary.jar.dir}/META-INF/MANIFEST.MF" mode="update">
+            <attribute name="Main-Class" value="org.helm.editor.HELMApp" />
+            <attribute name="Class-Path" value="${manifest.class.path}" />
+        </manifest>
+
+        <zip file="${binary.build.dir}/${jar.file.name}" basedir="${binary.jar.dir}" update="true"/>
+        
+        <delete dir="${binary.jar.dir}" />
+    
+        <zip file="${binary.dir}/HELMEditor-${version}.zip" basedir="${binary.build.dir}" />     
+        
+        <delete dir="${binary.build.dir}" />
+          
+    </target>
 </project>
