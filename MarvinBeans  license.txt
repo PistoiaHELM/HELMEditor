@@ -1,6 +1,9 @@
-/*******************************************************************************************
+/***********************************************************************************************************************
  * HELM Editor requires MarvinBeans version 5.0 or higher from ChemAxon. 
  * A copy of the required library (MarvinBeans-5.0.jar) is included for your convenience. 
- * Please note, however, that if you intend to use the software beyond a trial basis then 
- * you are responsible for procuring a MarvinBeans license from ChemAxon (www.chemaxon.com)
- *******************************************************************************************/
+ * ChemAxon has graciously agreed to provide a royalty-free license for the utilization of MarvinBeans directly 
+ * through the HELM Editor (specifically for operations pertaining to the chemical representation 
+ * of HELM monomers and macromolecules.) Please contact Cassell Essell (cessell@chemaxon.com) to obtain this license. 
+ * Utilization of the MarvinBeans library outside of the aforementioned scope and beyond a trial basis requires the 
+ * procurement of a regular MarvinBeans license.
+ ************************************************************************************************************************/
