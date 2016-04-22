@@ -27,3 +27,10 @@ HELMEditor 1.3
 * MarvinBeans 5.0
 * yFiles for Java 2.12
 * HELMNotationToolkit 1.3
+
+HELMEditor 1.4
+--------------
+* Java 1.7
+* MarvinBeans 5.0
+* yFiles for Java 2.12
+* HELMNotationToolkit 1.4
