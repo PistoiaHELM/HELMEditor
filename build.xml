@@ -339,7 +339,9 @@
         <mkdir dir="${binary.jar.dir}" />
             
         <!-- copy readme.txt file -->
+        <!--
         <copy file="${binary.dir}/readme.txt" tofile="${binary.build.dir}/readme.txt" />
+        -->
               
         <!-- copy jar files to binary directories -->
         <copy file="${obf.dir}/${obf.helm.jar.name}" tofile="${binary.build.dir}/${jar.file.name}" />

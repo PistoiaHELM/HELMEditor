@@ -168,6 +168,9 @@ local
 # applet artifacts
 applet
 
+# binary artifacts
+binary
+
 # obfuscated artifacts
 obf/*.*
 
