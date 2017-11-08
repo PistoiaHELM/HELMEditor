@@ -23,7 +23,7 @@ A full release history, information about dependencies and Java docs are availab
     4. Enter the following command line to start HELM Editor: java -jar HELMEditor-version.jar -helm $HELM_NOTATION
     
     Note:
-    
+     
     1. JRE 1.7 or higher is required, and Java is set on the path;
     2. $HELM_EDITOR_ROOT is the directory where you unzip the file;
     3. The command line argument "-helm $HELM_NOTATION" is optional. If provided, HELM Editor will start with $HELM_NOTATION loaded.
@@ -49,30 +49,30 @@ Please let us know by logging in the issue list. Even better - send us a fix via
 See the HELM [wiki](https://pistoiaalliance.atlassian.net/wiki/spaces/PUB/pages/13795367/HELM+Editor) for additional documentation and user guides
 
 
-##Dependencies##
+## Dependencies ##
 
-####HELM Editor 1.4####
+#### HELM Editor 1.4 ####
 
 - Java 1.7
 - MarvinBeans 5.0
 - yFiles for Java 2.12
 - HELMNotationToolkit 1.4
 
-####HELM Editor 1.3####
+#### HELM Editor 1.3 ####
 
 - Java 1.7
 - MarvinBeans 5.0
 - yFiles for Java 2.12
 - HELMNotationToolkit 1.3
 
-####HELM Editor 1.2####
+#### HELM Editor 1.2 ####
 
 - Java 1.6
 - MarvinBeans 5.0
 - yFiles for Java 2.6 plus graphml
 - HELMNotationToolkit 1.1
 
-####HELM Editor 1.1####
+#### HELM Editor 1.1 ####
 
 - Java 1.6
 - MarvinBeans 5.0
@@ -80,7 +80,7 @@ See the HELM [wiki](https://pistoiaalliance.atlassian.net/wiki/spaces/PUB/pages/
 - HELMNotationToolkit 1.0.1
 
 
-####HELM Editor 1.0####
+#### HELM Editor 1.0 ####
 
 - Java 1.6
 - MarvinBeans 5.0
