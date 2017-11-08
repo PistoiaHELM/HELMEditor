@@ -11,7 +11,7 @@ We recommend that new users try the webeditor, as it has fewer dependencies and 
 
 Releases are available in the GitHub [release](https://github.com/PistoiaHELM/HELMEditor/releases) folder. 
 
-A full release history, information about dependencies and Java docs are available at 
+A full release history and Java docs are available at 
 [http://pistoiahelm.github.io/HELM_Editor_Release_Notes.html](http://pistoiahelm.github.io/HELM_Editor_Release_Notes.html)
 
 
