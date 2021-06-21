@@ -1,7 +1,7 @@
 # HELM Editor #
 
 
-This HELM editor is based on the original tool developed within Pfizer and supports the first version of [HELM](https://pistoiaalliance.atlassian.net/wiki/spaces/PUB/pages/13795362/HELM+Notation) only. (i.e. without the later extensions that support ambiguity)
+This HELM editor is based on the original tool developed within Pfizer and supports the first version of [HELM](http://www.wiki.openhelm.org/) only. (i.e. without the later extensions that support ambiguity)
 
 We recommend that new users try the webeditor, as it has fewer dependencies and is being more actively developed.
 
@@ -44,7 +44,7 @@ Please let us know by logging in the issue list. Even better - send us a fix via
 
 ##  Further information ##
 
-See the HELM [wiki](https://pistoiaalliance.atlassian.net/wiki/spaces/PUB/pages/13795367/HELM+Editor) for additional documentation and user guides
+See the HELM [wiki](http://www.wiki.openhelm.org) for additional documentation and user guides
 
 
 ## Dependencies ##
